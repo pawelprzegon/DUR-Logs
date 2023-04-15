@@ -1,0 +1,38 @@
+body {
+    --nav-width: 200px;
+    margin: 0 0 0 var(--nav-width);
+}
+.nav{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    background: #222222;
+    font-size: 30px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+}
+
+.nav-link{
+    display: block;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.nav a:first-child{
+    margin-top: 10px;
+}
+
+.nav-link:hover {
+    background: rgb(226, 226, 226);
+    color: black;
+    border-radius: 15px 0 0 15px;
+}
+
+.active-href{
+    background: white;
+    color: black;
+    border-radius: 15px 0 0 15px;
+}
