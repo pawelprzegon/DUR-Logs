@@ -28,6 +28,7 @@ export default class extends AbstractView {
             let tableFiltersReplacements = new createTableReplacementsImpala(dataReplacements);
             tableFiltersReplacements.createTableAll('filters')
             let tableFiltersReplacementsReady = tableFiltersReplacements.getTable();
+            
     
             let tableBearingsReplacements = new createTableReplacementsImpala(dataReplacements);
             tableBearingsReplacements.createTableAll('bearings');
@@ -35,6 +36,7 @@ export default class extends AbstractView {
 
             app.appendChild(tableFiltersReplacementsReady);
             app.appendChild(tableReplacementsReady);
+            tableFiltersReplacements.showDatePicker();
         }else{
             // tutaj musi byc alert że coś nie tak 
         }

@@ -1,3 +1,5 @@
+
+
 export class createTableAllImpala{
     constructor(data){
         this.data = data;
@@ -11,7 +13,7 @@ export class createTableAllImpala{
         let tbody = this.createTbody();
         
         let tableLabel = document.createElement('h3')
-        tableLabel.innerText = 'Zużycia dla Impali'
+        tableLabel.innerText = 'Aktualny całkowity przebieg'
         let table = document.createElement('table');
         table.appendChild(theads);
         table.appendChild(tbody);
@@ -91,18 +93,22 @@ export class createTableReplacementsImpala{
         let thead = this.createTheadReplacement(element);
         let tableLabel = document.createElement('h3')
         let tbody
+        let change
         if (element == 'filters'){
+            change = this.FilterChange();
             tbody = this.createTbodyFilters();
             tableLabel.innerText = 'Daty wymiany filtrów oraz ich aktualny przebieg'
         }else{
             tbody = this.createTbodyBearings();
             tableLabel.innerText = 'Daty wymiany łożysk/pasków oraz ich aktualny przebieg'
+            change = this.FilterChange();
         }
         let table = document.createElement('table');
         table.appendChild(thead);
         table.appendChild(tbody);
         this.tableBox.appendChild(tableLabel)
         this.tableBox.appendChild(table)
+        this.tableBox.appendChild(change)
     }
 
     createTheadReplacement(replace){
@@ -110,6 +116,7 @@ export class createTableReplacementsImpala{
         let tr = document.createElement('tr');
         let name = document.createElement('th');
         name.innerText = 'Nazwa';
+        name.classList.add('table-th')
         tr.appendChild(name);
         thead.appendChild(tr);
         if (replace == 'filters'){
@@ -139,6 +146,7 @@ export class createTableReplacementsImpala{
                 let tr = document.createElement('tr');
                 let name = document.createElement('td');
                 name.innerText = unit.Name;
+                name.classList.add('table-th')
                 tr.append(name);
                 for (const value of Object.values(unit.filters)){
                     for (const val of Object.values(value)){
@@ -173,6 +181,7 @@ export class createTableReplacementsImpala{
                 let tr = document.createElement('tr');
                 let name = document.createElement('td');
                 name.innerText = unit.Name;
+                name.classList.add('table-th')
                 tr.append(name);
 
                 let each = document.createElement('td');
@@ -192,6 +201,23 @@ export class createTableReplacementsImpala{
             }
         });
         return tbody
+    }
+
+    FilterChange(){
+        let settingsBox = document.createElement('div')
+        settingsBox.classList.add('filter-settings')
+        let dateInput = document.createElement('input')
+        dateInput.type = 'text'
+        dateInput.setAttribute('data-toggle', 'datepicker')
+        settingsBox.appendChild(dateInput)
+        return settingsBox;
+    }
+
+    showDatePicker(){
+        $('[data-toggle="datepicker"]').datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'pl-PL'
+        });
     }
 
     getTable(){

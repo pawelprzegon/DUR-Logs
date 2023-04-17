@@ -1,21 +1,22 @@
-import AbstractView from "./AbstractView.js";
-import { callApiGet } from "../endpoints.js";
-// import { onlyUnique, calculateChartSize } from "../common.js";
 import { createDetailsTable } from "../createDashboardTable.js";
+import { callApiGet } from "../endpoints.js";
+import { uniqueSortedList } from "../common.js";
 
-export default class extends AbstractView {
-    constructor() {
-        super();
-        this.setTitle("Dashboard");
+export class createChart {
+    constructor(label) {
         this.myChart
-        this.app = document.querySelector('#app');
+        this.path
+        this.lastUnit
+        this.label = label
+        this.chartArea = document.createElement('div')
+        this.chartArea.classList.add('chart-area')
     }
 
     async getData(){
-        document.getElementById('app').innerHTML = ''
-
-        let [statusMutoh, dataMutoh] = await callApiGet('mutohs/by_month')
-        let [statusImpala, dataImpala] = await callApiGet('impalas/by_month')
+        if(this.label == 'Mutoh'){
+            this.path = 'mutohs/'
+        }
+        let [status, data] = await callApiGet(this.path+'by_month')
 
         let period = [
             {'name': 'msc 3'},
@@ -24,27 +25,29 @@ export default class extends AbstractView {
             {'name': 'msc all',}
         ]
         
-        if (statusMutoh == 200){
-            this.chartArea = document.createElement('div')
-            this.chartArea.classList.add('chart-area')
-            this.dropDownBox = document.createElement('div')
-            this.dropDownBox.classList.add('dropDown-Box')
-            this.createChartCanvas();
-            this.createUnitsDropDownList(period, '', 'Okres');
-            this.createUnitsDropDownList(dataMutoh, 'mutohs/', 'Mutoh');
-            this.createUnitsDropDownList(dataImpala, 'impalas/', 'Impala');
+        if (status == 200){
+            this.chartArea.appendChild(this.createChartCanvas());
+            this.dropDownBox = document.createElement('div');
+            this.dropDownBox.classList.add('dropDown-Box');
+            
+            this.dropDownBox.appendChild(this.createUnitsDropDownList(period, '', 'Okres'));
+            this.dropDownBox.appendChild(this.createUnitsDropDownList(data, this.path, this.label));
+
+            this.chartArea.appendChild(this.dropDownBox);
         }
     }
 
+    
+    
     createChartCanvas(){
         const ChartsArea = document.createElement('div');
         ChartsArea.classList.add("chart")
-        ChartsArea.style.width = calculateChartSize();
+        ChartsArea.style.width = '500px';
         const canvas = document.createElement('canvas');
         canvas.id = 'charts' ;
         canvas.style = 'null';
         ChartsArea.appendChild(canvas);
-        this.chartArea.appendChild(ChartsArea);
+        return ChartsArea
     }
 
     createUnitsDropDownList(data, path, label){
@@ -71,64 +74,48 @@ export default class extends AbstractView {
 
         let listOfUnits = document.createElement('ul')
         listOfUnits.classList.add('options')
-        let units = []
-        data.forEach(element => {
-            units.push(element.name)
-        });
+        let unique = uniqueSortedList(data, label)
 
-        let unique = units.filter(onlyUnique);
         unique.forEach(element => {
-            let unit = document.createElement('li')
-            unit.classList.add('option')
-            unit.innerText = element.split(' ')[1]
+            let unit = document.createElement('li');
+            unit.classList.add('option');
+            unit.id = 'unit'+element.split(' ')[1];
+            unit.innerText = element.split(' ')[1];
             unit.onclick = () => {
-                this.generateData(unit, element, label, path)
+                this.generateData(unit, element, label, path, btnText);
             }
-            listOfUnits.appendChild(unit)
+            listOfUnits.appendChild(unit);
         });
 
-        dropdown.appendChild(listOfUnits)
-        this.dropDownBox.appendChild(dropdown)
-        this.chartArea.appendChild(this.dropDownBox);
-        this.app.appendChild(this.chartArea)
-
-        const optionMenu = document.querySelector(`#${label}`);
-        const options = optionMenu.querySelectorAll(".option");
-
-        options.forEach(option =>{
-
-            option.addEventListener("click", ()=>{
-                if (label != 'Okres'){
-                    document.querySelector('#sBtn-text-Mutoh').innerText = '-';
-                    document.querySelector('#sBtn-text-Impala').innerText = '-';
-                }
-                btnText.innerText = option.innerText;
-
-                let menus = document.querySelectorAll('.active')
-                menus.forEach(menu =>{
-                    menu.classList.remove("active");
-                })
-            });
-        });
         
+        dropdown.appendChild(listOfUnits);
+        return dropdown
     }
 
 
-    async generateData(unit, element, label, path){
+    async generateData(unit, element, label, path, btnText){
+        
+        let menus = document.querySelectorAll('.active')
+        menus.forEach(menu =>{
+            menu.classList.remove("active");
+        })
+
         let activated = document.querySelector('.activated')
         let selected = document.querySelector('.selected')
         if (label != 'Okres'){
+            document.querySelector(`#sBtn-text-${this.label}`).innerText = '-';
             let period = document.querySelector('#sBtn-text-Okres').innerText
             if (selected != null){
                 activated.classList.remove('activated')
-                selected.classList.remove('selected')
+                selected.classList.remove('selected')   
             }
             if (period == '-'){
                 period = 'all'
+                document.querySelector('#sBtn-text-Okres').innerText = 'all'
             }
             let [status, data] = await callApiGet(path+element+`/${period}`)
-            this.createChart(element, data, label)
-            this.createDetails(data)
+            this.createChart(element, data)
+            // this.createDetails(data)
             document.querySelector(`#${label}`).classList.add('activated')
             unit.classList.add('selected')
         }else{
@@ -138,10 +125,11 @@ export default class extends AbstractView {
                 let activeLabel = (selected.innerText).split(' ')
                 let chartId = activated.firstChild.innerText+' '+selected.innerText
                 let [status, data] = await callApiGet(activePath+'s/'+activated.firstChild.innerText+' '+selected.innerText+`/${period}`)
-                this.createChart(chartId, data, activated.firstChild.innerText)
-                this.createDetails(data)
+                this.createChart(chartId, data)
+                // this.createDetails(data)
             }
         }
+        btnText.innerText = unit.innerText;
     }
 
     createDetails(data){
@@ -161,7 +149,8 @@ export default class extends AbstractView {
         this.app.appendChild(detailsBox)
     }
 
-    createChart(id, data, label){
+    createChart(id, data){
+        
         
         let Squaremeter = []
         let Total_Ink = []
@@ -176,6 +165,16 @@ export default class extends AbstractView {
         }
         
         let ctx = document.getElementById("charts").getContext('2d');
+        let gradientM2 = ctx.createLinearGradient(0, 0, 0, 450);
+        gradientM2.addColorStop(0, 'rgba(61, 196, 90, 0.7)');
+        gradientM2.addColorStop(0.5, 'rgba(61, 196, 90, 0.3)');
+        gradientM2.addColorStop(1, 'rgba(61, 196, 90, 0)');
+
+        let gradientMl = ctx.createLinearGradient(0, 0, 0, 450);
+        gradientMl.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
+        gradientMl.addColorStop(0.5, 'rgba(215, 72, 72, 0.3)');
+        gradientMl.addColorStop(1, 'rgba(215, 72, 72, 0)');
+
         this.myChart = new Chart(ctx, {
             type: 'line',
         data: {
@@ -184,19 +183,21 @@ export default class extends AbstractView {
                 {
                     label: "m2",
                     data: Squaremeter,
-                    // backgroundColor: "rgba(12, 143, 3, 0.3)",
-                    borderColor: "rgba(12, 143, 3, 0.3",
                     tension: 0.2,
                     borderWidth: 2,
-                    fill: true
+                    backgroundColor: gradientM2,
+                    pointBackgroundColor: 'white',
+                    borderColor: 'rgb(61, 196, 90)',
+                    fill: true,
                 },
                 {
                     label: "ml",
                     data: Total_Ink,
-                    // backgroundColor: "rgba(176, 0, 0,0.3)",
-                    borderColor: "rgba(176, 0, 0,0.3)",
                     tension: 0.2,
                     borderWidth: 2,
+                    backgroundColor: gradientMl,
+                    pointBackgroundColor: 'white',
+                    borderColor: 'rgb(215, 72, 72)',
                     fill: true,
                 },
             ]
@@ -249,5 +250,23 @@ export default class extends AbstractView {
             }
         });
     }
+
+    getChart(){
+        return this.chartArea
+    }
 }
 
+function calculateChartSize(){
+    let chartWidth = '500px'
+    if ( $(window).width() <= 600) {     
+      chartWidth = '350px'
+    }
+    else if (( $(window).width() > 600) && ( $(window).width() <= 900)){
+      chartWidth = '450px'
+    }else if (( $(window).width() > 900) && ( $(window).width() <= 1500)){
+        chartWidth = '650px'
+    }else{
+      chartWidth = '500px'
+    }
+    return chartWidth
+}

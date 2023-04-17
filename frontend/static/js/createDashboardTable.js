@@ -44,7 +44,6 @@ export class createDetailsTable{
         thead.appendChild(from);
         thead.appendChild(to);
         this.table.appendChild(thead);
-        console.log(this.sumM2, this.sumInk, this.maxDate, this.minDate)
     }
 
     createTbody(){

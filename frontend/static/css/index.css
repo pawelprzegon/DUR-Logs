@@ -1,13 +1,19 @@
+:root{
+  --bckg: #dfdfdf
+}
+
 body{
-    font-size: 18px;
+    font-size: 14px;
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     height: 100%;
+    background: var(--bckg);
 }
 
 .container{
     display: flex;
     flex-direction: column;
+    align-items: center;
     min-height: calc(var(--vh, 1vh) * 85);
 }
 
@@ -18,56 +24,132 @@ body{
 .app{
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-content: flex-start;
+    justify-content: center;
+    align-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
-    width: 100%;
+    width: 80%;
     height: 90vh;
+    padding: 20px;
+    border-radius: 10px;
 }
 
 
-table tr td {
-   vertical-align: top;
-    padding: 8px;
+table td {
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    overflow: hidden;
+    height: 30px;
 }
 
 table {
-    border-collapse: collapse;
-    width: fit-content;
+    border-collapse: separate;
+    border-spacing:0 3px;
+    /* width: fit-content; */
     text-align: center;
-    /* margin: 10px; */
-    border: 1px solid rgb(139, 139, 139)
+    padding: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 8px;
+    /* background-color: #e5e5e5; */
   }
+
 table p{
   margin: 0;
 }
 
-table th{
-  background: #999999;
-  padding: 5px;
-  font-weight: 400;
+table tr {
+  background: #dfdfdf;
 }
 
-tbody tr:nth-child(odd) {
-  background: #f4f4f4;
+table th{
+  font-weight: 700;
+  width: 80px;
+  height: 30px;
+  font-size: 15px;
+  /* background-color: #c7c7c7; */
 }
+
+.thead>tr{
+  background-color: white;
+}
+
+table td>p:last-child{
+  font-size: 16px;
+}
+
+.table-th:first-child,
+.table-td:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.table-th:last-child,
+.table-td:last-child {
+  border-radius: 0 5px 5px 0;
+}
+/* :nth-child(odd) */
+
+
 
 
 
 /* Mutoh */
-.target-reached{
-  background: #9be4ab !important;
+.unused{
+  background-color: white;
+  color:rgb(116, 116, 116)
+}
+
+.tablesmallBox{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .tableBox{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 490px;
+  height: 400px;
+  overflow: scroll;
   margin: 10px;
+  padding: 16px;
+  padding-right: 0px;
+  border-radius: 6px 6px 6px 6px;
+  box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -moz-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -webkit-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -o-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -ms-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  background-color: white;
 }
 
 .tableBox h3{
-  width: 300px;
-  height: 50px;
+  padding: 0;
+  margin: 0;
+  font-size: 18px;
 }
+
+.tableBox::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tableBox::-webkit-scrollbar-track {
+  background-color: white;
+  border-radius: 50px;
+}
+
+.tableBox::-webkit-scrollbar-thumb {
+  background-color: #5c5c5c;
+  border-radius: 50px;
+}
+.tableBox::-webkit-scrollbar-corner {
+  background-color: white;
+  border-radius: 6px 6px 6px 6px;
+}
+
+
 
 .descBox{
   margin: 10px;
@@ -86,11 +168,12 @@ tbody tr:nth-child(odd) {
   font-size: 14px;
 }
 .changeTargetBtn{
+  font-size: 13px;
   padding: 5px;
   cursor: pointer;
   width: fit-content;
   border-radius: 5px;
-  border: solid 1px rgb(221, 221, 221);
+  border: solid 1px rgb(0, 0, 0);
 }
 .changeTargetBtn:hover{
   background: rgb(187, 187, 187);
@@ -107,7 +190,7 @@ tbody tr:nth-child(odd) {
   font-size: 16px;
 }
 
-.changeTargetForm p, div, input{
+.changeTargetForm p, input{
   margin: 5px;
 }
 
@@ -122,12 +205,15 @@ tbody tr:nth-child(odd) {
 
 
 .replacement-date{
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .warning{
-  background-color: rgb(248, 156, 156);
+  color: rgb(255, 0, 0);
+  font-weight: 700;
 }
+
+
 
 
 .mutohs-list{
@@ -135,6 +221,44 @@ tbody tr:nth-child(odd) {
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+
+
+
+/* progress bar */
+
+
+.progress-bar {
+  height: 10px;
+  width: 100%;
+  border-radius: 10px;
+  border: solid 1px rgb(116, 116, 116)
+}
+
+.progress-bar > div {
+  width: 0%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: #a4cead;
+  background-size: 100px 100%;
+  transition: width 200ms;
+}
+
+.progress-label{
+  font-size: 11px;
+  margin-left: 5px;
+  width: 25%;
+}
+
+.unit{
+  cursor: pointer;
+}
+.unit:hover{
+  font-weight: 700;
+}
+
+
+/* chart */
 
 .printer-label{
   margin: 0;
@@ -147,12 +271,22 @@ tbody tr:nth-child(odd) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 60%;
-  width: 100%
+  justify-content: space-between;
+  height: 400px;
+  width: 470px;
+  margin: 10px;
+  padding: 16px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -moz-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -webkit-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -o-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+  -ms-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
 }
 
 .chart{
-  height: 80%;
+  height: 60%;
 }
 
 .dropDown-Box{
@@ -164,6 +298,7 @@ tbody tr:nth-child(odd) {
 .dropdown-label{
   font-size: 16px;
   margin: 0;
+  margin-bottom: 5px;
 }
 
 .details-area{
@@ -176,7 +311,7 @@ tbody tr:nth-child(odd) {
 }
 
   .select-menu{
-    width: 200px;
+    width: 130px;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -189,15 +324,14 @@ tbody tr:nth-child(odd) {
     display: flex;
     height: 12px;
     background: #fff;
-    padding: 20px;
-    font-size: 21px;
-    font-weight: 400;
+    padding: 10px;
+    font-size: 17px;
+    font-weight: 300;
     border-radius: 8px;
     align-items: center;
     cursor: pointer;
-    justify-content: space-between;
-    /* box-shadow: 0 0 5px rgba(0,0,0,0.1); */
-    box-shadow: 0 0 40px rgb(212,212,212);
+    justify-content: center;
+    box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
 }
 .select-btn i{
     font-size: 25px;
@@ -208,7 +342,7 @@ tbody tr:nth-child(odd) {
 }
 .select-menu .options{
     position: relative;
-    padding: 20px;
+    padding: 0px;
     margin-top: 10px;
     border-radius: 8px;
     background: #fff;
@@ -223,9 +357,12 @@ tbody tr:nth-child(odd) {
 }
 .options .option{
     display: flex;
+    justify-content: center;
+    align-items: center;
     height: 30px;
     cursor: pointer;
     padding: 0 16px;
+    font-size: 15px;
 }
 .options .option:hover{
     background: #F2F2F2;
@@ -237,4 +374,21 @@ tbody tr:nth-child(odd) {
 .option .option-text{
     font-size: 18px;
     color: #333;
+}
+
+.options::-webkit-scrollbar {
+  width: 10px;
+}
+
+.options::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 50px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  background-color: #5c5c5c;
+  border-radius: 50px;
+}
+.options::-webkit-scrollbar-corner {
+  background-color: #e4e4e4;
 }

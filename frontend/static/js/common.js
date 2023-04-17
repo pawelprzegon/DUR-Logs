@@ -1,18 +1,17 @@
-export function onlyUnique(value, index, array) {
+function onlyUnique(value, index, array) {
     return array.indexOf(value) === index;
 }
 
-export function calculateChartSize(){
-    let chartWidth = '500px'
-    if ( $(window).width() <= 600) {     
-      chartWidth = '450px'
+export function uniqueSortedList(data, label){
+    let units = []
+    data.forEach(element => {
+        units.push(element.name)
+    });
+
+    let unique = units.filter(onlyUnique);
+    if(label == 'Mutoh'){
+        unique.sort();
+        unique.reverse();
     }
-    else if (( $(window).width() > 600) && ( $(window).width() <= 900)){
-      chartWidth = '550px'
-    }else if (( $(window).width() > 900) && ( $(window).width() <= 1500)){
-        chartWidth = '750px'
-    }else{
-      chartWidth = '900px'
-    }
-    return chartWidth
+    return unique
 }

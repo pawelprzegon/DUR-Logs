@@ -10,34 +10,27 @@ export class createTablesMutoh{
     }
 
     createTables(){
-        let tbodys = this.createTbody();
-        for (const[key, value] of Object.entries(tbodys)){
-            let theads = this.createThead();
-            let tableBox = document.createElement('div');
-            tableBox.classList.add('tableBox');
-            let tableLabel = document.createElement('h3')
-            tableLabel.innerText = this.createLabel(key);
-            let table = document.createElement('table');
-            table.appendChild(theads);
-            table.appendChild(value);
-            tableBox.appendChild(tableLabel);
-            tableBox.appendChild(table);
-            this.result.push(tableBox);
-        }
+        let tbody = this.createTbody();
+        let tableBox = document.createElement('div');
+        tableBox.classList.add('tableBox');
+
+        let thead = this.createThead();
+        let table = document.createElement('table');
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        let tablesmallBox = document.createElement('div')
+        tablesmallBox.classList.add('tablesmallBox')
+        tablesmallBox.appendChild(table)
+        tableBox.appendChild(tablesmallBox);
+
+        this.result.push(tableBox);
     }
 
-    createLabel(element){
-        switch (element){
-            case 'unused':
-                return 'Urządzenia zutylizowane'
-            case 'inuse':
-                return 'Urządzenia w produkcji' 
-        }
-    }
 
     createThead(){
-        const heads = ['Nazwa', '[m2]', '[ml]', 'Ostatni druk'];
+        const heads = ['Nazwa', '[m2]', '[ml]', 'Ostatni druk', 'limit [%]'];
         let thead = document.createElement('thead')
+        thead.classList.add('thead')
         let tr = document.createElement('tr');
         heads.forEach(head =>{
             let each = document.createElement('th');
@@ -50,39 +43,40 @@ export class createTablesMutoh{
     }
 
     createTbody(){
-        let tbodyUnused = document.createElement('tbody')
-        let tbodyInUse = document.createElement('tbody')
+        let tbody = document.createElement('tbody')
+        tbody.classList.add('tbody')
         this.data.forEach(unit =>{
             let tr = document.createElement('tr');
-            let inUse;
             for(const [key, value] of Object.entries(unit)){
                 let each = document.createElement('td');
                 each.classList.add('table-td');
-                if (key == 'name'){
-                    each.innerText = value;
-                }else{
-                    each.innerText = value;
-                }
-                tr.appendChild(each);
-                if (key == 'lst_date'){
+                each.innerText = value;
+                if(key == 'name'){
+                    each.classList.add('unit')
+                    each.onclick = () => {
+                        let unit = document.querySelector(`#unit${value.split(' ')[1]}`)
+                        unit.click();
+                    }
+                }else if (key == 'lst_date'){
                     let date = new Date();
                     if(Date.parse(value) < date.setDate(date.getDate() - 7)){
-                        inUse = false;
+                        tr.classList.add('unused')
                     };
                 }else if(key == 'suma_m2' && value >= this.target){
                     tr.classList.add('target-reached')
+                }else if (key == 'target_reached'){
+                    each.innerText = '';
+                    each.classList.add('progress-bar-box');
+                    let [progressBarBox, progressLabel] = this.createProgressBar(value);
+                    each.appendChild(progressBarBox);
+                    each.appendChild(progressLabel);
                 }
-                
+                tr.appendChild(each);
             };
-            if (inUse == false){
-                tbodyUnused.appendChild(tr);
-            }else{
-                tbodyInUse.appendChild(tr);
-            }
-            
-            
+            tbody.appendChild(tr)
         });
-        return {'unused': tbodyUnused, 'inuse': tbodyInUse}
+        
+        return tbody
     }
 
     descriptions(){
@@ -168,4 +162,24 @@ export class createTablesMutoh{
     getTables(){
         return this.result;
     }
+
+    createProgressBar(value){
+        let progressBarBox = document.createElement('div');
+        progressBarBox.classList.add("progress-bar");
+        let prograssBar = document.createElement('div');
+        let progressLabel = document.createElement('small');
+        progressLabel.classList.add('progress-label');
+        progressLabel.innerText = value+'%';
+        progressBarBox.appendChild(prograssBar);
+        this.myTimer(prograssBar, value);
+        return [progressBarBox, progressLabel]
+    }
+
+    myTimer(obj, value) {
+        let progress = value;
+        if (progress > 100) {
+          progress = 100;
+        } 
+        obj.style.width = progress + "%";
+      }
 }

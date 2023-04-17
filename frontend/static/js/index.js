@@ -9,7 +9,7 @@ export const navigateTo = url =>{
 
 const router = async () => {
     const routes = [
-        {path: '/', view: Dashboard },
+        // {path: '/', view: Dashboard },
         {path: '/mutoh', view: Mutoh },
         {path: '/impala', view: Impala },
     ];
