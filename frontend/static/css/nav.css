@@ -25,14 +25,18 @@ body {
     margin-top: 10px;
 }
 
-.nav-link:hover {
-    background: rgb(226, 226, 226);
-    color: black;
-    border-radius: 15px 0 0 15px;
-}
-
 .active-href{
     background: #dfdfdf;
     color: black;
     border-radius: 15px 0 0 15px;
 }
+
+.nav-link:hover {
+    background: rgb(65, 65, 65);
+    border-radius: 15px 0 0 15px;
+}
+
+.active-href:hover {
+    background: #dfdfdf;
+}
+

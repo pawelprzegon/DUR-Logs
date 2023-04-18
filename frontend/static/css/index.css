@@ -169,6 +169,8 @@ table td>p:last-child{
   flex-wrap: wrap;
 }
 
+
+
 /* Impala */
 .descBox-Impala{
   margin: 10px;
@@ -195,6 +197,7 @@ p{
 
 .replaceBox{
   display: flex;
+  width: 100%;
 }
 
 
@@ -240,6 +243,14 @@ p{
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+}
+
+.activ{
+  cursor: pointer;
+}
+
+.selected-to-replace{
+  background-color: #5c5c5c;
 }
 
 

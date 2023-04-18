@@ -41,6 +41,7 @@ export default class extends AbstractView {
 
             app.appendChild(tableFiltersReplacementsReady);
             app.appendChild(tableReplacementsReady);
+            app.appendChild(tableFiltersReplacements.replaceBox())
         }else{
             // tutaj musi byc alert że coś nie tak 
         }

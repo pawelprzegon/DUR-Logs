@@ -90,7 +90,6 @@ export class createTableReplacementsImpala{
         this.tableBox.appendChild(tableLabel)
         this.tableBox.appendChild(table)
         this.tableBox.appendChild(this.descriptionsBox(changeType))
-        this.tableBox.appendChild(this.replaceBox(changeType))
     }
 
     createTheadReplacement(replace){
@@ -133,10 +132,20 @@ export class createTableReplacementsImpala{
                 this.units.push(unit.Name)
                 tr.append(name);
                 for (const value of Object.values(unit.filters)){
-                    for (const val of Object.values(value)){
+                    for (const [key,val] of Object.entries(value)){
                         if(val['last_replacement'] != 'NaT'){
                             let each = document.createElement('td');
-                            each.classList.add('table-td');
+                            each.classList.add('table-td', 'clickable');
+                            each.id = `filters-${unit.Name.split(' ')[1]}-${key}`;
+                            each.onclick = () => {
+                                if (each.classList.contains('activ')){
+                                    let selected = document.querySelector('.selected-to-replace');
+                                    if (selected){
+                                        selected.classList.remove('selected-to-replace');
+                                    }
+                                    each.classList.add('selected-to-replace');
+                                }
+                            }
                             if (val['liter']*1000 >= this.data.filters_threshold){
                                 each.classList.add('warning');
                             };
@@ -152,8 +161,7 @@ export class createTableReplacementsImpala{
                     };
                 };
                 tbody.appendChild(tr);
-            }
-            
+            }; 
         });
         return tbody
     }
@@ -169,7 +177,17 @@ export class createTableReplacementsImpala{
                 tr.append(name);
 
                 let each = document.createElement('td');
-                each.classList.add('table-td');
+                each.classList.add('table-td', 'clickable');
+                each.id = `bearings-${unit.Name.split(' ')[1]}`
+                each.onclick = () => {
+                    if (each.classList.contains('activ')){
+                        let selected = document.querySelector('.selected-to-replace');
+                        if (selected){
+                            selected.classList.remove('selected-to-replace');
+                        }
+                        each.classList.add('selected-to-replace');
+                    }
+                }
                 if (unit.bearings.tys_m2*1000 >= this.data.bearings_threshold){
                     each.classList.add('warning');
                 };
@@ -187,39 +205,37 @@ export class createTableReplacementsImpala{
         return tbody
     }
 
-    descriptionsBox(changeType){
+    descriptionsBox(){
         let descBox = document.createElement('div')
         descBox.classList.add('descBox-Impala')
         
         let descLabel = document.createElement('small')
         descLabel.innerText = 'Dane przedstawiają ostatnią datę wymiany oraz aktualny przebieg'
-        let changeTargetBtn = document.createElement('p')
-        changeTargetBtn.classList.add('changeTargetBtn')
-        changeTargetBtn.innerText = 'Dodaj wymianę'
-        changeTargetBtn.onclick = () => {
-            if (!document.querySelector(`.replace-${changeType}`)){
-                document.querySelector(`.replaceBox-${changeType}`).appendChild(this.showReplace(changeType));
-                this.showDatePicker(changeType);
-            }
-        }
-        descBox.appendChild(changeTargetBtn)
         descBox.appendChild(descLabel)
 
         return descBox
     }
 
-    replaceBox(changeType){
+    replaceBox(){
         let replaceBox = document.createElement('div')
-        replaceBox.classList.add(`replaceBox-${changeType}`)
+        replaceBox.classList.add('replaceBox')
+        let changeBtn = document.createElement('p')
+        changeBtn.classList.add('changeTargetBtn')
+        changeBtn.innerText = 'Dodaj wymianę'
+        changeBtn.onclick = () => {
+            if (!document.querySelector('.replace')){
+                replaceBox.appendChild(this.showReplace());
+                this.showDatePicker();
+                this.activate();
+            }
+        }
+        replaceBox.appendChild(changeBtn)
         return replaceBox
     }
 
-    showReplace(changeType){
-        let dropDownUnits = this.createDropDown(this.units, 'units', changeType)
-        let dropDownColors = this.createDropDown(this.colors, 'colors', changeType)
-
+    showReplace(){
         let settingsBox = document.createElement('div')
-        settingsBox.classList.add(`replace-${changeType}`)
+        settingsBox.classList.add('replace')
         
         let form = document.createElement('form');
         form.classList.add('changePartsForm');
@@ -227,19 +243,27 @@ export class createTableReplacementsImpala{
         dateInput.type = 'text'
         dateInput.classList.add('changeInput');
         dateInput.placeholder = 'data...';
-        dateInput.setAttribute(`data-toggle-${changeType}`, 'datepicker')
+        dateInput.setAttribute('data-toggle', 'datepicker')
         let submit = document.createElement('input');
         submit.classList.add('changePartsBtn');
         submit.type = 'submit';
         submit.value = 'zapisz';
         form.onsubmit = async (event) => {
             event.preventDefault();
-            dateInput.focus();
+            let selected = document.querySelector('.selected-to-replace')
+            selected = selected.id.split('-')
+            console.log(selected);
+            console.log(dateInput.value);
+            this.deactivate();
+            // dateInput.focus();
             
-            let what = changeType
+            let what = selected[0];
             let replaceDate = dateInput.value;
-            let unit = document.querySelector(`#sBtn-units-${changeType}`).innerText;
-            let color = document.querySelector(`#sBtn-colors-${changeType}`).innerText;
+            let unit = selected[1];
+            let color = null;
+            if (selected.length > 2){
+                color = selected[2];
+            }
             console.log(what, replaceDate, unit, color)
             let [response, status] = await callApiPut(`impalas/replacements/${what}&${replaceDate}&${unit}&${color}`);
             console.log(status, response);
@@ -247,46 +271,33 @@ export class createTableReplacementsImpala{
         }
 
         form.appendChild(dateInput)
-        form.appendChild(dropDownUnits)
-        form.appendChild(dropDownColors)
         form.appendChild(submit)
         settingsBox.appendChild(form)
         return settingsBox;
     }
 
-    createDropDown(data, id, changeType){
-        let Box = document.createElement('div');
-        Box.classList.add('select-menu')
-        Box.id = id;
-        let selectBtn = document.createElement('div');
-        selectBtn.classList.add('select-btn');
-        let sBtnText = document.createElement('span');
-        sBtnText.id = (`sBtn-${id}-${changeType}`);
-        sBtnText.innerText = '-';
-        let options = document.createElement('ul');
-        options.classList.add('options')
-        data.forEach(unit => {
-            let unit_ = document.createElement('li');
-            unit_.id = unit;
-            unit_.innerText = unit;
-            unit_.classList.add('option')
-            options.appendChild(unit_);
-            unit_.onclick = () => {
-                sBtnText.innerText = unit_.innerText;
-            }
-        });
-        selectBtn.appendChild(sBtnText)
-        Box.appendChild(selectBtn);
-        Box.appendChild(options);
-        Box.onclick = () => {document.querySelector(`#${id}`).classList.toggle("active")}
-        return Box
-    }
-
-    showDatePicker(changeType){
-        $(`[data-toggle-${changeType}="datepicker"]`).datepicker({
+    showDatePicker(){
+        $('[data-toggle="datepicker"]').datepicker({
             format: 'yyyy-mm-dd',
             language: 'pl-PL'
         });
+    }
+
+    activate(){
+        let clickableElements = document.querySelectorAll('.clickable');
+        clickableElements.forEach(element => {
+            element.classList.add('activ')
+        });
+    }
+
+    deactivate(){
+        let clickableElements = document.querySelectorAll('.activ');
+        clickableElements.forEach(element => {
+            element.classList.remove('activ');
+        });
+        let selected = document.querySelector('.selected-to-replace');                      
+        selected.classList.remove('selected-to-replace');
+        document.querySelector('.replace').remove(); 
     }
 
     getTable(){
