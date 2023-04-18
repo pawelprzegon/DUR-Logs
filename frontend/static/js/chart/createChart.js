@@ -15,6 +15,8 @@ export class createChart {
     async getData(){
         if(this.label == 'Mutoh'){
             this.path = 'mutohs/'
+        }else if(this.label == 'Impala'){
+            this.path = 'impalas/'
         }
         let [status, data] = await callApiGet(this.path+'by_month')
 
@@ -79,7 +81,9 @@ export class createChart {
         unique.forEach(element => {
             let unit = document.createElement('li');
             unit.classList.add('option');
-            unit.id = 'unit'+element.split(' ')[1];
+            if(label != 'Okres'){
+                unit.id = 'unit'+element.split(' ')[1];
+            }
             unit.innerText = element.split(' ')[1];
             unit.onclick = () => {
                 this.generateData(unit, element, label, path, btnText);
@@ -122,11 +126,9 @@ export class createChart {
             let period = unit.innerText
             if (selected != null){
                 let activePath = ((activated.firstChild.innerText).toLowerCase())
-                let activeLabel = (selected.innerText).split(' ')
                 let chartId = activated.firstChild.innerText+' '+selected.innerText
                 let [status, data] = await callApiGet(activePath+'s/'+activated.firstChild.innerText+' '+selected.innerText+`/${period}`)
                 this.createChart(chartId, data)
-                // this.createDetails(data)
             }
         }
         btnText.innerText = unit.innerText;

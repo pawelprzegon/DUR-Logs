@@ -1,5 +1,6 @@
 :root{
-  --bckg: #dfdfdf
+  --bckg: #dfdfdf;
+  --objheight: 420px;
 }
 
 body{
@@ -24,8 +25,8 @@ body{
 .app{
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-content: space-between;
+    justify-content: flex-start;
+    align-content: flex-start;
     align-items: flex-start;
     flex-wrap: wrap;
     width: 80%;
@@ -40,15 +41,14 @@ table td {
     padding-left: 8px;
     padding-right: 8px;
     overflow: hidden;
-    height: 30px;
+    height: 55px;
 }
 
 table {
     border-collapse: separate;
     border-spacing:0 3px;
-    /* width: fit-content; */
+    width: 100%;
     text-align: center;
-    padding: 10px;
     padding-left: 5px;
     padding-right: 5px;
     border-radius: 8px;
@@ -60,15 +60,15 @@ table p{
 }
 
 table tr {
-  background: #dfdfdf;
+  background: white;
 }
 
 table th{
   font-weight: 700;
   width: 80px;
-  height: 30px;
+  height: 55px;
   font-size: 15px;
-  /* background-color: #c7c7c7; */
+  background-color: #c7c7c7;
 }
 
 .thead>tr{
@@ -96,7 +96,7 @@ table td>p:last-child{
 
 /* Mutoh */
 .unused{
-  background-color: white;
+  background-color: var(--bckg);
   color:rgb(116, 116, 116)
 }
 
@@ -110,62 +110,74 @@ table td>p:last-child{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 490px;
-  height: 400px;
-  overflow: scroll;
+  align-content: flex-start;
+  width: 560px;
+  height: var(--objheight);
   margin: 10px;
   padding: 16px;
-  padding-right: 0px;
-  border-radius: 6px 6px 6px 6px;
-  box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -moz-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -webkit-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -o-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -ms-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  background-color: white;
+  /* border: 2px solid white */
 }
 
 .tableBox h3{
   padding: 0;
-  margin: 0;
+  margin: 5px;
   font-size: 18px;
+  height: 6%;
 }
 
-.tableBox::-webkit-scrollbar {
+.tableTbodyBox{
+  height: 350px;
+  overflow: scroll;
+}
+
+.tableTbodyBox::-webkit-scrollbar {
   width: 10px;
 }
 
-.tableBox::-webkit-scrollbar-track {
-  background-color: white;
+.tableTbodyBox::-webkit-scrollbar-track {
+  /* background-color: white; */
   border-radius: 50px;
 }
 
-.tableBox::-webkit-scrollbar-thumb {
+.tableTbodyBox::-webkit-scrollbar-thumb {
   background-color: #5c5c5c;
   border-radius: 50px;
 }
-.tableBox::-webkit-scrollbar-corner {
-  background-color: white;
+.tableTbodyBox::-webkit-scrollbar-corner {
+  /* background-color: white; */
   border-radius: 6px 6px 6px 6px;
 }
 
 
 
-.descBox{
+.descBox-Mutoh{
   margin: 10px;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 100%;
 }
 
-.descBox h3{
-  width: 300px;
-  height: 50px;
-}
 
-.descBox p:nth-child(2) {
+.descBox-Mutoh p:nth-child(2) {
   margin: 0;
   font-size: 14px;
+}
+
+.mutohs-list{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+/* Impala */
+.descBox-Impala{
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  height: 7%;
 }
 .changeTargetBtn{
   font-size: 13px;
@@ -175,6 +187,17 @@ table td>p:last-child{
   border-radius: 5px;
   border: solid 1px rgb(0, 0, 0);
 }
+p{
+  margin: 0;
+  margin-bottom: 0;
+}
+
+
+.replaceBox{
+  display: flex;
+}
+
+
 .changeTargetBtn:hover{
   background: rgb(187, 187, 187);
   border-radius: 5px;
@@ -213,14 +236,14 @@ table td>p:last-child{
   font-weight: 700;
 }
 
-
-
-
-.mutohs-list{
-  display:flex;
+.changePartsForm{
+  display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  align-items: flex-start;
 }
+
+
+
 
 
 
@@ -254,7 +277,7 @@ table td>p:last-child{
   cursor: pointer;
 }
 .unit:hover{
-  font-weight: 700;
+  color:rgb(0, 91, 177);
 }
 
 
@@ -272,21 +295,14 @@ table td>p:last-child{
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 400px;
-  width: 470px;
+  height: var(--objheight);
+  width: 560px;
   margin: 10px;
   padding: 16px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -moz-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -webkit-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -o-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
-  -ms-box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
 }
-
-.chart{
-  height: 60%;
+#charts{
+  width: 100%;
+  height: 100%;
 }
 
 .dropDown-Box{
@@ -317,7 +333,7 @@ table td>p:last-child{
 }
 
 .selected{
-  background: rgb(212, 212, 212);
+  background: rgb(151, 151, 151);
 }
 
 .select-menu .select-btn{
@@ -365,7 +381,7 @@ table td>p:last-child{
     font-size: 15px;
 }
 .options .option:hover{
-    background: #F2F2F2;
+    background: #e7e7e7;
 }
 .option i{
     font-size: 25px;

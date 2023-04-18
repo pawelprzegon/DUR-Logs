@@ -1,6 +1,7 @@
 import AbstractView from "./AbstractView.js";
 import {callApiGet} from "../endpoints.js"
 import {createTableAllImpala, createTableReplacementsImpala} from '../createImpalaTables.js'
+import { createChart } from "../chart/createChart.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -15,9 +16,13 @@ export default class extends AbstractView {
         let [statusRepl, dataReplacements] = await callApiGet('impalas/replacements/');
         if (status == 200){
             let app = document.querySelector('#app');
-            let tableAll = new createTableAllImpala(dataAll);
-            tableAll.createTableAll();
-            let tableAllReady = tableAll.getTable();
+            let newChart = new createChart('Impala');
+            newChart.getData();
+            let chart = newChart.getChart();
+            let allTables = new createTableAllImpala(dataAll);
+            allTables.createTableAll();
+            let tableAllReady = allTables.getTable();
+            app.appendChild(chart);
             app.appendChild(tableAllReady);
         }else{
             // tutaj musi byc alert że coś nie tak 
@@ -36,7 +41,6 @@ export default class extends AbstractView {
 
             app.appendChild(tableFiltersReplacementsReady);
             app.appendChild(tableReplacementsReady);
-            tableFiltersReplacements.showDatePicker();
         }else{
             // tutaj musi byc alert że coś nie tak 
         }

@@ -2,14 +2,13 @@ import AbstractView from "./AbstractView.js";
 import {callApiGet} from "../endpoints.js"
 import { createTablesMutoh } from "../createMutohTables.js";
 import { createChart } from "../chart/createChart.js";
-import { uniqueSortedList } from "../common.js";
+
 
 
 export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Mutoh");
-
     }
 
     async getData(){
@@ -29,21 +28,9 @@ export default class extends AbstractView {
         app.appendChild(chart);
         app.appendChild(tables_);
         app.appendChild(descripts);
-
-
-        // this.showLastUnitChart(uniqueSortedList(data, "Mutoh"));
- 
     }
 
-    showLastUnitChart(unique){
-        
-        let lastUnit = unique[0].split(' ')[1]
-        console.log(`#unit${lastUnit}`)
-        let unit = document.querySelector(`#unit${lastUnit}`)
-        console.log(unit)
-        unit.click();
 
-    }
     
 }
 
