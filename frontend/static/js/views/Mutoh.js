@@ -12,22 +12,37 @@ export default class extends AbstractView {
     }
 
     async getData(){
-        document.getElementById('app').innerHTML = ''
-
+        document.querySelector('#app').innerHTML = ''
+        
         let [status, data] = await callApiGet('mutohs/all');
         let [statusTarget, target] = await callApiGet('mutohs/target')
-        data.sort(dynamicSort("-name"));
-        let app = document.querySelector('#app');
-        let newChart = new createChart('Mutoh');
-        newChart.getData();
-        let chart = newChart.getChart();
-        let tables = new createTablesMutoh(data,target.target);
-        tables.createTables();
-        let descripts = tables.descriptions();
-        let [tables_] = tables.getTables();
-        app.appendChild(chart);
-        app.appendChild(tables_);
-        app.appendChild(descripts);
+        if (status == 200){
+            data.sort(dynamicSort("-name"));
+            let app = document.querySelector('#app');
+            
+            let newChart = new createChart('Mutoh');
+            newChart.getData();
+            let chart = newChart.getChart();
+            let tables = new createTablesMutoh(data,target.target);
+            tables.createTables();
+            let [tables_] = tables.getTables();
+            let dataBox = document.createElement('div')
+            dataBox.classList.add('dataBox')
+            dataBox.appendChild(chart);
+            dataBox.appendChild(tables_);
+            app.appendChild(dataBox);
+            // NavOptions
+            // NavOptions
+            let optionsData = new createTablesMutoh(data,target.target);
+            let navOptions = document.querySelector('#opcje')
+            let options = optionsData.options();
+            let optionsTarget = optionsData.changeTarget();
+            navOptions.appendChild(options)
+            navOptions.appendChild(optionsTarget)
+        }
+        else{
+            // something is no yes
+        }
     }
 
 

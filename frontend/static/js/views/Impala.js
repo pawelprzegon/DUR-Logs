@@ -10,20 +10,27 @@ export default class extends AbstractView {
     }
 
     async getData(){
-        document.getElementById('app').innerHTML = ''
+        document.querySelector('#app').innerHTML = ''
 
         let [status, dataAll] = await callApiGet('impalas/all');
         let [statusRepl, dataReplacements] = await callApiGet('impalas/replacements/');
         if (status == 200){
             let app = document.querySelector('#app');
+            
             let newChart = new createChart('Impala');
             newChart.getData();
             let chart = newChart.getChart();
             let allTables = new createTableAllImpala(dataAll);
             allTables.createTableAll();
             let tableAllReady = allTables.getTable();
-            app.appendChild(chart);
-            app.appendChild(tableAllReady);
+            let dataBox = document.createElement('div')
+            dataBox.classList.add('dataBox')
+            dataBox.appendChild(chart)
+            dataBox.appendChild(tableAllReady);
+            app.appendChild(dataBox);
+
+            
+            
         }else{
             // tutaj musi byc alert że coś nie tak 
         }
@@ -39,9 +46,19 @@ export default class extends AbstractView {
             tableBearingsReplacements.createTableAll('bearings');
             let tableReplacementsReady = tableBearingsReplacements.getTable();
 
-            app.appendChild(tableFiltersReplacementsReady);
-            app.appendChild(tableReplacementsReady);
-            app.appendChild(tableFiltersReplacements.replaceBox())
+            let dataBox = document.createElement('div')
+            dataBox.classList.add('dataBox')
+            dataBox.appendChild(tableFiltersReplacementsReady);
+            dataBox.appendChild(tableReplacementsReady);
+            app.appendChild(dataBox)
+            
+            // NavOptions
+            let optionsData = new createTableReplacementsImpala(dataReplacements);
+            let navOptions = document.querySelector('#opcje');
+            let options = optionsData.options();
+            let optionsTarget = optionsData.addReplacement();
+            navOptions.appendChild(options)
+            navOptions.appendChild(optionsTarget)
         }else{
             // tutaj musi byc alert że coś nie tak 
         }

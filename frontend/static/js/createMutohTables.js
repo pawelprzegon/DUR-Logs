@@ -13,7 +13,7 @@ export class createTablesMutoh{
         let tbody = this.createTbody();
         let tableBox = document.createElement('div');
         tableBox.classList.add('tableBox');
-
+        
         let tableThead = document.createElement('table');
         let tableTbody = document.createElement('table');
         let tableTbodyBox = document.createElement('div');
@@ -27,7 +27,8 @@ export class createTablesMutoh{
         tablesmallBox.classList.add('tablesmallBox');
         tablesmallBox.appendChild(tableThead);
         tablesmallBox.appendChild(tableTbodyBox);
-        tableBox.appendChild(tablesmallBox);
+        tableBox.appendChild(tablesmallBox); 
+        tableBox.appendChild(this.descriptionsBox());
 
         this.result.push(tableBox);
     }
@@ -85,38 +86,51 @@ export class createTablesMutoh{
         return tbody
     }
 
-    descriptions(){
-        let descBox = document.createElement('div');
-        descBox.classList.add('descBox-Mutoh');
-        let descLabel = document.createElement('h3');
-        descLabel.innerText = 'Opis:';
-        let desc = document.createElement('p');
-        desc.innerText = `Aktualny target [m2]: ${this.target} m2`;
-        let changeTargetBtn = document.createElement('p');
-        changeTargetBtn.classList.add('changeTargetBtn');
-        changeTargetBtn.innerText = 'Zmień target';
-        changeTargetBtn.onclick = () => {
-            if (!document.querySelector('.changeTargetBox')){
-                descBox.appendChild(this.changeTarget());
-                document.querySelector('.changeInput').focus();
+    descriptionsBox(){
+        let describBox = document.createElement('div')
+        describBox.classList.add('descBox')
+        let tableDescrib = document.createElement('small')
+        tableDescrib.innerText = '*całkowity przebieg urządzeń'
+        let tableTarget = document.createElement('small');
+        tableTarget.innerText = `Aktualny target [m2]: ${this.target} m2`;
+        describBox.appendChild(tableDescrib)
+        describBox.appendChild(tableTarget)
+
+        return describBox
+    }
+
+    options(){
+        let settingsBtnBox = document.createElement('div');
+        settingsBtnBox.classList.add('settingsBtnBox');
+        let settingsBtn = document.querySelector('.settingsBtn')
+        settingsBtn.innerText = 'Zmień target';
+        settingsBtn.onclick = () => {
+            let changeTargetBox = document.querySelector('.settingsBox')
+            if (changeTargetBox.style.visibility === 'hidden'){
+                changeTargetBox.style.visibility = null
+            }else{
+                changeTargetBox.style.visibility = 'hidden'
             }
         }
-        descBox.appendChild(descLabel);
-        descBox.appendChild(desc);
-        descBox.appendChild(changeTargetBtn);
-
-        return descBox
+        settingsBtnBox.appendChild(settingsBtn);
+        return settingsBtnBox
     }
 
     changeTarget(){
-        let changeBox = document.createElement('div');
-        changeBox.classList.add('changeTargetBox');
+        if (document.querySelector('.settingsBox')){
+            document.querySelector('.settingsBtnBox').remove();
+            document.querySelector('.settingsBox').remove();
+        }
+        let settingsBox = document.createElement('div');
+        settingsBox.classList.add('settingsBox');
+        settingsBox.style.visibility = "hidden";
+        
         let changeLabel = document.createElement('p');
         changeLabel.innerText = 'Wprowadź nowy target [m2]:';
         let changeInputBox = document.createElement('div');
         changeInputBox.classList.add('changeInputBox');
         let form = document.createElement('form');
-        form.classList.add('changeTargetForm');
+        form.classList.add('changeForm');
         let changeInput = document.createElement('input');
         changeInput.type = 'text';
         changeInput.classList.add('changeInput');
@@ -124,7 +138,7 @@ export class createTablesMutoh{
         let validNumberLabel = document.createElement('small');
         validNumberLabel.id = 'validNumberLabel';
         let submit = document.createElement('input');
-        submit.classList.add('changeTargetBtn');
+        submit.classList.add('settingsBtn');
         submit.type = 'submit';
         submit.value = 'zapisz';
         form.onsubmit = async (event) => {
@@ -143,9 +157,9 @@ export class createTablesMutoh{
         changeInputBox.appendChild(validNumberLabel);
         form.appendChild(changeInputBox);
         form.appendChild(submit);
-        changeBox.appendChild(form);
+        settingsBox.appendChild(form);
 
-        return changeBox
+        return settingsBox
         
         
     }

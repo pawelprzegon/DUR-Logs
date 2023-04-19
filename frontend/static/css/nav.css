@@ -1,5 +1,5 @@
 body {
-    --nav-width: 200px;
+    --nav-width: 220px;
     margin: 0 0 0 var(--nav-width);
 }
 .nav{
@@ -39,4 +39,80 @@ body {
 .active-href:hover {
     background: #dfdfdf;
 }
+
+/* options */
+
+.opcje{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: white;
+    text-decoration: none;
+    margin-top: 30px;
+}
+.settingsBtnBox{
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .descBox-Mutoh p:nth-child(2) {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .settingsBtn{
+    margin-top: 10px;
+    font-size: 13px;
+    padding: 5px;
+    cursor: pointer;
+    width: fit-content;
+    border-radius: 5px;
+    border: solid 1px white;
+  }
+  
+  .settingsBtn:hover{
+    background: rgb(187, 187, 187);
+    border-radius: 5px;
+  }
+
+
+  .settingsBox{
+    display: flex;
+    margin: 10px;
+    padding: 10px;
+    width: 180px;
+    border-radius: 5px;
+    border: solid 1px rgb(221, 221, 221);
+  }
+
+  .changeForm{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .changeForm p{
+    font-size: 16px;
+  }
+  
+  .changeForm p, input{
+    margin-top: 5px;
+  }
+  
+  .changeInputBox{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  hr.solid {
+    border-top: 1px solid #bbb;
+  }
+
+  #opcje>p:first-child{
+    margin: 0;
+    margin-bottom: 0;
+    padding: 15px
+  }
 

@@ -22,11 +22,12 @@ body{
   height: 5vh;
 }
 
+/* common */
 .app{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-start;
-    align-content: flex-start;
+    align-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
     width: 80%;
@@ -55,9 +56,6 @@ table {
     /* background-color: #e5e5e5; */
   }
 
-table p{
-  margin: 0;
-}
 
 table tr {
   background: white;
@@ -75,6 +73,10 @@ table th{
   background-color: white;
 }
 
+table td>p{
+  padding: 0;
+}
+
 table td>p:last-child{
   font-size: 16px;
 }
@@ -88,29 +90,13 @@ table td>p:last-child{
 .table-td:last-child {
   border-radius: 0 5px 5px 0;
 }
-/* :nth-child(odd) */
-
-
-
-
-
-/* Mutoh */
-.unused{
-  background-color: var(--bckg);
-  color:rgb(116, 116, 116)
-}
-
-.tablesmallBox{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
 
 .tableBox{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-content: flex-start;
+  justify-content: flex-end;
   width: 560px;
   height: var(--objheight);
   margin: 10px;
@@ -124,6 +110,37 @@ table td>p:last-child{
   font-size: 18px;
   height: 6%;
 }
+
+.descBox{
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  width: 100%;
+  height: 7%;
+}
+
+
+
+
+/* Mutoh */
+.dataBox{
+  display: flex;
+  flex-direction: row;
+}
+.unused{
+  background-color: var(--bckg);
+  color:rgb(116, 116, 116)
+}
+
+.tablesmallBox{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+
 
 .tableTbodyBox{
   height: 350px;
@@ -149,20 +166,6 @@ table td>p:last-child{
 }
 
 
-
-.descBox-Mutoh{
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-
-.descBox-Mutoh p:nth-child(2) {
-  margin: 0;
-  font-size: 14px;
-}
-
 .mutohs-list{
   display:flex;
   flex-direction: row;
@@ -172,57 +175,10 @@ table td>p:last-child{
 
 
 /* Impala */
-.descBox-Impala{
-  margin: 10px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  height: 7%;
-}
-.changeTargetBtn{
-  font-size: 13px;
-  padding: 5px;
-  cursor: pointer;
-  width: fit-content;
-  border-radius: 5px;
-  border: solid 1px rgb(0, 0, 0);
-}
-p{
-  margin: 0;
-  margin-bottom: 0;
-}
 
 
 .replaceBox{
   display: flex;
-  width: 100%;
-}
-
-
-.changeTargetBtn:hover{
-  background: rgb(187, 187, 187);
-  border-radius: 5px;
-}
-
-.changeTargetBox{
-  padding: 5px;
-  border-radius: 5px;
-  border: solid 1px rgb(221, 221, 221);
-}
-
-.changeTargetForm p{
-  font-size: 16px;
-}
-
-.changeTargetForm p, input{
-  margin: 5px;
-}
-
-.changeInputBox{
-  display: flex;
-  flex-direction: column;
 }
 
 .invalidNumber{
@@ -247,6 +203,7 @@ p{
 
 .activ{
   cursor: pointer;
+  background-color: #f8d4327c;
 }
 
 .selected-to-replace{

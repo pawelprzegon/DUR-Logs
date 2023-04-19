@@ -12,11 +12,12 @@ export class createTableAllImpala{
     createTableAll(){
         let theads = this.createThead();
         let tbody = this.createTbody();
-        
+        let description = this.descriptionsBox();
         let table = document.createElement('table');
         table.appendChild(theads);
         table.appendChild(tbody);
         this.tableBox.appendChild(table)
+        this.tableBox.appendChild(description)
     }
 
     createThead(){
@@ -55,6 +56,16 @@ export class createTableAllImpala{
         return tbody
     }
 
+    descriptionsBox(){
+        let descBox = document.createElement('div')
+        descBox.classList.add('descBox')
+        let descLabel = document.createElement('small')
+        descLabel.innerText = '*całkowity przebieg urządzeń'
+        descBox.appendChild(descLabel)
+
+        return descBox
+    }
+
     getTable(){
         return this.tableBox;
     }
@@ -75,19 +86,15 @@ export class createTableReplacementsImpala{
     createTableAll(changeType){
         let table = document.createElement('table');
         let thead = this.createTheadReplacement(changeType);
-        let tableLabel = document.createElement('h3')
         let tbody
         if (changeType == 'filters'){
             tbody = this.createTbodyFilters();
-            tableLabel.innerText = 'Daty wymiany filtrów oraz ich aktualny przebieg'
         }else{
             tbody = this.createTbodyBearings();
-            tableLabel.innerText = 'Daty wymiany łożysk/pasków oraz ich aktualny przebieg'
         }
         
         table.appendChild(thead);
         table.appendChild(tbody);
-        this.tableBox.appendChild(tableLabel)
         this.tableBox.appendChild(table)
         this.tableBox.appendChild(this.descriptionsBox(changeType))
     }
@@ -205,47 +212,68 @@ export class createTableReplacementsImpala{
         return tbody
     }
 
-    descriptionsBox(){
+    descriptionsBox(changeType){
+        let changeType_;
+        switch (changeType){
+            case 'filters':
+                changeType_ = 'filtrów';
+                break;
+            case 'bearings':
+                changeType_ = 'łożysk i pasków';
+                break;
+        }
         let descBox = document.createElement('div')
-        descBox.classList.add('descBox-Impala')
-        
+        descBox.classList.add('descBox')
         let descLabel = document.createElement('small')
-        descLabel.innerText = 'Dane przedstawiają ostatnią datę wymiany oraz aktualny przebieg'
+        descLabel.innerText = `*ostatnia data wymiany oraz aktualny przebieg ${changeType_}`
         descBox.appendChild(descLabel)
 
         return descBox
     }
 
-    replaceBox(){
-        let replaceBox = document.createElement('div')
-        replaceBox.classList.add('replaceBox')
-        let changeBtn = document.createElement('p')
-        changeBtn.classList.add('changeTargetBtn')
-        changeBtn.innerText = 'Dodaj wymianę'
-        changeBtn.onclick = () => {
-            if (!document.querySelector('.replace')){
-                replaceBox.appendChild(this.showReplace());
+    options(){
+        let settingsBtnBox = document.createElement('div');
+        settingsBtnBox.classList.add('settingsBtnBox');
+        let settingsBtn = document.querySelector('.settingsBtn')
+        settingsBtn.innerText = 'Dodaj wymianę';
+
+        settingsBtn.onclick = () => {
+            let settingsBox = document.querySelector('.settingsBox')
+            if (settingsBox.style.visibility === 'hidden'){
+                settingsBox.style.visibility = null;
                 this.showDatePicker();
                 this.activate();
+            }else{
+                settingsBox.style.visibility = 'hidden';
+                this.deactivate();
             }
         }
-        replaceBox.appendChild(changeBtn)
-        return replaceBox
+        settingsBtnBox.appendChild(settingsBtn);
+        return settingsBtnBox
     }
 
-    showReplace(){
+    addReplacement(){
+        if (document.querySelector('.settingsBox')){
+            document.querySelector('.settingsBtnBox').remove();
+            document.querySelector('.settingsBox').remove();
+        }
         let settingsBox = document.createElement('div')
-        settingsBox.classList.add('replace')
-        
+        settingsBox.classList.add('settingsBox')
+        settingsBox.style.visibility = "hidden";
+
+        let changeLabel = document.createElement('p');
+        changeLabel.innerText = 'Wprowadź datę oraz zaznacz pozycję w tabeli:';
+        let changeInputBox = document.createElement('div');
+        changeInputBox.classList.add('changeInputBox');
         let form = document.createElement('form');
-        form.classList.add('changePartsForm');
+        form.classList.add('changeForm');
         let dateInput = document.createElement('input')
         dateInput.type = 'text'
         dateInput.classList.add('changeInput');
         dateInput.placeholder = 'data...';
         dateInput.setAttribute('data-toggle', 'datepicker')
         let submit = document.createElement('input');
-        submit.classList.add('changePartsBtn');
+        submit.classList.add('settingsBtn');
         submit.type = 'submit';
         submit.value = 'zapisz';
         form.onsubmit = async (event) => {
@@ -255,7 +283,6 @@ export class createTableReplacementsImpala{
             console.log(selected);
             console.log(dateInput.value);
             this.deactivate();
-            // dateInput.focus();
             
             let what = selected[0];
             let replaceDate = dateInput.value;
@@ -264,13 +291,14 @@ export class createTableReplacementsImpala{
             if (selected.length > 2){
                 color = selected[2];
             }
-            console.log(what, replaceDate, unit, color)
             let [response, status] = await callApiPut(`impalas/replacements/${what}&${replaceDate}&${unit}&${color}`);
             console.log(status, response);
             navigateTo('/impala');
         }
 
-        form.appendChild(dateInput)
+        form.appendChild(changeLabel);
+        changeInputBox.appendChild(dateInput);
+        form.appendChild(changeInputBox)
         form.appendChild(submit)
         settingsBox.appendChild(form)
         return settingsBox;
@@ -295,9 +323,11 @@ export class createTableReplacementsImpala{
         clickableElements.forEach(element => {
             element.classList.remove('activ');
         });
-        let selected = document.querySelector('.selected-to-replace');                      
-        selected.classList.remove('selected-to-replace');
-        document.querySelector('.replace').remove(); 
+        let selected = document.querySelector('.selected-to-replace');
+        if (selected){
+            selected.classList.remove('selected-to-replace'); 
+        }                      
+        
     }
 
     getTable(){
