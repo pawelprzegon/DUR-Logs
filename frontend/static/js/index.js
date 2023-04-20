@@ -1,4 +1,3 @@
-import Dashboard from "./views/Dashboard.js";
 import Mutoh from "./views/Mutoh.js";
 import Impala from "./views/Impala.js";
 

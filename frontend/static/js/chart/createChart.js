@@ -1,4 +1,3 @@
-import { createDetailsTable } from "../createDashboardTable.js";
 import { callApiGet } from "../endpoints.js";
 import { uniqueSortedList } from "../common.js";
 
@@ -117,7 +116,6 @@ export class createChart {
             }
             let [status, data] = await callApiGet(path+element+`/${period}`)
             this.createChart(element, data)
-            // this.createDetails(data)
             document.querySelector(`#${label}`).classList.add('activated')
             unit.classList.add('selected')
         }else{
@@ -130,23 +128,6 @@ export class createChart {
             }
         }
         btnText.innerText = unit.innerText;
-    }
-
-    createDetails(data){
-        let detailsBox = document.querySelector('.details-area')
-        if (document.querySelector('.details-area') != null){
-            detailsBox.innerHTML = ''
-        }else{
-            detailsBox = document.createElement('div')
-        }
-        detailsBox.classList.add('details-area')
-        let detailsTable = new createDetailsTable(data);
-        detailsTable.prepareData();
-        detailsTable.createThead();
-        detailsTable.createTbody();
-        let table = detailsTable.getTable()
-        detailsBox.appendChild(table)
-        this.app.appendChild(detailsBox)
     }
 
     createChart(id, data){
