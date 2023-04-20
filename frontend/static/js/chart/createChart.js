@@ -40,11 +40,9 @@ export class createChart {
     }
 
     
-    
     createChartCanvas(){
         const ChartsArea = document.createElement('div');
         ChartsArea.classList.add("chart")
-        ChartsArea.style.width = '500px';
         const canvas = document.createElement('canvas');
         canvas.id = 'charts' ;
         canvas.style = 'null';
@@ -256,19 +254,4 @@ export class createChart {
     getChart(){
         return this.chartArea
     }
-}
-
-function calculateChartSize(){
-    let chartWidth = '500px'
-    if ( $(window).width() <= 600) {     
-      chartWidth = '350px'
-    }
-    else if (( $(window).width() > 600) && ( $(window).width() <= 900)){
-      chartWidth = '450px'
-    }else if (( $(window).width() > 900) && ( $(window).width() <= 1500)){
-        chartWidth = '650px'
-    }else{
-      chartWidth = '500px'
-    }
-    return chartWidth
 }

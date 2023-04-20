@@ -90,6 +90,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    width: 100%;
   }
   
   .changeForm p{
@@ -116,3 +117,26 @@ body {
     padding: 15px
   }
 
+
+  /* For Tablets & Mobiles */
+@media screen and  (max-width: 900px) {
+  body {
+    --nav-width: 150px;
+  }
+
+  .nav-link{
+    padding: 5px;
+  }
+
+  .settingsBox{
+    width: 100px;
+  }
+
+  .changeForm {
+    width: 100%;
+}
+
+  .changeForm p {
+    font-size: 12px;
+}
+}
