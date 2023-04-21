@@ -49,20 +49,46 @@ export default class extends AbstractView {
                             app.appendChild(dataBox_Repl)
                             
                             // NavOptions
-                            // let optionsData = new createTableReplacementsImpala(dataReplacements);
                             let navOptions = document.querySelector('#opcje');
-                            
-                            let desc = 'Wprowadź datę oraz zaznacz pozycję w tabeli:'
-                            let lbl = 'Wprowadź wymianę:'
-                            let plchold = 'data...'
-                            let path = '/impala'
-                            let optionsTarget = new Replacement(desc, lbl, plchold, path);
-                            navOptions.appendChild(optionsTarget.options())
-                            optionsTarget.impalaReplacements();
-                            
-                            
-                            navOptions.appendChild(optionsTarget.getReplaceBox())
-                            
+
+                            if (document.querySelectorAll('.DbSettings')){
+
+                                let DbSettings = document.querySelectorAll('.DbSettings')
+                                DbSettings.forEach(element => {
+                                   element.remove(); 
+                                });
+                            }
+                            // filters and bearings replacements
+                            let partsDesc = 'Wprowadź datę oraz zaznacz pozycję w tabeli:'
+                            let partsLbl = 'Wprowadź wymianę'
+                            let partsPlchold = 'data'
+                            let partsPath = '/impala'
+                            let partsRepl = new Replacement(partsDesc, partsLbl, partsPlchold, partsPath);
+                            partsRepl.createBox();
+                            partsRepl.callendarReplacement();
+                            navOptions.appendChild(partsRepl.getReplaceBox())
+
+                            // change targets for filters
+                            let fTargetDesc = 'Wprowadź nowy target [ml]:';
+                            let fTargetLbl = 'Zmień target filtrów';
+                            let fTargetPlchold = 'wartość';
+                            let fTargetPath = '/impala';
+                            let fTarget = new Replacement(fTargetDesc, fTargetLbl, fTargetPlchold, fTargetPath);
+                            fTarget.createBox();
+                            fTarget.inputValue('impalas/settings/filters&');
+                            navOptions.appendChild(fTarget.getReplaceBox());
+
+                            // change targets for bearings
+                            let bTargetDesc = 'Wprowadź nowy target [m2]:';
+                            let bTargetLbl = 'Zmień target łożysk';
+                            let bTargetPlchold = 'wartość';
+                            let bTargetPath = '/impala';
+                            let bTarget = new Replacement(bTargetDesc, bTargetLbl, bTargetPlchold, bTargetPath);
+                            bTarget.createBox();
+                            bTarget.inputValue('impalas/settings/bearings&');
+                            navOptions.appendChild(bTarget.getReplaceBox());
+
+
                         }
             else if (status != 200) {
                                 alerts(status, dataAll.detail, 'alert-red');

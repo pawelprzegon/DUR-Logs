@@ -39,17 +39,18 @@ export default class extends AbstractView {
                 
                             // NavOptions
                             let navOptions = document.querySelector('#opcje');
+
+                            if (document.querySelector('.DbSettings')){
+                                document.querySelector('.DbSettings').remove();
+                            }
                             
                             let desc = 'Wprowadź nowy target [m2]:'
                             let lbl = 'Zmień target'
-                            let plchold = 'wprowadź wartość...'
+                            let plchold = 'wartość'
                             let path = '/mutoh'
                             let optionsData = new Replacement(desc, lbl, plchold, path);
-                            navOptions.appendChild(optionsData.options());
-                            optionsData.mutohTarget();
-                            // let optionsData = new createTablesMutoh(data,target.target);
-                            
-                            
+                            optionsData.createBox();
+                            optionsData.inputValue('mutohs/target/');
                             navOptions.appendChild(optionsData.getReplaceBox());
                             
                         }
@@ -72,14 +73,15 @@ export default class extends AbstractView {
 }
 
 function dynamicSort(property) {
+    let prop
     let sortOrder = 1;
     if(property[0] === "-") {
         sortOrder = -1;
-        property = property.substr(1);
+        prop = property.substr(1);
     }
     return function (a,b) {
 
-        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        let result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
         return result * sortOrder;
     }
 }

@@ -51,7 +51,8 @@ body {
     margin-top: 30px;
 }
 .settingsBtnBox{
-    margin: 10px;
+    margin: 4px;
+    margin-left: 10px;
     display: flex;
     flex-direction: column;
   }
@@ -62,7 +63,7 @@ body {
   }
 
   .settingsBtn{
-    margin-top: 10px;
+    margin-top: 5px;
     font-size: 13px;
     padding: 5px;
     cursor: pointer;
@@ -74,6 +75,14 @@ body {
   .settingsBtn:hover{
     background: rgb(187, 187, 187);
     border-radius: 5px;
+    color: black;
+  }
+
+  input[type="submit" i]{
+    background-color: #222222;
+    color: white;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
   }
 
 

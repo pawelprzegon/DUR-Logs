@@ -36,35 +36,37 @@ export function showloader() {
 
 export class Replacement{
     constructor(description, btnLabel, plchold, path){
-        this.removeReplacement();
         this.description = description
         this.btnLabel = btnLabel;
         this.plchold = plchold;
         this.path = path;
-        this.settingsBox = document.createElement('div');
-
-        this.changeInputBox = document.createElement('div');
-        this.form = document.createElement('form');
-        this.submit = document.createElement('input');
+        this.trigger = btnLabel.split(' ').slice(-1).pop()
+        this.DbSettings = document.createElement('div');
+        this.address = this.lastUrlSegment();
     }
 
-    removeReplacement(){
-        if (document.querySelector('.settingsBox')){
-            document.querySelector('.settingsBtn').innerHTML=''
-            document.querySelector('.settingsBox').innerHTML=''
+    lastUrlSegment(){
+        const parts = window.location.href.split('/');
+        return parts.pop() || parts.pop(); 
+    }
+
+
+    callendarReplacement(){
+        this.settingsBtn.onclick = () => {
+            document.querySelectorAll(`.settingsBox:not(.${this.trigger})`).forEach(element => {
+                element.style.display = 'none';
+            });
+            let settingsBox = document.querySelector(`.${this.trigger}`)
+            if (settingsBox.style.display === 'none'){
+                settingsBox.style.display = null;
+                this.showDatePicker();
+                this.activate();  
+            }else{
+                settingsBox.style.display = 'none';
+                this.deactivate();
+            }
         }
-    }
 
-    impalaReplacements(){
-        let dateInput = document.createElement('input')
-        dateInput.type = 'text'
-        dateInput.classList.add('changeInput');
-        dateInput.placeholder = this.plchold //'data...';
-        dateInput.setAttribute('data-toggle', 'datepicker')
-        
-        this.submit.classList.add('settingsBtn');
-        this.submit.type = 'submit';
-        this.submit.value = 'zapisz';
         this.form.onsubmit = async (event) => {
             event.preventDefault();
             let selected = document.querySelector('.selected-to-replace')
@@ -72,7 +74,7 @@ export class Replacement{
             this.deactivate();
             
             let what = selected[0];
-            let replaceDate = dateInput.value;
+            let replaceDate = this.changeInput.value;
             let unit = selected[1];
             let color = null;
             if (selected.length > 2){
@@ -80,27 +82,34 @@ export class Replacement{
             }
             let [response, status] = await callApiPut(`impalas/replacements/${what}&${replaceDate}&${unit}&${color}`);
             console.log(status, response);
-            navigateTo(this.path);
+            if(status == 200){
+                navigateTo(this.path);
+            }
+            else{
+                alerts(status, response.detail, 'alert-red')
+            }
         }
-        this.changeInputBox.appendChild(dateInput);
-        this.pack();
     }
 
-    mutohTarget(){
-        let changeInput = document.createElement('input');
-        changeInput.type = 'text';
-        changeInput.classList.add('changeInput');
-        changeInput.placeholder = this.plchold //'wprowadź wartość...';
-        let validNumberLabel = document.createElement('small');
-        validNumberLabel.id = 'validNumberLabel';
-        this.submit.classList.add('settingsBtn');
-        this.submit.type = 'submit';
-        this.submit.value = 'zapisz';
+    inputValue(apiPath){
+        this.settingsBtn.onclick = () => {
+            document.querySelectorAll(`.settingsBox:not(.${this.trigger})`).forEach(element => {
+                element.style.display = 'none';
+            });
+            let settingsBox = document.querySelector(`.${this.trigger}`)
+            if (settingsBox.style.display === 'none'){
+                settingsBox.style.display = null;
+                document.querySelector('.changeInput').focus();
+            }else{
+                settingsBox.style.display = 'none';  
+            }
+        }
+        
         this.form.onsubmit = async (event) => {
             event.preventDefault();
-            let validate = this.numberValidation(changeInput.value);
+            let validate = this.numberValidation(this.changeInput.value);
             if (validate == true){
-                let [response, status] = await callApiPut('mutohs/target/'+changeInput.value);
+                let [response, status] = await callApiPut(apiPath+this.changeInput.value);
                 console.log(status, response);
                 if(status == 200){
                     navigateTo(this.path);
@@ -108,11 +117,8 @@ export class Replacement{
                 else{
                     alerts(status, response.detail, 'alert-red')
                 }
-                
             }
         }
-        this.changeInputBox.appendChild(changeInput);
-        this.pack();
     }
 
     numberValidation(number){
@@ -128,36 +134,60 @@ export class Replacement{
         }
     }
 
-    options(){
-        this.settingsBox.classList.add('settingsBox')
-        this.settingsBox.style.visibility = "hidden";
-    
-        let changeLabel = document.createElement('p');
-        changeLabel.innerText = this.description //'Wprowadź datę oraz zaznacz pozycję w tabeli:';
-        
-        this.changeInputBox.classList.add('changeInputBox');
-        
-        this.form.classList.add('changeForm');
-        this.form.appendChild(changeLabel);
+    createBox(){
+        this.DbSettings.classList.add('DbSettings')
+        let button = this.createButton();
+        let body = this.craeteBody();
+        this.DbSettings.appendChild(button)
+        this.DbSettings.appendChild(body)
+    }
 
+    createButton(){
         let settingsBtnBox = document.createElement('div');
         settingsBtnBox.classList.add('settingsBtnBox');
-        let settingsBtn = document.querySelector('.settingsBtn')
-        settingsBtn.innerText = 'Dodaj wymianę';
+        this.settingsBtn = document.createElement('p');
+        this.settingsBtn.classList.add('settingsBtn')
+        this.settingsBtn.innerText = this.btnLabel;
 
-        settingsBtn.onclick = () => {
-            let settingsBox = document.querySelector('.settingsBox')
-            if (settingsBox.style.visibility === 'hidden'){
-                settingsBox.style.visibility = null;
-                this.showDatePicker();
-                this.activate();
-            }else{
-                settingsBox.style.visibility = 'hidden';
-                this.deactivate();
-            }
-        }
-        settingsBtnBox.appendChild(settingsBtn);
+       
+        settingsBtnBox.appendChild(this.settingsBtn);
         return settingsBtnBox
+    }
+
+    craeteBody(){
+        let settingsBox = document.createElement('div');
+        settingsBox.classList.add('settingsBox', `${this.trigger}`)
+        settingsBox.style.display = "none";
+    
+        let changeLabel = document.createElement('p');
+        changeLabel.innerText = this.description;
+          
+        this.form = document.createElement('form');
+        this.form.classList.add('changeForm');
+        let changeInputBox = document.createElement('div');
+        changeInputBox.classList.add('changeInputBox');
+        
+        this.changeInput = document.createElement('input');
+        this.changeInput.type = 'text';
+        this.changeInput.classList.add('changeInput');
+        if (this.plchold === 'data'){this.changeInput.setAttribute('data-toggle', 'datepicker')}
+        this.changeInput.placeholder = this.plchold;
+        let validNumberLabel = document.createElement('small');
+        validNumberLabel.id = 'validNumberLabel';
+
+        let submit = document.createElement('input');
+        submit.classList.add('settingsBtn');
+        submit.type = 'submit';
+        submit.value = 'zapisz';
+
+        changeInputBox.appendChild(this.changeInput);
+        changeInputBox.appendChild(validNumberLabel);
+        this.form.appendChild(changeLabel);
+        this.form.appendChild(changeInputBox)
+        this.form.appendChild(submit)
+        settingsBox.appendChild(this.form)
+
+        return settingsBox
     }
 
     showDatePicker(){
@@ -186,14 +216,7 @@ export class Replacement{
         
     }
 
-    pack(){
-        
-        this.form.appendChild(this.changeInputBox)
-        this.form.appendChild(this.submit)
-        this.settingsBox.appendChild(this.form)
-    }
-
     getReplaceBox(){
-        return this.settingsBox;
+        return this.DbSettings;
     }
 }
