@@ -1,5 +1,6 @@
 import { navigateTo } from "./index.js";
 import {callApiPut} from "./endpoints.js"
+import { alerts } from "./alerts/alerts.js";
 
 
 export class createTablesMutoh{
@@ -108,6 +109,7 @@ export class createTablesMutoh{
             let changeTargetBox = document.querySelector('.settingsBox')
             if (changeTargetBox.style.visibility === 'hidden'){
                 changeTargetBox.style.visibility = null
+                document.querySelector('.changeInput').focus();
             }else{
                 changeTargetBox.style.visibility = 'hidden'
             }
@@ -147,11 +149,16 @@ export class createTablesMutoh{
             if (validate == true){
                 let [response, status] = await callApiPut('mutohs/target/'+changeInput.value);
                 console.log(status, response);
-                navigateTo('/mutoh');
+                if(status == 200){
+                    navigateTo('/mutoh');
+                }
+                else{
+                    alerts(status, response.detail, 'alert-red')
+                }
+                
             }
         }
         
-
         form.appendChild(changeLabel);
         changeInputBox.appendChild(changeInput);
         changeInputBox.appendChild(validNumberLabel);

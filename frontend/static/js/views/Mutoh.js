@@ -3,6 +3,7 @@ import {callApiGet} from "../endpoints.js"
 import { createTablesMutoh } from "../createMutohTables.js";
 import { createChart } from "../chart/createChart.js";
 import { alerts } from "../alerts/alerts.js";
+import { Replacement, hideloader, showloader } from "../common.js";
 
 
 
@@ -15,10 +16,12 @@ export default class extends AbstractView {
     async getData(){
         document.querySelector('#app').innerHTML = ''
         try{
+            showloader();
             let [status, data] = await callApiGet('mutohs/all');
             let [statusTarget, target] = await callApiGet('mutohs/target');
 
             if (status == 200 && statusTarget == 200) {
+                            hideloader();
                             data.sort(dynamicSort("-name"));
                             let app = document.querySelector('#app');
                             
@@ -35,12 +38,20 @@ export default class extends AbstractView {
                             app.appendChild(dataBox);
                 
                             // NavOptions
-                            let optionsData = new createTablesMutoh(data,target.target);
                             let navOptions = document.querySelector('#opcje');
-                            let options = optionsData.options();
-                            let optionsTarget = optionsData.changeTarget();
-                            navOptions.appendChild(options);
-                            navOptions.appendChild(optionsTarget);
+                            
+                            let desc = 'Wprowadź nowy target [m2]:'
+                            let lbl = 'Zmień target'
+                            let plchold = 'wprowadź wartość...'
+                            let path = '/mutoh'
+                            let optionsData = new Replacement(desc, lbl, plchold, path);
+                            navOptions.appendChild(optionsData.options());
+                            optionsData.mutohTarget();
+                            // let optionsData = new createTablesMutoh(data,target.target);
+                            
+                            
+                            navOptions.appendChild(optionsData.getReplaceBox());
+                            
                         }
             else if (status != 200) {
                                 alerts(status, data.detail, 'alert-red');
@@ -50,6 +61,7 @@ export default class extends AbstractView {
                             }
 
         }catch(error){
+            console.log(error)
             alerts('error', error, 'alert-red');
         }
         

@@ -3,6 +3,7 @@ import {callApiGet} from "../endpoints.js"
 import {createTableAllImpala, createTableReplacementsImpala} from '../createImpalaTables.js'
 import { createChart } from "../chart/createChart.js";
 import { alerts } from "../alerts/alerts.js";
+import { Replacement, hideloader, showloader } from "../common.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -13,9 +14,11 @@ export default class extends AbstractView {
     async getData(){
         document.querySelector('#app').innerHTML = ''
         try{
+            showloader();
             let [status, dataAll] = await callApiGet('impalas/all');
             let [statusRepl, dataReplacements] = await callApiGet('impalas/replacements/');
             if (status == 200 && statusRepl == 200) {
+                            hideloader();
                             let app = document.querySelector('#app');
                             
                             let newChart = new createChart('Impala');
@@ -46,12 +49,20 @@ export default class extends AbstractView {
                             app.appendChild(dataBox_Repl)
                             
                             // NavOptions
-                            let optionsData = new createTableReplacementsImpala(dataReplacements);
+                            // let optionsData = new createTableReplacementsImpala(dataReplacements);
                             let navOptions = document.querySelector('#opcje');
-                            let options = optionsData.options();
-                            let optionsTarget = optionsData.addReplacement();
-                            navOptions.appendChild(options)
-                            navOptions.appendChild(optionsTarget)
+                            
+                            let desc = 'Wprowadź datę oraz zaznacz pozycję w tabeli:'
+                            let lbl = 'Wprowadź wymianę:'
+                            let plchold = 'data...'
+                            let path = '/impala'
+                            let optionsTarget = new Replacement(desc, lbl, plchold, path);
+                            navOptions.appendChild(optionsTarget.options())
+                            optionsTarget.impalaReplacements();
+                            
+                            
+                            navOptions.appendChild(optionsTarget.getReplaceBox())
+                            
                         }
             else if (status != 200) {
                                 alerts(status, dataAll.detail, 'alert-red');
@@ -61,6 +72,7 @@ export default class extends AbstractView {
                             }
 
         }catch(error){
+            console.log(error)
             alerts('error', error, 'alert-red');
         }
         

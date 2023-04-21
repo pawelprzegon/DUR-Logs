@@ -1,5 +1,3 @@
-import { callApiPut } from "./endpoints.js";
-import { navigateTo } from "./index.js";
 
 export class createTableAllImpala{
     constructor(data){
@@ -231,104 +229,7 @@ export class createTableReplacementsImpala{
         return descBox
     }
 
-    options(){
-        let settingsBtnBox = document.createElement('div');
-        settingsBtnBox.classList.add('settingsBtnBox');
-        let settingsBtn = document.querySelector('.settingsBtn')
-        settingsBtn.innerText = 'Dodaj wymianę';
-
-        settingsBtn.onclick = () => {
-            let settingsBox = document.querySelector('.settingsBox')
-            if (settingsBox.style.visibility === 'hidden'){
-                settingsBox.style.visibility = null;
-                this.showDatePicker();
-                this.activate();
-            }else{
-                settingsBox.style.visibility = 'hidden';
-                this.deactivate();
-            }
-        }
-        settingsBtnBox.appendChild(settingsBtn);
-        return settingsBtnBox
-    }
-
-    addReplacement(){
-        if (document.querySelector('.settingsBox')){
-            document.querySelector('.settingsBtnBox').remove();
-            document.querySelector('.settingsBox').remove();
-        }
-        let settingsBox = document.createElement('div')
-        settingsBox.classList.add('settingsBox')
-        settingsBox.style.visibility = "hidden";
-
-        let changeLabel = document.createElement('p');
-        changeLabel.innerText = 'Wprowadź datę oraz zaznacz pozycję w tabeli:';
-        let changeInputBox = document.createElement('div');
-        changeInputBox.classList.add('changeInputBox');
-        let form = document.createElement('form');
-        form.classList.add('changeForm');
-        let dateInput = document.createElement('input')
-        dateInput.type = 'text'
-        dateInput.classList.add('changeInput');
-        dateInput.placeholder = 'data...';
-        dateInput.setAttribute('data-toggle', 'datepicker')
-        let submit = document.createElement('input');
-        submit.classList.add('settingsBtn');
-        submit.type = 'submit';
-        submit.value = 'zapisz';
-        form.onsubmit = async (event) => {
-            event.preventDefault();
-            let selected = document.querySelector('.selected-to-replace')
-            selected = selected.id.split('-')
-            console.log(selected);
-            console.log(dateInput.value);
-            this.deactivate();
-            
-            let what = selected[0];
-            let replaceDate = dateInput.value;
-            let unit = selected[1];
-            let color = null;
-            if (selected.length > 2){
-                color = selected[2];
-            }
-            let [response, status] = await callApiPut(`impalas/replacements/${what}&${replaceDate}&${unit}&${color}`);
-            console.log(status, response);
-            navigateTo('/impala');
-        }
-
-        form.appendChild(changeLabel);
-        changeInputBox.appendChild(dateInput);
-        form.appendChild(changeInputBox)
-        form.appendChild(submit)
-        settingsBox.appendChild(form)
-        return settingsBox;
-    }
-
-    showDatePicker(){
-        $('[data-toggle="datepicker"]').datepicker({
-            format: 'yyyy-mm-dd',
-            language: 'pl-PL'
-        });
-    }
-
-    activate(){
-        let clickableElements = document.querySelectorAll('.clickable');
-        clickableElements.forEach(element => {
-            element.classList.add('activ')
-        });
-    }
-
-    deactivate(){
-        let clickableElements = document.querySelectorAll('.activ');
-        clickableElements.forEach(element => {
-            element.classList.remove('activ');
-        });
-        let selected = document.querySelector('.selected-to-replace');
-        if (selected){
-            selected.classList.remove('selected-to-replace'); 
-        }                      
-        
-    }
+    
 
     getTable(){
         return this.tableBox;
