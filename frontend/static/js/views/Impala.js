@@ -3,7 +3,7 @@ import {callApiGet} from "../endpoints.js"
 import {createTableAllImpala, createTableReplacementsImpala} from '../createImpalaTables.js'
 import { createChart } from "../chart/createChart.js";
 import { alerts } from "../alerts/alerts.js";
-import { Replacement, hideloader, showloader } from "../common.js";
+import { Replacement, hideloader, removeDbSettings, showloader } from "../common.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -51,13 +51,7 @@ export default class extends AbstractView {
                             // NavOptions
                             let navOptions = document.querySelector('#opcje');
 
-                            if (document.querySelectorAll('.DbSettings')){
-
-                                let DbSettings = document.querySelectorAll('.DbSettings')
-                                DbSettings.forEach(element => {
-                                   element.remove(); 
-                                });
-                            }
+                            removeDbSettings();
                             // filters and bearings replacements
                             let partsDesc = 'Wprowadź datę oraz zaznacz pozycję w tabeli:'
                             let partsLbl = 'Wprowadź wymianę'
@@ -70,7 +64,7 @@ export default class extends AbstractView {
 
                             // change targets for filters
                             let fTargetDesc = 'Wprowadź nowy target [ml]:';
-                            let fTargetLbl = 'Zmień target filtrów';
+                            let fTargetLbl = 'Zmień target dla filtrów';
                             let fTargetPlchold = 'wartość';
                             let fTargetPath = '/impala';
                             let fTarget = new Replacement(fTargetDesc, fTargetLbl, fTargetPlchold, fTargetPath);
@@ -80,7 +74,7 @@ export default class extends AbstractView {
 
                             // change targets for bearings
                             let bTargetDesc = 'Wprowadź nowy target [m2]:';
-                            let bTargetLbl = 'Zmień target łożysk';
+                            let bTargetLbl = 'Zmień target dla łożysk';
                             let bTargetPlchold = 'wartość';
                             let bTargetPath = '/impala';
                             let bTarget = new Replacement(bTargetDesc, bTargetLbl, bTargetPlchold, bTargetPath);

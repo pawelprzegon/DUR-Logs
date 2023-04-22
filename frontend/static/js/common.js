@@ -21,18 +21,28 @@ export function uniqueSortedList(data, label){
 }
 
 export async function hideloader() {
-    return setTimeout(() => {
     document.getElementById('loading').style.visibility = 'hidden';
     document.getElementById('loading').style.display = 'none';
-    }, 500);
   }
 
 export function showloader() {
-  return setTimeout(() => {
+//   return setTimeout(() => {
       document.getElementById('loading').style.visibility = 'visible';
       document.getElementById('loading').style.display = '';
-    }, 500);
+    // }, 1000);
 }
+
+export function removeDbSettings(){
+    let dbSettings = document.querySelectorAll('.DbSettings')
+    if (dbSettings){
+        dbSettings.forEach(element => {
+            element.remove();
+        });
+    }
+}
+
+
+
 
 export class Replacement{
     constructor(description, btnLabel, plchold, path){

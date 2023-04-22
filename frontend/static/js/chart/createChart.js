@@ -20,6 +20,7 @@ export class createChart {
         let [status, data] = await callApiGet(this.path+'by_month')
 
         let period = [
+            {'name': 'msc 1'},
             {'name': 'msc 3'},
             {'name': 'msc 6'},
             {'name': 'msc 12'},
@@ -130,14 +131,19 @@ export class createChart {
         btnText.innerText = unit.innerText;
     }
 
+    reduceDate(date){
+        let tmpLbl = date.split('-');
+        tmpLbl.pop();
+        return tmpLbl.join('-')
+    }
+
     createChart(id, data){
-        
-        
         let Squaremeter = []
         let Total_Ink = []
         let labels = []
         data.forEach(element => {
-            labels.push(element.date)
+            
+            labels.push(this.reduceDate(element.date))
             Squaremeter.push(element.Squaremeter)
             Total_Ink.push(element.Total_Ink)
         });
@@ -155,6 +161,7 @@ export class createChart {
         gradientMl.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
         gradientMl.addColorStop(0.5, 'rgba(215, 72, 72, 0.3)');
         gradientMl.addColorStop(1, 'rgba(215, 72, 72, 0)');
+
 
         this.myChart = new Chart(ctx, {
             type: 'line',
@@ -235,4 +242,13 @@ export class createChart {
     getChart(){
         return this.chartArea
     }
+
+    
 }
+
+
+function reEscape(s) {
+    return s.replace(/([.*+?^$|(){}\[\]])/mg, "\\$1");
+}
+
+

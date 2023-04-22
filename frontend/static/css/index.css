@@ -93,6 +93,8 @@ table td {
     padding-right: 8px;
     overflow: hidden;
     height: 55px;
+    width: 80px;
+    text-align: center;
 }
 
 table {

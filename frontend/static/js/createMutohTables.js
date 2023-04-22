@@ -36,7 +36,7 @@ export class createTablesMutoh{
 
 
     createThead(){
-        const heads = ['Nazwa', '[m2]', '[ml]', 'Ostatni druk', 'Osiągnięty target [%]'];
+        const heads = ['Nazwa', 'Serial number', '[m2]', '[ml]', 'Ostatni druk', 'Osiągnięty target [%]'];
         let thead = document.createElement('thead');
         thead.classList.add('thead');
         let tr = document.createElement('tr');
@@ -202,9 +202,7 @@ export class createTablesMutoh{
 
     myTimer(obj, value) {
         let progress = value;
-        if (progress > 100) {
-          progress = 100;
-        } 
+        progress = Math.min(progress, 100); 
         obj.style.width = progress + "%";
       }
 }

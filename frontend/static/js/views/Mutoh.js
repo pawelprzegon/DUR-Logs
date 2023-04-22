@@ -3,7 +3,7 @@ import {callApiGet} from "../endpoints.js"
 import { createTablesMutoh } from "../createMutohTables.js";
 import { createChart } from "../chart/createChart.js";
 import { alerts } from "../alerts/alerts.js";
-import { Replacement, hideloader, showloader } from "../common.js";
+import { Replacement, hideloader, removeDbSettings, showloader } from "../common.js";
 
 
 
@@ -38,12 +38,9 @@ export default class extends AbstractView {
                             app.appendChild(dataBox);
                 
                             // NavOptions
+                            removeDbSettings();
                             let navOptions = document.querySelector('#opcje');
 
-                            if (document.querySelector('.DbSettings')){
-                                document.querySelector('.DbSettings').remove();
-                            }
-                            
                             let desc = 'Wprowadź nowy target [m2]:'
                             let lbl = 'Zmień target'
                             let plchold = 'wartość'
@@ -67,9 +64,6 @@ export default class extends AbstractView {
         }
         
     }
-
-
-    
 }
 
 function dynamicSort(property) {
