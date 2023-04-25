@@ -66,6 +66,7 @@ export class createTablesMutoh{
                         unit.click();
                     }
                 }else if (key == 'lst_date'){
+                    each.innerText = value.replace('T', ' ')
                     let date = new Date();
                     if(Date.parse(value) < date.setDate(date.getDate() - 7)){
                         tr.classList.add('unused');
