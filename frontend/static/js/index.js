@@ -1,5 +1,6 @@
 import Mutoh from "./views/Mutoh.js";
 import Impala from "./views/Impala.js";
+import Xeikon from "./views/Xeikon.js";
 
 export const navigateTo = url =>{
     history.pushState(null, null, url);
@@ -11,6 +12,7 @@ const router = async () => {
         // {path: '/', view: Dashboard },
         {path: '/mutoh', view: Mutoh },
         {path: '/impala', view: Impala },
+        {path: '/xeikon', view: Xeikon },
     ];
 
     const potentialMatches = routes.map(route => {
