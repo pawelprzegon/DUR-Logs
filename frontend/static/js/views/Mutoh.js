@@ -17,8 +17,8 @@ export default class extends AbstractView {
         document.querySelector('#app').innerHTML = ''
         try{
             showloader();
-            let [status, data] = await callApiGet('mutohs/all');
-            let [statusTarget, target] = await callApiGet('mutohs/target');
+            let [status, data] = await callApiGet('mutoh');
+            let [statusTarget, target] = await callApiGet('mutoh/target');
 
             if (status == 200 && statusTarget == 200) {
                             hideloader();
@@ -28,7 +28,7 @@ export default class extends AbstractView {
                             let newChart = new createChart('Mutoh');
                             newChart.getData();
                             let chart = newChart.getChart();
-                            let tables = new createTablesMutoh(data,target.target);
+                            let tables = new createTablesMutoh(data, target.target);
                             tables.createTables();
                             let [tables_] = tables.getTables();
                             let dataBox = document.createElement('div');
@@ -47,8 +47,12 @@ export default class extends AbstractView {
                             let path = '/mutoh'
                             let optionsData = new Replacement(desc, lbl, plchold, path);
                             optionsData.createBox();
-                            optionsData.inputValue('mutohs/target/');
+                            optionsData.inputValue('mutoh/target/');
                             navOptions.appendChild(optionsData.getReplaceBox());
+                            
+
+                                
+                           
                             
                         }
             else if (status != 200) {

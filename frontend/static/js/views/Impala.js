@@ -15,8 +15,8 @@ export default class extends AbstractView {
         document.querySelector('#app').innerHTML = ''
         try{
             showloader();
-            let [status, dataAll] = await callApiGet('impalas/all');
-            let [statusRepl, dataReplacements] = await callApiGet('impalas/replacements/');
+            let [status, dataAll] = await callApiGet('impala');
+            let [statusRepl, dataReplacements] = await callApiGet('impala/replacements/');
             if (status == 200 && statusRepl == 200) {
                             hideloader();
                             let app = document.querySelector('#app');
@@ -69,7 +69,7 @@ export default class extends AbstractView {
                             let fTargetPath = '/impala';
                             let fTarget = new Replacement(fTargetDesc, fTargetLbl, fTargetPlchold, fTargetPath);
                             fTarget.createBox();
-                            fTarget.inputValue('impalas/settings/filters&');
+                            fTarget.inputValue('impala/settings/filters&');
                             navOptions.appendChild(fTarget.getReplaceBox());
 
                             // change targets for bearings
@@ -79,7 +79,7 @@ export default class extends AbstractView {
                             let bTargetPath = '/impala';
                             let bTarget = new Replacement(bTargetDesc, bTargetLbl, bTargetPlchold, bTargetPath);
                             bTarget.createBox();
-                            bTarget.inputValue('impalas/settings/bearings&');
+                            bTarget.inputValue('impala/setting/bearings&');
                             navOptions.appendChild(bTarget.getReplaceBox());
 
 

@@ -38,16 +38,18 @@ export class createTableAllImpala{
         this.data.forEach(unit =>{
             let tr = document.createElement('tr');
             for (const [key, value] of Object.entries(unit)){
-                let each = document.createElement('td');
-                each.classList.add('table-td');
-                each.innerText = value;
-                if(key == 'name'){
-                    each.classList.add('unit');
-                    each.onclick = () => {
-                        let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
-                        unit.click();
-                    }}
-                tr.appendChild(each);
+                if (key != 'filters' && key != 'bearings'){
+                    let each = document.createElement('td');
+                    each.classList.add('table-td');
+                    each.innerText = value;
+                    if(key == 'name'){
+                        each.classList.add('unit');
+                        each.onclick = () => {
+                            let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
+                            unit.click();
+                        }}
+                    tr.appendChild(each);
+                };
             };
             tbody.appendChild(tr);
         });
@@ -138,9 +140,12 @@ export class createTableReplacementsImpala{
                 tr.append(name);
                 for (const value of Object.values(unit.filters)){
                     for (const [key,val] of Object.entries(value)){
+                        let each = document.createElement('td');
+                        each.classList.add('table-td', 'clickable');
+                        let date = document.createElement('p');
+                        date.classList.add('replacement-date');
+                        let quantity = document.createElement('p');
                         if(val['last_replacement'] != 'NaT'){
-                            let each = document.createElement('td');
-                            each.classList.add('table-td', 'clickable');
                             each.id = `filters-${unit.Name.split(' ')[1]}-${key}`;
                             each.onclick = () => {
                                 if (each.classList.contains('activ')){
@@ -154,15 +159,15 @@ export class createTableReplacementsImpala{
                             if (val['liter']*1000 >= this.data.filters_threshold){
                                 each.classList.add('warning');
                             };
-                            let date = document.createElement('p');
-                            date.classList.add('replacement-date');
                             date.innerText = val['last_replacement'];
-                            let quantity = document.createElement('p');
                             quantity.innerText = val['liter'];
-                            each.appendChild(date);
-                            each.appendChild(quantity);
-                            tr.appendChild(each);
-                        };
+                        }else{
+                            date.innerText = 0;
+                            quantity.innerText = 0;
+                        }
+                        each.appendChild(date);
+                        each.appendChild(quantity);
+                        tr.appendChild(each);
                     };
                 };
                 tbody.appendChild(tr);
@@ -183,7 +188,7 @@ export class createTableReplacementsImpala{
 
                 let each = document.createElement('td');
                 each.classList.add('table-td', 'clickable');
-                each.id = `bearings-${unit.Name.split(' ')[1]}`
+                each.id = `bearings-${unit.Name}`
                 each.onclick = () => {
                     if (each.classList.contains('activ')){
                         let selected = document.querySelector('.selected-to-replace');

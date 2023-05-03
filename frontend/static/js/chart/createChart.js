@@ -13,11 +13,11 @@ export class createChart {
 
     async getData(){
         if(this.label == 'Mutoh'){
-            this.path = 'mutohs/'
+            this.path = 'mutoh/'
         }else if(this.label == 'Impala'){
-            this.path = 'impalas/'
+            this.path = 'impala/'
         }
-        let [status, data] = await callApiGet(this.path+'by_month')
+        let [status, data] = await callApiGet(this.path+'monthView')
 
         let period = [
             {'name': 'msc 1'},
@@ -124,7 +124,7 @@ export class createChart {
             if (selected != null){
                 let activePath = ((activated.firstChild.innerText).toLowerCase())
                 let chartId = activated.firstChild.innerText+' '+selected.innerText
-                let [status, data] = await callApiGet(activePath+'s/'+activated.firstChild.innerText+' '+selected.innerText+`/${period}`)
+                let [status, data] = await callApiGet(activePath+'/'+chartId+`/${period}`)
                 this.createChart(chartId, data)
             }
         }
@@ -142,7 +142,6 @@ export class createChart {
         let Total_Ink = []
         let labels = []
         data.forEach(element => {
-            
             labels.push(this.reduceDate(element.date))
             Squaremeter.push(element.Squaremeter)
             Total_Ink.push(element.Total_Ink)

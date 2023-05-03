@@ -30,10 +30,8 @@ const router = async () => {
     }
 
 
-    
     const view = new match.route.view();
     await view.getData();
-
     
 };
 

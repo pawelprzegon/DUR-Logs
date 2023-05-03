@@ -85,12 +85,12 @@ export class Replacement{
             
             let what = selected[0];
             let replaceDate = this.changeInput.value;
-            let unit = selected[1];
+            let unit = 'Impala '+selected[1];
             let color = null;
             if (selected.length > 2){
                 color = selected[2];
             }
-            let [response, status] = await callApiPut(`impalas/replacements/${what}&${replaceDate}&${unit}&${color}`);
+            let [response, status] = await callApiPut(`impala/replacements/${what}&${replaceDate}&${unit}&${color}`);
             console.log(status, response);
             if(status == 200){
                 navigateTo(this.path);
@@ -120,7 +120,7 @@ export class Replacement{
             let validate = this.numberValidation(this.changeInput.value);
             if (validate == true){
                 let [response, status] = await callApiPut(apiPath+this.changeInput.value);
-                console.log(status, response);
+                // console.log(status, response);
                 if(status == 200){
                     navigateTo(this.path);
                 }

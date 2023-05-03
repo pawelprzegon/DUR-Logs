@@ -148,7 +148,7 @@ export class createTablesMutoh{
             event.preventDefault();
             let validate = this.numberValidation(changeInput.value);
             if (validate == true){
-                let [response, status] = await callApiPut('mutohs/target/'+changeInput.value);
+                let [response, status] = await callApiPut('mutoh/target/'+changeInput.value);
                 console.log(status, response);
                 if(status == 200){
                     navigateTo('/mutoh');
