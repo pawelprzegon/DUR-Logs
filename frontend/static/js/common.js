@@ -9,7 +9,12 @@ function onlyUnique(value, index, array) {
 export function uniqueSortedList(data, label){
     let units = []
     data.forEach(element => {
-        units.push(element.name)
+        if (element.hasOwnProperty('name')){
+            units.push(element.name)
+        }
+        else if(element.hasOwnProperty('unit')){
+            units.push(element.unit)
+        }
     });
 
     let unique = units.filter(onlyUnique);

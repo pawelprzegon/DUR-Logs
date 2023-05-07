@@ -17,18 +17,18 @@ export default class extends AbstractView {
         document.querySelector('#app').innerHTML = ''
         try{
             showloader();
-            let [status, data] = await callApiGet('mutoh');
+            let [status, dataAll] = await callApiGet('mutoh');
             let [statusTarget, target] = await callApiGet('mutoh/target');
 
             if (status == 200 && statusTarget == 200) {
                             hideloader();
-                            data.sort(dynamicSort("-name"));
+                            dataAll.sort(dynamicSort("-name"));
                             let app = document.querySelector('#app');
                             
-                            let newChart = new createChart('Mutoh');
+                            let newChart = new createChart(dataAll, 'Mutoh');
                             newChart.getData();
                             let chart = newChart.getChart();
-                            let tables = new createTablesMutoh(data, target.target);
+                            let tables = new createTablesMutoh(dataAll, target.target);
                             tables.createTables();
                             let [tables_] = tables.getTables();
                             let dataBox = document.createElement('div');
@@ -56,7 +56,7 @@ export default class extends AbstractView {
                             
                         }
             else if (status != 200) {
-                                alerts(status, data.detail, 'alert-red');
+                                alerts(status, dataAll.detail, 'alert-red');
                             }
             else if(statusTarget != 200){
                                 alerts(status, target.detail, 'alert-red');

@@ -1,9 +1,9 @@
 import AbstractView from "./AbstractView.js";
 import {callApiGet} from "../endpoints.js"
-import {createTableAllImpala, createTableReplacementsImpala} from '../createImpalaTables.js'
+import { Xeikon_All_Data , Xeikon_Toner_Data} from "../createXeikonTables.js";
 import { createChart } from "../chart/createChart.js";
 import { alerts } from "../alerts/alerts.js";
-import { Replacement, hideloader, removeDbSettings, showloader } from "../common.js";
+import {hideloader, showloader, removeDbSettings } from "../common.js";
 
 export default class extends AbstractView {
     constructor() {
@@ -16,16 +16,36 @@ export default class extends AbstractView {
         try{
             showloader();
             let [status, dataAll] = await callApiGet('xeikon');
-            if (status == 200) {
+            let [statusToner, dataToner] = await callApiGet('xeikon/toner/');
+            if (status == 200 && statusToner == 200) {
                             hideloader();
-                            console.log(status)
-                            console.log(dataAll)
+                            let app = document.querySelector('#app');
+                            let newChart = new createChart(dataAll, 'Xeikon');
+                            newChart.getData();
+                            let chart = newChart.getChart();
+
+                            let allTables = new Xeikon_All_Data(dataAll);
+                            allTables.createAll();
+                            let tableAllReady = allTables.getTable();
+                            let dataBox = document.createElement('div')
+                            dataBox.classList.add('dataBox')
+                            dataBox.appendChild(chart)
+                            dataBox.appendChild(tableAllReady);
+                            app.appendChild(dataBox); 
+
+                            let tonerTable = new Xeikon_Toner_Data(dataToner);
+                            tonerTable.createAll();
+                            let tonerTableReady = tonerTable.getTable();
+                            let tonerDataBox = document.createElement('div')
+                            tonerDataBox.classList.add('dataBox')
+                            tonerDataBox.appendChild(tonerTableReady);
+                            app.appendChild(tonerDataBox);
+
+                            removeDbSettings();
+
                         }
             else if (status != 200) {
                                 alerts(status, dataAll.detail, 'alert-red');
-                            }
-            else if(statusRepl != 200){
-                                alerts(statusRepl, dataReplacements.detail, 'alert-red');
                             }
 
         }catch(error){

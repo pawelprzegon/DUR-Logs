@@ -36,7 +36,7 @@ export class createTablesMutoh{
 
 
     createThead(){
-        const heads = ['Nazwa', 'Serial number', '[m2]', '[ml]', 'Ostatni druk', 'Osiągnięty target [%]'];
+        const heads = ['Nazwa', 'Serial number', '[m2]', '[ml]', 'data', 'Osiągnięty target [%]'];
         let thead = document.createElement('thead');
         thead.classList.add('thead');
         let tr = document.createElement('tr');

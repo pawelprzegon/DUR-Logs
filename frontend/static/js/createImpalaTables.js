@@ -1,5 +1,5 @@
 
-export class createTableAllImpala{
+export class Impala_All_Data{
     constructor(data){
         this.data = data;
         this.tableBox = document.createElement('div')
@@ -7,7 +7,7 @@ export class createTableAllImpala{
         this.table = document.createElement('table');
     }
 
-    createTableAll(){
+    createAll(){
         let theads = this.createThead();
         let tbody = this.createTbody();
         let description = this.descriptionsBox();
@@ -19,7 +19,7 @@ export class createTableAllImpala{
     }
 
     createThead(){
-        const heads = ['Nazwa', '[m2]', '[ml]', 'Ostatni druk'];
+        const heads = ['Nazwa', '[m2]', '[ml]', 'data'];
         let thead = document.createElement('thead')
         let tr = document.createElement('tr');
         heads.forEach(head =>{

@@ -2,7 +2,8 @@ import { callApiGet } from "../endpoints.js";
 import { uniqueSortedList } from "../common.js";
 
 export class createChart {
-    constructor(label) {
+    constructor(data, label) {
+        this.data = data
         this.myChart
         this.path
         this.lastUnit
@@ -16,9 +17,9 @@ export class createChart {
             this.path = 'mutoh/'
         }else if(this.label == 'Impala'){
             this.path = 'impala/'
+        }else if(this.label == 'Xeikon'){
+            this.path = 'xeikon/'
         }
-        let [status, data] = await callApiGet(this.path+'monthView')
-
         let period = [
             {'name': 'msc 1'},
             {'name': 'msc 3'},
@@ -26,18 +27,16 @@ export class createChart {
             {'name': 'msc 12'},
             {'name': 'msc all',}
         ]
-        
-        if (status == 200){
-            this.chartArea.appendChild(this.createChartCanvas());
-            this.dropDownBox = document.createElement('div');
-            this.dropDownBox.classList.add('dropDown-Box');
-            
-            this.dropDownBox.appendChild(this.createUnitsDropDownList(period, '', 'Okres'));
-            this.dropDownBox.appendChild(this.createUnitsDropDownList(data, this.path, this.label));
 
-            this.chartArea.appendChild(this.dropDownBox);
+        this.chartArea.appendChild(this.createChartCanvas());
+        this.dropDownBox = document.createElement('div');
+        this.dropDownBox.classList.add('dropDown-Box');
+        
+        this.dropDownBox.appendChild(this.createUnitsDropDownList(period, '', 'Okres'));
+        this.dropDownBox.appendChild(this.createUnitsDropDownList(this.data, this.path, this.label));
+
+        this.chartArea.appendChild(this.dropDownBox);
         }
-    }
 
     
     createChartCanvas(){
@@ -75,7 +74,6 @@ export class createChart {
         let listOfUnits = document.createElement('ul')
         listOfUnits.classList.add('options')
         let unique = uniqueSortedList(data, label)
-
         unique.forEach(element => {
             let unit = document.createElement('li');
             unit.classList.add('option');
@@ -125,6 +123,7 @@ export class createChart {
                 let activePath = ((activated.firstChild.innerText).toLowerCase())
                 let chartId = activated.firstChild.innerText+' '+selected.innerText
                 let [status, data] = await callApiGet(activePath+'/'+chartId+`/${period}`)
+                console.log(status, data)
                 this.createChart(chartId, data)
             }
         }
@@ -141,10 +140,23 @@ export class createChart {
         let Squaremeter = []
         let Total_Ink = []
         let labels = []
+        let label1
+        let label2
         data.forEach(element => {
             labels.push(this.reduceDate(element.date))
-            Squaremeter.push(element.Squaremeter)
-            Total_Ink.push(element.Total_Ink)
+            if (element.hasOwnProperty('Squaremeter') && element.hasOwnProperty('Total_Ink')){
+                Squaremeter.push(element.Squaremeter)
+                Total_Ink.push(element.Total_Ink)
+                label1 = 'm2'
+                label2 = 'ml'
+            }
+            else if(element.hasOwnProperty('printed') && element.hasOwnProperty('toner')){
+                Squaremeter.push(element.printed)
+                Total_Ink.push(element.toner)
+                label1 = 'A3'
+                label2 = 'gram'
+            }
+            
         });
         if(this.myChart != undefined){
             this.myChart.destroy();
@@ -168,7 +180,7 @@ export class createChart {
             labels: labels,
             datasets: [
                 {
-                    label: "m2",
+                    label: label1,
                     data: Squaremeter,
                     tension: 0.2,
                     borderWidth: 2,
@@ -178,7 +190,7 @@ export class createChart {
                     fill: true,
                 },
                 {
-                    label: "ml",
+                    label: label2,
                     data: Total_Ink,
                     tension: 0.2,
                     borderWidth: 2,

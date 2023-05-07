@@ -1,6 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import {callApiGet} from "../endpoints.js"
-import {createTableAllImpala, createTableReplacementsImpala} from '../createImpalaTables.js'
+import {Impala_All_Data, createTableReplacementsImpala} from '../createImpalaTables.js'
 import { createChart } from "../chart/createChart.js";
 import { alerts } from "../alerts/alerts.js";
 import { Replacement, hideloader, removeDbSettings, showloader } from "../common.js";
@@ -21,11 +21,11 @@ export default class extends AbstractView {
                             hideloader();
                             let app = document.querySelector('#app');
                             
-                            let newChart = new createChart('Impala');
+                            let newChart = new createChart(dataAll, 'Impala');
                             newChart.getData();
                             let chart = newChart.getChart();
-                            let allTables = new createTableAllImpala(dataAll);
-                            allTables.createTableAll();
+                            let allTables = new Impala_All_Data(dataAll);
+                            allTables.createAll();
                             let tableAllReady = allTables.getTable();
                             let dataBox = document.createElement('div')
                             dataBox.classList.add('dataBox')
