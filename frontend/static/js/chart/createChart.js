@@ -14,11 +14,11 @@ export class createChart {
 
     async getData(){
         if(this.label == 'Mutoh'){
-            this.path = 'mutoh/'
+            this.path = 'mutoh/chart/'
         }else if(this.label == 'Impala'){
-            this.path = 'impala/'
+            this.path = 'impala/chart/'
         }else if(this.label == 'Xeikon'){
-            this.path = 'xeikon/'
+            this.path = 'xeikon/chart/'
         }
         let period = [
             {'name': 'msc 1'},

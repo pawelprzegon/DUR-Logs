@@ -65,7 +65,7 @@ export class createTablesMutoh{
                         let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
                         unit.click();
                     }
-                }else if (key == 'lst_date'){
+                }else if (key == 'date'){
                     each.innerText = value.replace('T', ' ')
                     let date = new Date();
                     if(Date.parse(value) < date.setDate(date.getDate() - 7)){

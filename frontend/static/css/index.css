@@ -198,7 +198,7 @@ table td>p:last-child{
 
 
 .tableTbodyBox{
-  height: 350px;
+  height: 600px;
   overflow: scroll;
 }
 
@@ -262,7 +262,7 @@ table td>p:last-child{
 }
 
 .selected-to-replace{
-  background-color: #5c5c5c;
+  background-color: #dddddd;
 }
 
 
