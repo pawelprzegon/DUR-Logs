@@ -62,24 +62,25 @@ export class createChart {
         // aktywny dropdown
         btn.onclick = () => {document.querySelector(`#${label}`).classList.toggle("active")}
 
-        // let listOfUnits = document.createElement('ul')
-        // listOfUnits.classList.add('options')
-        // let unique = uniqueSortedList(data, label)
-        // unique.forEach(element => {
-        //     let unit = document.createElement('li');
-        //     unit.classList.add('option');
-        //     if(label != 'Okres'){
-        //         unit.id = 'unit'+element.split(' ')[1];
-        //     }
-        //     unit.innerText = element.split(' ')[1];
-        //     unit.onclick = () => {
-        //         this.generateData(unit, element, label, path, btnText);
-        //     }
-        //     listOfUnits.appendChild(unit);
-        // });
+        let listOfUnits = document.createElement('ul')
+        listOfUnits.classList.add('options')
+        let unique = uniqueSortedList(data, label)
+        unique.forEach(element => {
+            let unit = document.createElement('li');
+            unit.classList.add('option');
+            if(label != 'Okres'){
+                unit.id = 'unit'+element.split(' ')[1];
+            }
+            unit.innerText = element.split(' ')[1];
+            unit.onclick = () => {
+                // btnText.innerText = element.split(' ')[1]
+                // this.generateData(unit, element, label, path, btnText);
+            }
+            listOfUnits.appendChild(unit);
+        });
 
         
-        // dropdown.appendChild(listOfUnits);
+        dropdown.appendChild(listOfUnits);
         return dropdown
     }
 
@@ -90,70 +91,132 @@ export class createChart {
         return tmpLbl.join('-')
     }
 
-    createChart(id, data){
-        let Squaremeter = []
-        let Total_Ink = []
+    createChart(unit, data){
+        let dataset = {}
         let labels = []
-        let label1
-        let label2
+        let label = {}
         data.forEach(element => {
             labels.push(this.reduceDate(element.date))
-            if (element.hasOwnProperty('Squaremeter') && element.hasOwnProperty('Total_Ink')){
-                Squaremeter.push(element.Squaremeter)
-                Total_Ink.push(element.Total_Ink)
-                label1 = 'm2'
-                label2 = 'ml'
-            }
-            else if(element.hasOwnProperty('printed') && element.hasOwnProperty('toner')){
-                Squaremeter.push(element.printed)
-                Total_Ink.push(element.toner)
-                label1 = 'A3'
-                label2 = 'gram'
-            }
-            
-        });
+            for (const[key, value] of Object.entries(element)){
+                if (key != 'date' && key != 'unit'){
+                    if (dataset[key]){
+                        dataset[key].push(value)
+                    }else{
+                        dataset[key] = [value]
+                    } 
+                }
+                if (key == 'Squaremeter'){
+                    label[key] = 'm2'
+                }else if (key == 'Total_Ink'){ 
+                    label[key] = 'ml'
+                }
+                else if(key == 'printed'){
+                    label[key] = 'A3'
+                }
+                else if(key == 'date' || key == 'unit'){
+                }
+                else{
+                    label[key] = 'gram'
+                }
+            }  
+        }); 
         if(this.myChart != undefined){
             this.myChart.destroy();
         }
         
         let ctx = document.getElementById("charts").getContext('2d');
-        let gradientM2 = ctx.createLinearGradient(0, 0, 0, 450);
-        gradientM2.addColorStop(0, 'rgba(61, 196, 90, 0.7)');
-        gradientM2.addColorStop(0.5, 'rgba(61, 196, 90, 0.3)');
-        gradientM2.addColorStop(1, 'rgba(61, 196, 90, 0)');
+        let colors = []
+        let CMYKcolors = []
 
-        let gradientMl = ctx.createLinearGradient(0, 0, 0, 450);
-        gradientMl.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
-        gradientMl.addColorStop(0.5, 'rgba(215, 72, 72, 0.3)');
-        gradientMl.addColorStop(1, 'rgba(215, 72, 72, 0)');
+        let red = ctx.createLinearGradient(0, 0, 0, 450);
+        red.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
+        red.addColorStop(0.5, 'rgba(215, 72, 72, 0.3)');
+        red.addColorStop(1, 'rgba(215, 72, 72, 0)');
 
+        let green = ctx.createLinearGradient(0, 0, 0, 450);
+        green.addColorStop(0, 'rgba(61, 196, 90, 0.7)');
+        green.addColorStop(0.5, 'rgba(61, 196, 90, 0.3)');
+        green.addColorStop(1, 'rgba(61, 196, 90, 0)');
+
+        let cyan = ctx.createLinearGradient(0, 0, 0, 450);
+        cyan.addColorStop(0, 'rgba(0, 255, 255, 0.7)');
+        cyan.addColorStop(0.5, 'rgba(0, 255, 255, 0.3)');
+        cyan.addColorStop(1, 'rgba(0, 255, 255, 0)');
+        let magenta = ctx.createLinearGradient(0, 0, 0, 450);
+        magenta.addColorStop(0, 'rgba(255, 0, 255, 0.7)');
+        magenta.addColorStop(0.5, 'rgba(255, 0, 255, 0.3)');
+        magenta.addColorStop(1, 'rgba(255, 0, 255, 0)');
+        let yellow = ctx.createLinearGradient(0, 0, 0, 450);
+        yellow.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
+        yellow.addColorStop(0.5, 'rgba(255, 255, 0, 0.3)');
+        yellow.addColorStop(1, 'rgba(255, 255, 0, 0)');
+        let black = ctx.createLinearGradient(0, 0, 0, 450);
+        black.addColorStop(0, 'rgba(0, 0, 0, 0.7)');
+        black.addColorStop(0.5, 'rgba(0, 0, 0, 0.3)');
+        black.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        let white = ctx.createLinearGradient(0, 0, 0, 450);
+        white.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        white.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+        white.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        colors.push([green, 'rgb(58, 204, 43)'])
+        colors.push([red, 'rgb(228, 63, 63)'])
+        CMYKcolors.push([cyan, , 'rgb(0, 255, 255)'])
+        CMYKcolors.push([magenta, 'rgb(255, 0, 255)'])
+        CMYKcolors.push([yellow, 'rgb(255, 255, 0)'])
+        CMYKcolors.push([black, 'rgb(0, 0, 0)'])
+        CMYKcolors.push([white, 'rgb(255, 255, 255)'])
+
+
+        let readyDataSet = []
+        let size = Object.keys(dataset).length
+        for (const[index, [key, value]] of Object.entries(Object.entries(dataset))){
+            let color
+            if (size <= 2){
+                color = colors
+            }else{
+                color = CMYKcolors
+            }
+            data = {
+                label: label[key],
+                data: value,
+                tension: 0.2,
+                borderWidth: 2,
+                backgroundColor: color[index][0],
+                pointBackgroundColor: 'white',
+                borderColor: color[index][1],
+                fill: true,
+            }
+            readyDataSet.push(data)
+        };
 
         this.myChart = new Chart(ctx, {
             type: 'line',
         data: {
             labels: labels,
-            datasets: [
-                {
-                    label: label1,
-                    data: Squaremeter,
-                    tension: 0.2,
-                    borderWidth: 2,
-                    backgroundColor: gradientM2,
-                    pointBackgroundColor: 'white',
-                    borderColor: 'rgb(61, 196, 90)',
-                    fill: true,
-                },
-                {
-                    label: label2,
-                    data: Total_Ink,
-                    tension: 0.2,
-                    borderWidth: 2,
-                    backgroundColor: gradientMl,
-                    pointBackgroundColor: 'white',
-                    borderColor: 'rgb(215, 72, 72)',
-                    fill: true,
-                },
-            ]
+            datasets: readyDataSet
+            // datasets: [
+            //     {
+            //         label: label1,
+            //         data: Squaremeter,
+            //         tension: 0.2,
+            //         borderWidth: 2,
+            //         backgroundColor: gradientM2,
+            //         pointBackgroundColor: 'white',
+            //         borderColor: 'rgb(61, 196, 90)',
+            //         fill: true,
+            //     },
+            //     {
+            //         label: label2,
+            //         data: Total_Ink,
+            //         tension: 0.2,
+            //         borderWidth: 2,
+            //         backgroundColor: gradientMl,
+            //         pointBackgroundColor: 'white',
+            //         borderColor: 'rgb(215, 72, 72)',
+            //         fill: true,
+            //     },
+            // ]
         },
         options: {
             maintainAspectRatio: 2,
@@ -161,7 +224,7 @@ export class createChart {
             plugins: {
             title: {
                 display: true,
-                text: id,
+                text: unit,
                 padding: {
                 top: 10,
                 bottom: 20

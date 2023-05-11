@@ -54,7 +54,6 @@ export async function generateNewChart(chart, path, unit){
         document.querySelector('#sBtn-text-Okres').innerText = 'all'
     }
     let [status, data] = await callApiGet(path+`/${period}`)
-    console.log(data)
     chart.createChart(unit, data)
 }
 

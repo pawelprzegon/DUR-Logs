@@ -44,7 +44,7 @@ export class Impala_All_Data{
                     let each = document.createElement('td');
                     each.classList.add('table-td');
                     each.innerText = value;
-                    if(key == 'name'){
+                    if(key == 'unit'){
                         each.classList.add('unit');
                         each.onclick = () => {
                             let path = `impala/chart/${value}`
@@ -136,9 +136,9 @@ export class createTableReplacementsImpala{
             if (!unit.hasOwnProperty('filters_threshold') && !unit.hasOwnProperty('bearings_threshold')){
                 let tr = document.createElement('tr');
                 let name = document.createElement('td');
-                name.innerText = unit.Name;
+                name.innerText = unit.unit;
                 name.classList.add('table-th')
-                this.units.push(unit.Name)
+                this.units.push(unit.unit)
                 tr.append(name);
                 for (const value of Object.values(unit.filters)){
                     for (const [key,val] of Object.entries(value)){
@@ -148,7 +148,7 @@ export class createTableReplacementsImpala{
                         date.classList.add('replacement-date');
                         let quantity = document.createElement('p');
                         if(val['last_replacement'] != 'NaT'){
-                            each.id = `filters-${unit.Name.split(' ')[1]}-${key}`;
+                            each.id = `filters-${unit.unit.split(' ')[1]}-${key}`;
                             each.onclick = () => {
                                 if (each.classList.contains('activ')){
                                     let selected = document.querySelector('.selected-to-replace');
@@ -184,13 +184,13 @@ export class createTableReplacementsImpala{
             if (!unit.hasOwnProperty('filters_threshold') && !unit.hasOwnProperty('bearings_threshold')){
                 let tr = document.createElement('tr');
                 let name = document.createElement('td');
-                name.innerText = unit.Name;
+                name.innerText = unit.unit;
                 name.classList.add('table-th')
                 tr.append(name);
 
                 let each = document.createElement('td');
                 each.classList.add('table-td', 'clickable');
-                each.id = `bearings-${unit.Name}`
+                each.id = `bearings-${unit.unit}`
                 each.onclick = () => {
                     if (each.classList.contains('activ')){
                         let selected = document.querySelector('.selected-to-replace');

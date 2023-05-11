@@ -60,7 +60,7 @@ export class createTablesMutoh{
                 let each = document.createElement('td');
                 each.classList.add('table-td');
                 each.innerText = value;
-                if(key == 'name'){
+                if(key == 'unit'){
                     each.classList.add('unit');
                     each.onclick = () => {
                         let path = `mutoh/chart/${value}`
