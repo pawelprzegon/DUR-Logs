@@ -2,7 +2,7 @@ import { alerts } from "./alerts/alerts.js";
 import { callApiPut, callApiGet } from "./endpoints.js";
 import { navigateTo } from "./index.js";
 
-function onlyUnique(value, index, array) {
+export function onlyUnique(value, index, array) {
     return array.indexOf(value) === index;
 }
 
@@ -45,19 +45,6 @@ export function removeDbSettings(){
         });
     }
 }
-
-export async function generateNewChart(chart, path, unit){
-        
-    let period = document.querySelector('#sBtn-text-Okres').innerText
-    if (period == '-'){
-        period = 'all'
-        document.querySelector('#sBtn-text-Okres').innerText = 'all'
-    }
-    let [status, data] = await callApiGet(path+`/${period}`)
-    chart.createChart(unit, data)
-}
-
-
 
 
 export class Replacement{
@@ -245,4 +232,66 @@ export class Replacement{
     getReplaceBox(){
         return this.DbSettings;
     }
+}
+
+
+export async function generateNewChart(chart){
+    
+    let period = document.querySelector('#sBtn-text-Okres').innerText
+    if (period == '-'){
+        period = 'all'
+        document.querySelector('#sBtn-text-Okres').innerText = 'all'
+    }
+    let path = localStorage.getItem("activeChartData");
+    let unit = localStorage.getItem('activeUnit')
+    let [status, data] = await callApiGet(path+`/${period}`)
+    chart.createChart(unit, data)
+}
+
+
+export function getTwocolors(ctx){
+    let colors = []
+    let red = ctx.createLinearGradient(0, 0, 0, 450);
+    red.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
+    red.addColorStop(0.5, 'rgba(215, 72, 72, 0.3)');
+    red.addColorStop(1, 'rgba(215, 72, 72, 0)');
+    let green = ctx.createLinearGradient(0, 0, 0, 450);
+    green.addColorStop(0, 'rgba(61, 196, 90, 0.7)');
+    green.addColorStop(0.5, 'rgba(61, 196, 90, 0.3)');
+    green.addColorStop(1, 'rgba(61, 196, 90, 0)');
+
+    colors.push([green, 'rgb(58, 204, 43)'])
+    colors.push([red, 'rgb(228, 63, 63)'])
+    return colors
+}
+
+export function getManycolors(ctx){
+    let CMYKcolors = []
+    let cyan = ctx.createLinearGradient(0, 0, 0, 450);
+    cyan.addColorStop(0, 'rgba(0, 255, 255, 0.7)');
+    cyan.addColorStop(0.5, 'rgba(0, 255, 255, 0.3)');
+    cyan.addColorStop(1, 'rgba(0, 255, 255, 0)');
+    let magenta = ctx.createLinearGradient(0, 0, 0, 450);
+    magenta.addColorStop(0, 'rgba(255, 0, 255, 0.7)');
+    magenta.addColorStop(0.5, 'rgba(255, 0, 255, 0.3)');
+    magenta.addColorStop(1, 'rgba(255, 0, 255, 0)');
+    let yellow = ctx.createLinearGradient(0, 0, 0, 450);
+    yellow.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
+    yellow.addColorStop(0.5, 'rgba(255, 255, 0, 0.3)');
+    yellow.addColorStop(1, 'rgba(255, 255, 0, 0)');
+    let black = ctx.createLinearGradient(0, 0, 0, 450);
+    black.addColorStop(0, 'rgba(0, 0, 0, 0.7)');
+    black.addColorStop(0.5, 'rgba(0, 0, 0, 0.3)');
+    black.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    let white = ctx.createLinearGradient(0, 0, 0, 450);
+    white.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+    white.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+    white.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+    CMYKcolors.push([cyan, , 'rgb(0, 255, 255)'])
+    CMYKcolors.push([magenta, 'rgb(255, 0, 255)'])
+    CMYKcolors.push([yellow, 'rgb(255, 255, 0)'])
+    CMYKcolors.push([black, 'rgb(0, 0, 0)'])
+    CMYKcolors.push([white, 'rgb(255, 255, 255)'])
+    return CMYKcolors
 }

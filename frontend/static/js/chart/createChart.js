@@ -1,5 +1,5 @@
 import { callApiGet } from "../endpoints.js";
-import { uniqueSortedList } from "../common.js";
+import { getTwocolors, getManycolors, uniqueSortedList, generateNewChart, onlyUnique } from "../common.js";
 
 export class createChart {
     constructor() {
@@ -11,7 +11,7 @@ export class createChart {
     }
 
     async getData(){
-        let period = [
+        this.period = [
             {'name': 'msc 1'},
             {'name': 'msc 3'},
             {'name': 'msc 6'},
@@ -22,10 +22,7 @@ export class createChart {
         this.chartArea.appendChild(this.createChartCanvas());
         this.dropDownBox = document.createElement('div');
         this.dropDownBox.classList.add('dropDown-Box');
-        
-        this.dropDownBox.appendChild(this.createUnitsDropDownList(period, '', 'Okres'));
-        // this.dropDownBox.appendChild(this.createUnitsDropDownList(this.data, this.path, this.label));
-
+        this.dropDownBox.appendChild(this.createDropDownList());
         this.chartArea.appendChild(this.dropDownBox);
         }
 
@@ -40,15 +37,14 @@ export class createChart {
         return ChartsArea
     }
 
-    createUnitsDropDownList(data, path, label){
+    createDropDownList(){
+        let label = 'Okres'
         let dropdown = document.createElement('div')
         dropdown.classList.add('select-menu')
         dropdown.id = label
         let lbl = document.createElement('p')
         lbl.classList.add('dropdown-label')
-        if (label == 'Okres'){lbl.innerText = label+' [msc]'}
-        else{lbl.innerText = label}
-        
+        lbl.innerText = label+' [msc]'
         let btn = document.createElement('div')
         btn.classList.add('select-btn')
         let btnText = document.createElement('span')
@@ -60,122 +56,49 @@ export class createChart {
         dropdown.appendChild(btn)
 
         // aktywny dropdown
-        btn.onclick = () => {document.querySelector(`#${label}`).classList.toggle("active")}
+        btn.onclick = () => {document.querySelector('#Okres').classList.toggle("active")}
 
-        let listOfUnits = document.createElement('ul')
-        listOfUnits.classList.add('options')
-        let unique = uniqueSortedList(data, label)
+        let okresList = document.createElement('ul')
+        okresList.classList.add('options')
+        let unique = uniqueSortedList(this.period, label)
         unique.forEach(element => {
             let unit = document.createElement('li');
             unit.classList.add('option');
-            if(label != 'Okres'){
-                unit.id = 'unit'+element.split(' ')[1];
-            }
             unit.innerText = element.split(' ')[1];
             unit.onclick = () => {
-                // btnText.innerText = element.split(' ')[1]
-                // this.generateData(unit, element, label, path, btnText);
+                btnText.innerText = unit.innerText
+                document.querySelector('#Okres').classList.remove("active")
+                generateNewChart(this)
             }
-            listOfUnits.appendChild(unit);
+            okresList.appendChild(unit);
         });
 
         
-        dropdown.appendChild(listOfUnits);
+        dropdown.appendChild(okresList);
         return dropdown
     }
 
 
-    reduceDate(date){
-        let tmpLbl = date.split('-');
-        tmpLbl.pop();
-        return tmpLbl.join('-')
-    }
-
     createChart(unit, data){
-        let dataset = {}
-        let labels = []
-        let label = {}
-        data.forEach(element => {
-            labels.push(this.reduceDate(element.date))
-            for (const[key, value] of Object.entries(element)){
-                if (key != 'date' && key != 'unit'){
-                    if (dataset[key]){
-                        dataset[key].push(value)
-                    }else{
-                        dataset[key] = [value]
-                    } 
-                }
-                if (key == 'Squaremeter'){
-                    label[key] = 'm2'
-                }else if (key == 'Total_Ink'){ 
-                    label[key] = 'ml'
-                }
-                else if(key == 'printed'){
-                    label[key] = 'A3'
-                }
-                else if(key == 'date' || key == 'unit'){
-                }
-                else{
-                    label[key] = 'gram'
-                }
-            }  
-        }); 
+         
         if(this.myChart != undefined){
             this.myChart.destroy();
         }
         
+        let [labels, label, dataset, values] = prepareChartData(unit, data)
+        console.log(labels)
+        console.log(label)
+        console.log(dataset)
+        console.log(values)
         let ctx = document.getElementById("charts").getContext('2d');
-        let colors = []
-        let CMYKcolors = []
-
-        let red = ctx.createLinearGradient(0, 0, 0, 450);
-        red.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
-        red.addColorStop(0.5, 'rgba(215, 72, 72, 0.3)');
-        red.addColorStop(1, 'rgba(215, 72, 72, 0)');
-
-        let green = ctx.createLinearGradient(0, 0, 0, 450);
-        green.addColorStop(0, 'rgba(61, 196, 90, 0.7)');
-        green.addColorStop(0.5, 'rgba(61, 196, 90, 0.3)');
-        green.addColorStop(1, 'rgba(61, 196, 90, 0)');
-
-        let cyan = ctx.createLinearGradient(0, 0, 0, 450);
-        cyan.addColorStop(0, 'rgba(0, 255, 255, 0.7)');
-        cyan.addColorStop(0.5, 'rgba(0, 255, 255, 0.3)');
-        cyan.addColorStop(1, 'rgba(0, 255, 255, 0)');
-        let magenta = ctx.createLinearGradient(0, 0, 0, 450);
-        magenta.addColorStop(0, 'rgba(255, 0, 255, 0.7)');
-        magenta.addColorStop(0.5, 'rgba(255, 0, 255, 0.3)');
-        magenta.addColorStop(1, 'rgba(255, 0, 255, 0)');
-        let yellow = ctx.createLinearGradient(0, 0, 0, 450);
-        yellow.addColorStop(0, 'rgba(255, 255, 0, 0.7)');
-        yellow.addColorStop(0.5, 'rgba(255, 255, 0, 0.3)');
-        yellow.addColorStop(1, 'rgba(255, 255, 0, 0)');
-        let black = ctx.createLinearGradient(0, 0, 0, 450);
-        black.addColorStop(0, 'rgba(0, 0, 0, 0.7)');
-        black.addColorStop(0.5, 'rgba(0, 0, 0, 0.3)');
-        black.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        let white = ctx.createLinearGradient(0, 0, 0, 450);
-        white.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
-        white.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
-        white.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-        colors.push([green, 'rgb(58, 204, 43)'])
-        colors.push([red, 'rgb(228, 63, 63)'])
-        CMYKcolors.push([cyan, , 'rgb(0, 255, 255)'])
-        CMYKcolors.push([magenta, 'rgb(255, 0, 255)'])
-        CMYKcolors.push([yellow, 'rgb(255, 255, 0)'])
-        CMYKcolors.push([black, 'rgb(0, 0, 0)'])
-        CMYKcolors.push([white, 'rgb(255, 255, 255)'])
-
-
         let readyDataSet = []
         let size = Object.keys(dataset).length
         for (const[index, [key, value]] of Object.entries(Object.entries(dataset))){
             let color
             if (size <= 2){
-                color = colors
+                color = getTwocolors(ctx)
             }else{
-                color = CMYKcolors
+                color = getManycolors(ctx)
             }
             data = {
                 label: label[key],
@@ -193,30 +116,8 @@ export class createChart {
         this.myChart = new Chart(ctx, {
             type: 'line',
         data: {
-            labels: labels,
+            labels: labels['month'],
             datasets: readyDataSet
-            // datasets: [
-            //     {
-            //         label: label1,
-            //         data: Squaremeter,
-            //         tension: 0.2,
-            //         borderWidth: 2,
-            //         backgroundColor: gradientM2,
-            //         pointBackgroundColor: 'white',
-            //         borderColor: 'rgb(61, 196, 90)',
-            //         fill: true,
-            //     },
-            //     {
-            //         label: label2,
-            //         data: Total_Ink,
-            //         tension: 0.2,
-            //         borderWidth: 2,
-            //         backgroundColor: gradientMl,
-            //         pointBackgroundColor: 'white',
-            //         borderColor: 'rgb(215, 72, 72)',
-            //         fill: true,
-            //     },
-            // ]
         },
         options: {
             maintainAspectRatio: 2,
@@ -254,7 +155,7 @@ export class createChart {
                 stacked: false,
                 title: {
                 display: true,
-                text: 'Value'
+                text: values
                 },
                 min: 0,
                 // max: max,
@@ -274,9 +175,106 @@ export class createChart {
     
 }
 
-
-function reEscape(s) {
-    return s.replace(/([.*+?^$|(){}\[\]])/mg, "\\$1");
+function reduceDate(date){
+    let tmpLbl = date.split('-');
+    tmpLbl.pop();
+    return tmpLbl.join('-')
 }
 
+function prepareChartData(unit, data){
+    let legend = new chartLegend()
+    
+    data.forEach(element => {
+        legend.addToMonths(element.date)
+        
+        for (const[key, value] of Object.entries(element)){
+            let letter = Array.from(unit)[0];
+            if (letter == 'I' || letter == 'M'){
+                if (key == 'printed'){
+                    legend.addToLabel(key)
+                    legend.addToValues('[m2]')
+                }else if (key == 'ink'){ 
+                    legend.addToLabel(key)
+                    legend.addToValues('[ml]')
+                }
+            }
+            else if(letter == 'X'){
+                if(key == 'printed'){
+                    legend.addToLabel(key)
+                    legend.addToValues('[A3]')
+                    legend.addToUnits('[A3]')
+                }
+                else if(key == 'date' || key == 'unit'){
+                }
+                else{
+                    legend.addToLabel(key)
+                    legend.addToValues('[gram]')
+                    legend.addToUnits('[gram]')
+                }
+            }
+            if (key != 'date' && key != 'unit'){
+                legend.addToDataSet(key, value)
+                
+            }
+        }  
+    });
+    return [legend.getLabels(), legend.getLabel(), legend.getdataSet(), legend.getValues()]
+        
+}
 
+class chartLegend {
+    constructor() {
+        this.dataset = {}
+        this.labels = {}
+        this.label = {}
+        this.values = []
+    }
+
+    addToUnits(element){
+        if (this.labels['mesurment_units']){
+            this.labels['mesurment_units'].push(element)
+        }else{
+            this.labels['mesurment_units'] = [element]
+        }
+    }
+
+    addToMonths(element){
+        if (this.labels['month']){
+            this.labels['month'].push(element)
+        }else{
+            this.labels['month'] = [element]
+        }
+    }
+
+    addToDataSet(key, element){
+        if (this.dataset[key]){
+            this.dataset[key].push(element)
+        }else{
+            this.dataset[key] = [element]
+        } 
+    }
+
+    addToLabel(element){
+        this.label[element] = element
+    }
+
+    addToValues(element){
+        this.values.push(element) 
+    }
+
+
+    getLabels(){
+        return this.labels
+    }
+    getdataSet(){
+        return this.dataset
+    }
+    getLabel(){
+        return this.label
+    }
+    getValues(){
+        this.values = this.values.filter(onlyUnique);
+        return this.values
+    }
+
+}

@@ -37,7 +37,7 @@ export class createTablesMutoh{
 
 
     createThead(){
-        const heads = ['Nazwa', 'Serial number', '[m2]', '[ml]', 'data', 'Osiągnięty target [%]'];
+        const heads = ['Unit', 'S/N', 'Printed\n[m2]', 'Ink\n[ml]', 'Date', 'Target\n[%]'];
         let thead = document.createElement('thead');
         thead.classList.add('thead');
         let tr = document.createElement('tr');
@@ -64,7 +64,9 @@ export class createTablesMutoh{
                     each.classList.add('unit');
                     each.onclick = () => {
                         let path = `mutoh/chart/${value}`
-                        generateNewChart(this.chart, path, value);
+                        localStorage.setItem("activeChartData", path);
+                        localStorage.setItem("activeUnit", value);
+                        generateNewChart(this.chart);
                     }
                 }else if (key == 'date'){
                     each.innerText = value.replace('T', ' ')

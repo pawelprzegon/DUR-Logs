@@ -22,7 +22,7 @@ export class Xeikon_All_Data{
     }
 
     createThead(){
-        const heads = ['Nazwa', 'S/N', 'przebieg [A3]', 'toner [gram]', 'data'];
+        const heads = ['Unit', 'S/N', 'Printed\n[A3]', 'Ink\n[gram]', 'date'];
         let thead = document.createElement('thead')
         let tr = document.createElement('tr');
         heads.forEach(head =>{
@@ -49,7 +49,9 @@ export class Xeikon_All_Data{
                     each.classList.add('unit');
                     each.onclick = () => {
                         let path = `xeikon/chart/${value}`
-                        generateNewChart(this.chart, path, value);
+                        localStorage.setItem("activeChartData", path);
+                        localStorage.setItem("activeUnit", value);
+                        generateNewChart(this.chart);
                     }
                 }
                 tr.appendChild(each);
@@ -135,7 +137,9 @@ export class Xeikon_Data{
                     each.classList.add('unit');
                     each.onclick = () => {
                         let path = this.dataPath+`chart/${value}`
-                        generateNewChart(this.chart, path, value);
+                        localStorage.setItem("activeChartData", path);
+                        localStorage.setItem("activeUnit", value);
+                        generateNewChart(this.chart);
                     }
                 }
                 tr.appendChild(each);

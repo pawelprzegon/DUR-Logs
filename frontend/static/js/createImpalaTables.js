@@ -21,7 +21,7 @@ export class Impala_All_Data{
     }
 
     createThead(){
-        const heads = ['Nazwa', '[m2]', '[ml]', 'data'];
+        const heads = ['Unit', 'Printed\n[m2]', 'Ink\n[ml]', 'Date'];
         let thead = document.createElement('thead')
         let tr = document.createElement('tr');
         heads.forEach(head =>{
@@ -48,7 +48,9 @@ export class Impala_All_Data{
                         each.classList.add('unit');
                         each.onclick = () => {
                             let path = `impala/chart/${value}`
-                            generateNewChart(this.chart, path, value);
+                            localStorage.setItem("activeChartData", path);
+                            localStorage.setItem("activeUnit", value);
+                            generateNewChart(this.chart);
                         }}
                     tr.appendChild(each);
                 };
