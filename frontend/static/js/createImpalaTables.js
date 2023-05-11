@@ -1,7 +1,9 @@
+import { generateNewChart } from "./common.js";
 
 export class Impala_All_Data{
-    constructor(data){
+    constructor(data, chart){
         this.data = data;
+        this.chart = chart
         this.tableBox = document.createElement('div')
         this.tableBox.classList.add('tableBox')
         this.table = document.createElement('table');
@@ -45,8 +47,8 @@ export class Impala_All_Data{
                     if(key == 'name'){
                         each.classList.add('unit');
                         each.onclick = () => {
-                            let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
-                            unit.click();
+                            let path = `impala/chart/${value}`
+                            generateNewChart(this.chart, path, value);
                         }}
                     tr.appendChild(each);
                 };

@@ -1,12 +1,13 @@
 import { navigateTo } from "./index.js";
 import {callApiPut} from "./endpoints.js"
 import { alerts } from "./alerts/alerts.js";
-
+import { generateNewChart } from "./common.js"
 
 export class createTablesMutoh{
-    constructor(data, target){
+    constructor(data, target, chart){
         this.data = data;
         this.target = target;
+        this.chart = chart;
         this.result = [];
     }
 
@@ -62,8 +63,8 @@ export class createTablesMutoh{
                 if(key == 'name'){
                     each.classList.add('unit');
                     each.onclick = () => {
-                        let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
-                        unit.click();
+                        let path = `mutoh/chart/${value}`
+                        generateNewChart(this.chart, path, value);
                     }
                 }else if (key == 'date'){
                     each.innerText = value.replace('T', ' ')

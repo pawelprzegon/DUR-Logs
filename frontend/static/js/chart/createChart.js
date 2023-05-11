@@ -2,24 +2,15 @@ import { callApiGet } from "../endpoints.js";
 import { uniqueSortedList } from "../common.js";
 
 export class createChart {
-    constructor(data, label) {
-        this.data = data
+    constructor() {
         this.myChart
         this.path
         this.lastUnit
-        this.label = label
         this.chartArea = document.createElement('div')
         this.chartArea.classList.add('chart-area')
     }
 
     async getData(){
-        if(this.label == 'Mutoh'){
-            this.path = 'mutoh/chart/'
-        }else if(this.label == 'Impala'){
-            this.path = 'impala/chart/'
-        }else if(this.label == 'Xeikon'){
-            this.path = 'xeikon/chart/'
-        }
         let period = [
             {'name': 'msc 1'},
             {'name': 'msc 3'},
@@ -33,7 +24,7 @@ export class createChart {
         this.dropDownBox.classList.add('dropDown-Box');
         
         this.dropDownBox.appendChild(this.createUnitsDropDownList(period, '', 'Okres'));
-        this.dropDownBox.appendChild(this.createUnitsDropDownList(this.data, this.path, this.label));
+        // this.dropDownBox.appendChild(this.createUnitsDropDownList(this.data, this.path, this.label));
 
         this.chartArea.appendChild(this.dropDownBox);
         }
@@ -71,64 +62,27 @@ export class createChart {
         // aktywny dropdown
         btn.onclick = () => {document.querySelector(`#${label}`).classList.toggle("active")}
 
-        let listOfUnits = document.createElement('ul')
-        listOfUnits.classList.add('options')
-        let unique = uniqueSortedList(data, label)
-        unique.forEach(element => {
-            let unit = document.createElement('li');
-            unit.classList.add('option');
-            if(label != 'Okres'){
-                unit.id = 'unit'+element.split(' ')[1];
-            }
-            unit.innerText = element.split(' ')[1];
-            unit.onclick = () => {
-                this.generateData(unit, element, label, path, btnText);
-            }
-            listOfUnits.appendChild(unit);
-        });
+        // let listOfUnits = document.createElement('ul')
+        // listOfUnits.classList.add('options')
+        // let unique = uniqueSortedList(data, label)
+        // unique.forEach(element => {
+        //     let unit = document.createElement('li');
+        //     unit.classList.add('option');
+        //     if(label != 'Okres'){
+        //         unit.id = 'unit'+element.split(' ')[1];
+        //     }
+        //     unit.innerText = element.split(' ')[1];
+        //     unit.onclick = () => {
+        //         this.generateData(unit, element, label, path, btnText);
+        //     }
+        //     listOfUnits.appendChild(unit);
+        // });
 
         
-        dropdown.appendChild(listOfUnits);
+        // dropdown.appendChild(listOfUnits);
         return dropdown
     }
 
-
-    async generateData(unit, element, label, path, btnText){
-        
-        let menus = document.querySelectorAll('.active')
-        menus.forEach(menu =>{
-            menu.classList.remove("active");
-        })
-
-        let activated = document.querySelector('.activated')
-        let selected = document.querySelector('.selected')
-        if (label != 'Okres'){
-            document.querySelector(`#sBtn-text-${this.label}`).innerText = '-';
-            let period = document.querySelector('#sBtn-text-Okres').innerText
-            if (selected != null){
-                activated.classList.remove('activated')
-                selected.classList.remove('selected')   
-            }
-            if (period == '-'){
-                period = 'all'
-                document.querySelector('#sBtn-text-Okres').innerText = 'all'
-            }
-            let [status, data] = await callApiGet(path+element+`/${period}`)
-            this.createChart(element, data)
-            document.querySelector(`#${label}`).classList.add('activated')
-            unit.classList.add('selected')
-        }else{
-            let period = unit.innerText
-            if (selected != null){
-                let activePath = ((activated.firstChild.innerText).toLowerCase())
-                let chartId = activated.firstChild.innerText+' '+selected.innerText
-                let [status, data] = await callApiGet(activePath+'/'+chartId+`/${period}`)
-                console.log(status, data)
-                this.createChart(chartId, data)
-            }
-        }
-        btnText.innerText = unit.innerText;
-    }
 
     reduceDate(date){
         let tmpLbl = date.split('-');

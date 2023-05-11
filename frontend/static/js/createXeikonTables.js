@@ -1,6 +1,10 @@
+import { generateNewChart } from "./common.js";
+
 export class Xeikon_All_Data{
-    constructor(data){
+    constructor(data, description, chart){
         this.data = data;
+        this.description = description
+        this.chart = chart
         this.tableBox = document.createElement('div')
         this.tableBox.classList.add('tableBox')
         this.table = document.createElement('table');
@@ -44,9 +48,10 @@ export class Xeikon_All_Data{
                 if(key == 'unit'){
                     each.classList.add('unit');
                     each.onclick = () => {
-                        let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
-                        unit.click();
-                    }}
+                        let path = `xeikon/chart/${value}`
+                        generateNewChart(this.chart, path, value);
+                    }
+                }
                 tr.appendChild(each);
             };
             tbody.appendChild(tr);
@@ -58,7 +63,7 @@ export class Xeikon_All_Data{
         let descBox = document.createElement('div')
         descBox.classList.add('descBox')
         let descLabel = document.createElement('small')
-        descLabel.innerText = '*całkowity przebieg urządzeń'
+        descLabel.innerText = this.description
         descBox.appendChild(descLabel)
 
         return descBox
@@ -70,9 +75,11 @@ export class Xeikon_All_Data{
 }
 
 export class Xeikon_Data{
-    constructor(data, description){
+    constructor(data, description, chart, dataPath){
         this.data = data;
         this.description = description
+        this.chart = chart
+        this.dataPath = dataPath
         this.tableBox = document.createElement('div')
         this.tableBox.classList.add('tableBox')
         this.table = document.createElement('table');
@@ -124,12 +131,13 @@ export class Xeikon_Data{
                 let each = document.createElement('td');
                 each.classList.add('table-td');
                 each.innerText = value;
-                // if(key == 'unit'){
-                //     each.classList.add('unit');
-                //     each.onclick = () => {
-                //         let unit = document.querySelector(`#unit${value.split(' ')[1]}`);
-                //         unit.click();
-                //     }}
+                if(key == 'unit' && this.dataPath != undefined){
+                    each.classList.add('unit');
+                    each.onclick = () => {
+                        let path = this.dataPath+`chart/${value}`
+                        generateNewChart(this.chart, path, value);
+                    }
+                }
                 tr.appendChild(each);
             };
             tbody.appendChild(tr);

@@ -21,40 +21,37 @@ export default class extends AbstractView {
             let [statusTarget, target] = await callApiGet('mutoh/target');
 
             if (status == 200 && statusTarget == 200) {
-                            hideloader();
-                            dataAll.sort(dynamicSort("-name"));
-                            let app = document.querySelector('#app');
-                            
-                            let newChart = new createChart(dataAll, 'Mutoh');
-                            newChart.getData();
-                            let chart = newChart.getChart();
-                            let tables = new createTablesMutoh(dataAll, target.target);
-                            tables.createTables();
-                            let [tables_] = tables.getTables();
-                            let dataBox = document.createElement('div');
-                            dataBox.classList.add('dataBox');
-                            dataBox.appendChild(chart);
-                            dataBox.appendChild(tables_);
-                            app.appendChild(dataBox);
+                hideloader();
+
+                dataAll.sort(dynamicSort("-name"));
+                let app = document.querySelector('#app');
                 
-                            // NavOptions
-                            removeDbSettings();
-                            let navOptions = document.querySelector('#opcje');
+                let newChart = new createChart();
+                newChart.getData();
+                let chart = newChart.getChart();
+                let tables = new createTablesMutoh(dataAll, target.target, newChart);
+                tables.createTables();
+                let [tables_] = tables.getTables();
+                let dataBox = document.createElement('div');
+                dataBox.classList.add('dataBox');
+                dataBox.appendChild(chart);
+                dataBox.appendChild(tables_);
+                app.appendChild(dataBox);
+    
+                // NavOptions
+                removeDbSettings();
+                let navOptions = document.querySelector('#opcje');
 
-                            let desc = 'Wprowadź nowy target [m2]:'
-                            let lbl = 'Zmień target'
-                            let plchold = 'wartość'
-                            let path = '/mutoh'
-                            let optionsData = new Replacement(desc, lbl, plchold, path);
-                            optionsData.createBox();
-                            optionsData.inputValue('mutoh/target/');
-                            navOptions.appendChild(optionsData.getReplaceBox());
-                            
+                let desc = 'Wprowadź nowy target [m2]:'
+                let lbl = 'Zmień target'
+                let plchold = 'wartość'
+                let path = '/mutoh'
+                let optionsData = new Replacement(desc, lbl, plchold, path);
+                optionsData.createBox();
+                optionsData.inputValue('mutoh/target/');
+                navOptions.appendChild(optionsData.getReplaceBox());
 
-                                
-                           
-                            
-                        }
+            }
             else if (status != 200) {
                                 alerts(status, dataAll.detail, 'alert-red');
                             }

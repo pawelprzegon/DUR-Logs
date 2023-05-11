@@ -1,5 +1,5 @@
 import { alerts } from "./alerts/alerts.js";
-import { callApiPut } from "./endpoints.js";
+import { callApiPut, callApiGet } from "./endpoints.js";
 import { navigateTo } from "./index.js";
 
 function onlyUnique(value, index, array) {
@@ -44,6 +44,18 @@ export function removeDbSettings(){
             element.remove();
         });
     }
+}
+
+export async function generateNewChart(chart, path, unit){
+        
+    let period = document.querySelector('#sBtn-text-Okres').innerText
+    if (period == '-'){
+        period = 'all'
+        document.querySelector('#sBtn-text-Okres').innerText = 'all'
+    }
+    let [status, data] = await callApiGet(path+`/${period}`)
+    console.log(data)
+    chart.createChart(unit, data)
 }
 
 

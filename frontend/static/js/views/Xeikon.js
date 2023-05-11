@@ -16,15 +16,16 @@ export default class extends AbstractView {
         try{
             removeDbSettings();
             showloader();
+            let app = document.querySelector('#app');
+            let newChart = new createChart();
+            newChart.getData();
+            let chart = newChart.getChart();
+
             let [status, dataAll] = await callApiGet('xeikon');
             if (status == 200 ){
                 hideloader();
-                let app = document.querySelector('#app');
-                let newChart = new createChart(dataAll, 'Xeikon');
-                newChart.getData();
-                let chart = newChart.getChart();
-
-                let allTables = new Xeikon_All_Data(dataAll);
+                let description = '*całkowity przebieg urządzeń'
+                let allTables = new Xeikon_All_Data(dataAll, description, newChart);
                 allTables.createAll();
                 let tableAllReady = allTables.getTable();
 
@@ -36,17 +37,19 @@ export default class extends AbstractView {
 
             }else if (status != 200) {alerts(status, dataAll.detail, 'alert-red');}
 
-            let [statusToner, dataToner] = await callApiGet('xeikon/toner/');
-            let [statusDVL, dataDVL] = await callApiGet('xeikon/dvl/');
+            let tonerPath = 'xeikon/toner/'
+            let dvlPath = 'xeikon/dvl/'
+            let [statusToner, dataToner] = await callApiGet(tonerPath);
+            let [statusDVL, dataDVL] = await callApiGet(dvlPath);
             if (statusToner == 200 && statusDVL == 200) {
                 hideloader();
                 let descriptionToner = '*całkowite zużycie tonera dla poszczególnych kolorów [gram]'
-                let tonerTable = new Xeikon_Data(dataToner, descriptionToner);
+                let tonerTable = new Xeikon_Data(dataToner, descriptionToner, newChart, tonerPath);
                 tonerTable.createAll(1);
                 let tonerTableReady = tonerTable.getTable();
                 
                 let description = '*licznik DVL [A3] oraz ilość wymian [szt]';
-                let dvlTable = new Xeikon_Data(dataDVL, description);
+                let dvlTable = new Xeikon_Data(dataDVL, description, newChart);
                 dvlTable.createAll(2);
                 let dvlTableReady = dvlTable.getTable();
 
@@ -59,17 +62,19 @@ export default class extends AbstractView {
             else if (statusDVL != 200) {alerts(statusDVL, dataDVL.detail, 'alert-red');}
             else if (statusToner != 200) {alerts(statusToner, dataToner.detail, 'alert-red');};
 
-            let [statusFuser, dataFuser] = await callApiGet('xeikon/fuser/');
-            let [statusClicks, dataClicks] = await callApiGet('xeikon/clicks/');
+            let fuserPath = 'xeikon/fuser/'
+            let clicksPath = 'xeikon/clicks/'
+            let [statusFuser, dataFuser] = await callApiGet(fuserPath);
+            let [statusClicks, dataClicks] = await callApiGet(clicksPath);
             if (statusFuser == 200 && statusClicks == 200){
                 hideloader();
                 let descriptionFuser = '*aktualne zużycie fusera [A3] oraz ilość wymian [szt]';
-                let fuserTable = new Xeikon_Data(dataFuser, descriptionFuser);
+                let fuserTable = new Xeikon_Data(dataFuser, descriptionFuser, newChart);
                 fuserTable.createAll(1);
                 let fuserTableReady = fuserTable.getTable();
 
                 let descriptionClicks = '*aktualna ilość druku w kolorze oraz b&w [A3]';
-                let clicksTable = new Xeikon_Data(dataClicks, descriptionClicks);
+                let clicksTable = new Xeikon_Data(dataClicks, descriptionClicks, newChart, clicksPath);
                 clicksTable.createAll(1);
                 let clicksTableReady = clicksTable.getTable();
 
