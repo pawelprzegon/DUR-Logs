@@ -1,0 +1,31 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "PROD UP",
+            "type": "shell",
+            "command": "docker-compose -f ${workspaceFolder}\\docker-compose-prod.yml up ",
+            "problemMatcher": []
+        },
+        {
+            "label": "DOCKER_DESKTOP UP",
+            "type": "shell",
+            "command": "docker-compose -f ${workspaceFolder}\\docker-compose.yml up ",
+            "problemMatcher": []
+        },
+        {
+            "label": "NEON_DB UP",
+            "type": "shell",
+            "command": "docker-compose -f ${workspaceFolder}\\docker-compose-neon.yml up ",
+            "problemMatcher": []
+        },
+        {
+            "label": "DOWN",
+            "type": "shell",
+            "command": "docker-compose down",
+            "problemMatcher": []
+        }
+    ]
+}

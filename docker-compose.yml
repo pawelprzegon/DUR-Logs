@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: UNITS_db
+    image: postgres:15.1-alpine
+    environment:
+      POSTGRES_PASSWORD: docker # environment variable that sets the superuser password for PostgreSQL
+      POSTGRES_USER: docker # variable that will create the specified user
+      POSTGRES_DB: Artgeist_API # the name of your db
+    networks:
+      - backend
+
+  adminer:
+    container_name: UNITS_adminer
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+
+  app:
+    container_name: UNITS_app
+    build: .
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload --workers 4"
+    volumes:
+      - .:/app
+      - /d/DATA/mutoh:/app/mutoh_api/volumes
+      - /d/DATA/impala:/app/impala_api/volumes
+      - /d/DATA/xeikon:/app/xeikon_api/volumes
+      - /d/DATA/latex:/app/latex_api/volumes
+    ports:
+      - 8000:8000
+    networks:
+      - backend
+
+      
+networks:
+  backend:
+     driver: bridge
