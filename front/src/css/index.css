@@ -1,0 +1,524 @@
+:root{
+  --bckg: #dfdfdf;
+  --objheight: 420px;
+  --gray: #6B7280;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    height: 100%;
+    background: var(--bckg);
+}
+/* loading spinner */
+
+.spinner-border{
+  display: flex;
+  justify-content: center;
+  height: 50px;
+  margin-top: 100px;
+}
+.lds-ring {
+  display: flex;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  margin: 6px;
+  border: 6px solid var(--gray);
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: var(--gray) transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* main css */
+
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    /* min-height: calc(var(--vh, 1vh) * 85); */
+}
+
+.alerts{
+  height: 5vh;
+  width: 80%;
+}
+
+/* common */
+.app{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    width: 80%;
+    /* height: 90vh; */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+table td {
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    overflow: hidden;
+    height: 55px;
+    width: 80px;
+    text-align: center;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing:0 3px;
+    width: 100%;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 8px;
+    /* background-color: #e5e5e5; */
+  }
+
+
+table tr {
+  background: white;
+}
+
+table th{
+  font-weight: 700;
+  width: 80px;
+  height: 55px;
+  font-size: 15px;
+  background-color: #c7c7c7;
+}
+
+.thead>tr{
+  background-color: white;
+}
+
+table td>p{
+  padding: 0;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+table td>p:last-child{
+  font-size: 16px;
+}
+
+.table-th:first-child,
+.table-td:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.table-th:last-child,
+.table-td:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.tableBox{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: flex-end;
+  width: 50%;
+  height: var(--objheight);
+  margin: 10px;
+  padding: 16px;
+  /* border: 2px solid white */
+}
+
+.tableBox h3{
+  padding: 0;
+  margin: 5px;
+  font-size: 18px;
+  height: 6%;
+}
+
+.descBox{
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  width: 100%;
+  height: 7%;
+}
+
+
+
+
+/* Mutoh */
+.dataBox{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.unused{
+  background-color: var(--bckg);
+  color:rgb(116, 116, 116)
+}
+
+.tablesmallBox{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+
+
+.tableTbodyBox{
+  height: 600px;
+  overflow: scroll;
+}
+
+.tableTbodyBox::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tableTbodyBox::-webkit-scrollbar-track {
+  /* background-color: white; */
+  border-radius: 50px;
+}
+
+.tableTbodyBox::-webkit-scrollbar-thumb {
+  background-color: #5c5c5c;
+  border-radius: 50px;
+}
+.tableTbodyBox::-webkit-scrollbar-corner {
+  /* background-color: white; */
+  border-radius: 6px 6px 6px 6px;
+}
+
+
+.mutohs-list{
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+
+
+/* Impala */
+
+
+.replaceBox{
+  display: flex;
+}
+
+.invalidNumber{
+  border: solid 2px rgb(255, 101, 101);
+}
+
+
+.replacement-date{
+  font-size: 12px;
+}
+
+.warning{
+  color: rgb(255, 0, 0);
+  font-weight: 700;
+}
+
+.changePartsForm{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.activ{
+  cursor: pointer;
+  background-color: #f8d4327c;
+}
+
+.selected-to-replace{
+  background-color: #dddddd;
+}
+
+
+
+
+
+
+
+/* progress bar */
+
+
+.progress-bar {
+  height: 10px;
+  width: 100%;
+  border-radius: 10px;
+  border: solid 1px rgb(116, 116, 116)
+}
+
+.progress-bar > div {
+  width: 0%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: #a4cead;
+  background-size: 100px 100%;
+  transition: width 200ms;
+}
+
+.progress-label{
+  font-size: 11px;
+  margin-left: 5px;
+  width: 25%;
+}
+
+.unit{
+  cursor: pointer;
+}
+.unit:hover{
+  color:rgb(0, 91, 177);
+}
+
+
+/* chart */
+
+.printer-label{
+  margin: 0;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.chart-area{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--objheight);
+  width: 50%;
+  margin: 10px;
+  padding: 16px;
+}
+.chart{
+  min-height:auto;
+  width:100%;
+  display: flex;
+  flex-grow:1;
+}
+
+.dropDown-Box{
+  display: flex;
+  flex-direction: row;
+  height: 20%;
+}
+
+.dropdown-label{
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.details-area{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 30px;
+  height: 40%;
+  width: 100%;
+}
+
+  .select-menu{
+    width: 130px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.selected{
+  background: rgb(151, 151, 151);
+}
+
+.select-menu .select-btn{
+    display: flex;
+    height: 12px;
+    background: #fff;
+    padding: 10px;
+    font-size: 17px;
+    font-weight: 300;
+    border-radius: 8px;
+    align-items: center;
+    cursor: pointer;
+    justify-content: center;
+    box-shadow: 0 0 40px rgba(102, 102, 102, 0.534);
+}
+.select-btn i{
+    font-size: 25px;
+    transition: 0.3s;
+}
+.select-menu.active .select-btn i{
+    transform: rotate(-180deg);
+}
+.select-menu .options{
+    position: relative;
+    padding: 0px;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #fff;
+    /* box-shadow: 0 0 3px rgba(0,0,0,0.1); */
+    box-shadow: 0 0 40px rgb(212,212,212);
+    display: none;
+    max-height: 200px;
+    overflow: auto;
+}
+.select-menu.active .options{
+    display: block;
+}
+.options .option{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    cursor: pointer;
+    padding: 0 16px;
+    font-size: 15px;
+}
+.options .option:hover{
+    background: #e7e7e7;
+}
+.option i{
+    font-size: 25px;
+    margin-right: 12px;
+}
+.option .option-text{
+    font-size: 18px;
+    color: #333;
+}
+
+.options::-webkit-scrollbar {
+  width: 10px;
+}
+
+.options::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 50px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  background-color: #5c5c5c;
+  border-radius: 50px;
+}
+.options::-webkit-scrollbar-corner {
+  background-color: #e4e4e4;
+}
+
+
+
+
+
+/* For Tablets & Mobiles */
+@media screen and  (max-width: 900px) {
+  .app{
+    flex-direction: row;
+  }
+  .container{
+    width: 100%;
+  }
+  .dataBox {
+      flex-direction: column;
+  }
+  .chart-area{
+    width: 100%;
+    margin:0;
+    padding: 0;
+  }
+  .tableBox{
+    width: 100%;
+    margin:0;
+    padding: 0;
+  }
+  .replacement-date {
+    font-size: 11px;
+  }
+  table td>p:last-child {
+    font-size: 15px;
+  }
+
+}
+
+
+
+
+/* Desktop Small */
+@media screen and (min-width: 900px) and (max-width: 1250px) {
+  .app{
+    flex-direction: row;
+  }
+  .dataBox {
+      flex-direction: column;
+  }
+  .chart-area{
+    width: 100%;
+  }
+  .tableBox{
+    width: 100%;
+  }
+}
+
+
+
+
+
+/* Desktop Mid */
+@media screen and (min-width: 1250px) and (max-width: 1400px) {
+  .replacement-date {
+    font-size: 11px;
+  }
+  table td>p:last-child {
+    font-size: 15px;
+  }
+  .app{
+    width: 100%;
+  }
+}
+
+
+
+
+
+/* Desktop Mid */
+@media screen and (min-width: 1400px) and (max-width: 1550px) {
+  .app{
+    width: 100%;
+  }
+}
+
+/* Desktop Big */
+@media screen and (min-width: 1550px) and (max-width: 1700px) {
+  .app{
+    width: 90%;
+  }
+ 
+}

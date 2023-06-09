@@ -1,0 +1,151 @@
+body {
+    --nav-width: 220px;
+    margin: 0 0 0 var(--nav-width);
+}
+.nav{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    background: #222222;
+    font-size: 30px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+}
+
+.nav-link{
+    display: block;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.nav a:first-child{
+    margin-top: 10px;
+}
+
+.active-href{
+    background: #dfdfdf;
+    color: black;
+    border-radius: 15px 0 0 15px;
+}
+
+.nav-link:hover {
+    background: rgb(65, 65, 65);
+    border-radius: 15px 0 0 15px;
+}
+
+.active-href:hover {
+    background: #dfdfdf;
+}
+
+/* options */
+
+.opcje{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: white;
+    text-decoration: none;
+    margin-top: 30px;
+}
+.settingsBtnBox{
+    margin: 4px;
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .descBox-Mutoh p:nth-child(2) {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .settingsBtn{
+    margin-top: 5px;
+    font-size: 13px;
+    padding: 5px;
+    cursor: pointer;
+    width: fit-content;
+    border-radius: 5px;
+    border: solid 1px white;
+  }
+  
+  .settingsBtn:hover{
+    background: rgb(187, 187, 187);
+    border-radius: 5px;
+    color: black;
+  }
+
+  input[type="submit" i]{
+    background-color: #222222;
+    color: white;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+  }
+
+
+  .settingsBox{
+    display: flex;
+    margin: 10px;
+    padding: 10px;
+    width: 180px;
+    border-radius: 5px;
+    border: solid 1px rgb(221, 221, 221);
+  }
+
+  .changeForm{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+  }
+  
+  .changeForm p{
+    font-size: 16px;
+  }
+  
+  .changeForm p, input{
+    margin-top: 5px;
+  }
+  
+  .changeInputBox{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  hr.solid {
+    border-top: 1px solid #bbb;
+  }
+
+  #opcje>p:first-child{
+    margin: 0;
+    margin-bottom: 0;
+    padding: 15px
+  }
+
+
+  /* For Tablets & Mobiles */
+@media screen and  (max-width: 900px) {
+  body {
+    --nav-width: 150px;
+  }
+
+  .nav-link{
+    padding: 5px;
+  }
+
+  .settingsBox{
+    width: 100px;
+  }
+
+  .changeForm {
+    width: 100%;
+}
+
+  .changeForm p {
+    font-size: 12px;
+}
+}
