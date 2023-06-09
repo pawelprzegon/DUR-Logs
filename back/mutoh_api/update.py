@@ -16,15 +16,15 @@ from mutoh_api.models_Mutoh import MutohSettings as MutSet
 
 import shutil
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-
+# basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.join( os.path.dirname( __file__ ), '..' ))
 @dataclass
 class MutohItems:
     mutohNumbers: list = field(default_factory=list)
     tst: dict = field(default_factory=dict)
     lines: List[str] = field(init=False)
     archives_file_path: str = f"{basedir}/archives"
-    incomming_file_path: str  = f"{basedir}/volumes"
+    incomming_file_path: str  = f"{basedir}/volumes/mutoh"
     data_folder: str = f"{incomming_file_path}/**/*.log"
     
 

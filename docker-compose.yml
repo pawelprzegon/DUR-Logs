@@ -1,40 +1,33 @@
 version: "3.8"
 
 services:
-  db:
-    container_name: UNITS_db
-    image: postgres:15.1-alpine
-    environment:
-      POSTGRES_PASSWORD: docker # environment variable that sets the superuser password for PostgreSQL
-      POSTGRES_USER: docker # variable that will create the specified user
-      POSTGRES_DB: Artgeist_API # the name of your db
-    networks:
-      - backend
-
-  adminer:
-    container_name: UNITS_adminer
-    image: adminer
+  front:
+    container_name: units_FRONT
+    build: ./front
     ports:
-      - 8080:8080
+      - 3001:3000
     networks:
-      - backend
-
-  app:
-    container_name: UNITS_app
-    build: .
-    command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload --workers 4"
+      - app-network
     volumes:
-      - .:/app
-      - /d/DATA/mutoh:/app/mutoh_api/volumes
-      - /d/DATA/impala:/app/impala_api/volumes
-      - /d/DATA/xeikon:/app/xeikon_api/volumes
-      - /d/DATA/latex:/app/latex_api/volumes
-    ports:
-      - 8000:8000
-    networks:
-      - backend
+      - ./front:/front/
 
-      
+  back:
+    container_name: units_BACK
+    build: ./back
+    restart: on-failure:10
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://docker:docker@postgres:5432/Artgeist_API
+      - CORS_URL=http://localhost:3001
+      - DB_TIMEOUT=30
+    volumes:
+      - ./back:/back/
+      - /d/DATA:/back/volumes
+    ports:
+      - 8001:8000
+    networks:
+      - app-network
+
 networks:
-  backend:
-     driver: bridge
+  app-network:
+    external:
+      name: database-net

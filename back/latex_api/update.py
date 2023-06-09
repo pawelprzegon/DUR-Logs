@@ -6,8 +6,8 @@ from datetime import datetime
 from db import get_session 
 from sqlalchemy.sql import func
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-incomming_file_path: str  = f"{basedir}/volumes"
+basedir = os.path.abspath(os.path.join( os.path.dirname( __file__ ), '..' ))
+incomming_file_path: str  = f"{basedir}/volumes/latex"
 data_folder: str = f"{incomming_file_path}/**/*.xls"
 path = r'./temp/latex.csv'
 

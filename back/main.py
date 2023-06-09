@@ -26,15 +26,8 @@ def include_routers(app):
 def include_middlewares(app):
     
     app.add_middleware(DBSessionMiddleware, db_url=os.environ["DATABASE_URL"])
-    
-    origins = [
-    "http://localhost",
-    "http://localhost:8000",
-    "http://localhost:3000",
-    "http://127.0.0.1:5500",
-    "http://192.168.31.173:3000",
-    "http://192.168.31.82:3000",
-    ]
+    CORS_URL = os.environ["CORS_URL"]
+    origins = [CORS_URL]
 
     app.add_middleware(
         CORSMiddleware,

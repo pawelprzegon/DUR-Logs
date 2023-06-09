@@ -1,65 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#000000">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
 
-    <link rel="stylesheet" href="./static/css/alerts.css">
-    <link rel="stylesheet" href="./static/css/nav.css">
-    <link rel="stylesheet" href="./static/css/index.css">
-    
-    
+    <link rel="stylesheet" href="./css/alerts.css" />
+    <link rel="stylesheet" href="./css/nav.css" />
+    <link rel="stylesheet" href="./css/index.css" />
+
     <link rel="icon" type="image/png" href="./static/images/artgeist.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@200;300;400;500&family=Roboto+Flex:wght@200;300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fengyuanchen.github.io/datepicker/css/datepicker.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@200;300;400;500&family=Roboto+Flex:wght@200;300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fengyuanchen.github.io/datepicker/css/datepicker.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    
-    
-    
-
-</head>
-<body>
-    
+  </head>
+  <body>
     <header class="app-header" id="app-header"></header>
     <div class="container">
-
-        <nav class="nav">
-            <!-- <a href="/" class="nav-link active-href" id="DB-nav" data-link>Dashboard</a> -->
-            <a href="/mutoh" class="nav-link active-href" id="Mutoh-nav" data-link>Mutoh</a>
-            <a href="/impala" class="nav-link" id="Impala-nav" data-link>Impala</a>
-            <a href="/xeikon" class="nav-link" id="Xeikon-nav" data-link>Xeikon</a>
-            <div id="opcje" class="opcje">
-                <hr class="solid">
-                <p> Opcje</p>
-            </div>
-        </nav>
-        <div class="alerts" id="alerts">
-            <div class="spinner-border" role="status" id="loading" style="visibility: hidden">
-                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-                </div>
-            <div class="alert hidden" id="alert">
-                <span class="alert-close" data-close="alert" title="Close"><span id="timer"></span>&times;</span>
-                <div id="alert-message"></div>
-            </div>
+      <nav class="nav">
+        <!-- <a href="/" class="nav-link active-href" id="DB-nav" data-link>Dashboard</a> -->
+        <a href="/mutoh" class="nav-link active-href" id="Mutoh-nav" data-link
+          >Mutoh</a
+        >
+        <a href="/impala" class="nav-link" id="Impala-nav" data-link>Impala</a>
+        <a href="/xeikon" class="nav-link" id="Xeikon-nav" data-link>Xeikon</a>
+        <div id="opcje" class="opcje">
+          <hr class="solid" />
+          <p>Opcje</p>
         </div>
-
-        <div class="app" id="app">
-    
+      </nav>
+      <div class="alerts" id="alerts">
+        <div
+          class="spinner-border"
+          role="status"
+          id="loading"
+          style="visibility: hidden"
+        >
+          <div class="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
+        <div class="alert hidden" id="alert">
+          <span class="alert-close" data-close="alert" title="Close"
+            ><span id="timer"></span>&times;</span
+          >
+          <div id="alert-message"></div>
+        </div>
+      </div>
 
+      <div class="app" id="app"></div>
     </div>
-    
-    
 
-    <script type="module" src="static/js/index.js"></script>
-    <script type="module" src="static/js/alerts/alerts.js"></script>
+    <script type="module" src="./js/index.js"></script>
+    <script type="module" src="./js/alerts/alerts.js"></script>
     <script src="https://fengyuanchen.github.io/datepicker/js/datepicker.js"></script>
     <script src="https://fengyuanchen.github.io/datepicker/js/datepicker.pl-PL.js"></script>
-
-</body>
+  </body>
 </html>

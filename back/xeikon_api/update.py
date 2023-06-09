@@ -8,7 +8,7 @@ from datetime import datetime
 from sqlalchemy import func
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.join( os.path.dirname( __file__ ), '..' ))
 
 class XeikonDatabase:
     def __init__(self, unit) -> None:
@@ -35,7 +35,7 @@ class XeikonDatabase:
         return dt.strftime("%Y-%m-%d")
         
     def fundLatestFile(self):
-        file_path = f"{basedir}/volumes/{self.unit}"
+        file_path = f"{basedir}/volumes/xeikon/{self.unit}"
         data_folder = f"{file_path}/**/*.zip"
         all_zip_files = glob.glob(data_folder, recursive=True)
         lastFile = max(all_zip_files)

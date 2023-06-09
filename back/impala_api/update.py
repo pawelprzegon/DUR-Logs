@@ -1,6 +1,7 @@
 import sys
 import subprocess
 import os
+import glob
 from io import StringIO
 import pandas as pd
 import numpy as np
@@ -154,11 +155,23 @@ def add_sums_to_db_all() -> dict:
         impala_data = [0, 0, 0, 0]
         return impala_data
 
+basedir = os.path.abspath(os.path.join( os.path.dirname( __file__ ), '..' ))
+incomming_file_path: str  = f"{basedir}/volumes/impala"
+data_folder: str = f"{incomming_file_path}/**/*.mdb"
 
+import re
+def get_unit_number(file):
+    # /back/volumes/impala/AmberDB_1.mdb
+    file = file.split('/')[-1]
+    return re.findall(r'\d+', file)
+    
+         
 def update():
-    for _ in range(1, 5):
-        db = mdb_to_pandas(f"/app/impala_api/volumes/AmberDB_{_}.mdb")
-        db = sort_multiply_data(db, _)
+    files = glob.glob(data_folder, recursive=True)
+    for file in files:
+        unit = get_unit_number(file)
+        db = mdb_to_pandas(file)
+        db = sort_multiply_data(db, *unit)
         add_all_to_db_by_month(db)
     add_sums_to_db_all()
 
