@@ -249,7 +249,7 @@ export async function generateNewChart(chart){
 }
 
 
-export function getTwocolors(ctx){
+export function getTwoColors(ctx){
     let colors = []
     let red = ctx.createLinearGradient(0, 0, 0, 450);
     red.addColorStop(0, 'rgba(215, 72, 72, 0.7)');
@@ -265,7 +265,7 @@ export function getTwocolors(ctx){
     return colors
 }
 
-export function getManycolors(ctx){
+export function getManyColors(ctx){
     let CMYKcolors = []
     let cyan = ctx.createLinearGradient(0, 0, 0, 450);
     cyan.addColorStop(0, 'rgba(0, 255, 255, 0.7)');
@@ -288,7 +288,7 @@ export function getManycolors(ctx){
     white.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
     white.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
-    CMYKcolors.push([cyan, , 'rgb(0, 255, 255)'])
+    CMYKcolors.push([cyan, 'rgb(0, 255, 255)'])
     CMYKcolors.push([magenta, 'rgb(255, 0, 255)'])
     CMYKcolors.push([yellow, 'rgb(255, 255, 0)'])
     CMYKcolors.push([black, 'rgb(0, 0, 0)'])

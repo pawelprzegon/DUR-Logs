@@ -51,10 +51,12 @@ export class createTablesMutoh{
         return thead
     }
 
+
     createTbody(){
         let tbody = document.createElement('tbody');
         tbody.classList.add('tbody');
-        this.data.forEach(unit =>{
+        let sortedData = this.data.reverse()
+        sortedData.forEach(unit =>{
             let tr = document.createElement('tr');
             for(const [key, value] of Object.entries(unit)){
                 let each = document.createElement('td');
@@ -87,7 +89,6 @@ export class createTablesMutoh{
             };
             tbody.appendChild(tr);
         });
-        
         return tbody
     }
 

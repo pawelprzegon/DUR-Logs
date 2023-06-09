@@ -1,5 +1,5 @@
 import { callApiGet } from "../endpoints.js";
-import { getTwocolors, getManycolors, uniqueSortedList, generateNewChart, onlyUnique } from "../common.js";
+import { getTwoColors, getManyColors, uniqueSortedList, generateNewChart, onlyUnique } from "../common.js";
 
 export class createChart {
     constructor() {
@@ -86,19 +86,15 @@ export class createChart {
         }
         
         let [labels, label, dataset, values] = prepareChartData(unit, data)
-        console.log(labels)
-        console.log(label)
-        console.log(dataset)
-        console.log(values)
         let ctx = document.getElementById("charts").getContext('2d');
         let readyDataSet = []
         let size = Object.keys(dataset).length
         for (const[index, [key, value]] of Object.entries(Object.entries(dataset))){
             let color
             if (size <= 2){
-                color = getTwocolors(ctx)
+                color = getTwoColors(ctx)
             }else{
-                color = getManycolors(ctx)
+                color = getManyColors(ctx)
             }
             data = {
                 label: label[key],
@@ -239,10 +235,12 @@ class chartLegend {
     }
 
     addToMonths(element){
+        let splitedDate = element.split('-')
+        let shortDate = splitedDate[0]+'-'+splitedDate[1]
         if (this.labels['month']){
-            this.labels['month'].push(element)
+            this.labels['month'].push(shortDate)
         }else{
-            this.labels['month'] = [element]
+            this.labels['month'] = [shortDate]
         }
     }
 
