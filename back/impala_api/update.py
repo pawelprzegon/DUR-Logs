@@ -2,16 +2,20 @@ import sys
 import subprocess
 import os
 import glob
+import re
 from io import StringIO
 import pandas as pd
 import numpy as np
 from impala_api.models_Impala import Impala as Imp
 from impala_api.models_Impala import Impala_details as Impd
 from fastapi_sqlalchemy import db
+from sqlalchemy import func
+from datetime import date
 
 
-
-VERBOSE = True
+basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+incomming_file_path: str = f"{basedir}/volumes/impala"
+data_folder: str = f"{incomming_file_path}/**/*.mdb"
 
 
 def mdb_to_pandas(database_path):
@@ -47,7 +51,7 @@ def mdb_to_pandas(database_path):
     return None
 
 
-def sort_multiply_data(df, unit_number):
+def sort_multiply_data(df, unit_number, last_db_insert):
     cols = ['Black', 'Cyan', 'Magenta', 'Yellow', 'White']
     df[cols] = df[cols] / 70000000
     df.insert(0, 'unit', f'Impala {unit_number}')
@@ -64,6 +68,7 @@ def sort_multiply_data(df, unit_number):
         ["Black", "Cyan", "Magenta", "Yellow", "White", "Squaremeter", "Total_Ink"]].sum().reset_index()
     df = df.sort_values(by=['date'])
     df = df.round(3)
+    df = df.loc[df.date > last_db_insert]
     return df
 
 
@@ -104,76 +109,48 @@ def add_all_to_db_by_month(database):
         db.session.commit()
 
 
-def add_sums_to_db_all() -> dict:
-    impala_data = {}  # create dictionary with each mutoh sum of m2 and ink
-    try:
-        from dotenv import load_dotenv
-        from sqlalchemy import create_engine
-
-        load_dotenv(".env")
-        SQLALCHEMY_DATABASE_URL = os.environ["DATABASE_URL"]
-        engine = create_engine(SQLALCHEMY_DATABASE_URL)
-        import sqlalchemy as dbs
-
-        # engine = db.create_engine("postgresql://docker:docker@database:5432/mutoh")
-
-        df = pd.read_sql_query(
-            sql=dbs.select(
-                [
-                    Impd.unit,
-                    Impd.printed,
-                    Impd.ink,
-                    Impd.date
-                ]
-            ),
-            con=engine,
+def new_summ_all(unit):
+    summed_data = db.session.query(func.sum(Impd.printed).label('sum_printed'), func.sum(
+        Impd.ink).label('sum_ink')).filter(Impd.unit == unit).first()
+    if (
+        exists := db.session.query(Imp).filter(Imp.unit == unit).first()
+    ):
+        exists.suma_m2 = int(summed_data.sum_printed)
+        exists.suma_ml = int(summed_data.sum_ink)
+        exists.date = date.today()
+    else:
+        impala_data = Imp(
+            unit=str(unit),
+            suma_m2=int(summed_data.sum_printed),
+            suma_ml=int(summed_data.sum_ink),
+            date=date.today()
         )
-        df2 = df["unit"].unique()
-        for unit in df2:
-            suma_m2 = df[df["unit"] == unit].sum(numeric_only=True)["printed"]
-            suma_ml = df[df["unit"] == unit].sum(numeric_only=True)["ink"]
-            date = df[df["unit"] == unit].max()["date"]
+        db.session.add(impala_data)
+    db.session.commit()
 
-            impala_data = Imp(
-                unit=str(unit),
-                suma_m2=int(suma_m2),
-                suma_ml=int(suma_ml),
-                date=date
-            )
 
-            if (
-                exists := db.session.query(Imp).filter(Imp.unit == str(unit)).first()
-            ):
-                exists.suma_m2 = int(suma_m2)
-                exists.suma_ml = int(suma_ml)
-                exists.date = date
-            else:
-                db.session.add(impala_data)
-            db.session.commit()
-
-    except IndexError:
-        impala_data = [0, 0, 0, 0]
-        return impala_data
-
-basedir = os.path.abspath(os.path.join( os.path.dirname( __file__ ), '..' ))
-incomming_file_path: str  = f"{basedir}/volumes/impala"
-data_folder: str = f"{incomming_file_path}/**/*.mdb"
-
-import re
 def get_unit_number(file):
-    # /back/volumes/impala/AmberDB_1.mdb
     file = file.split('/')[-1]
     return re.findall(r'\d+', file)
-    
-         
+
+
+def get_last_insert(unit):
+    last_db_insert = db.session.query(func.max(Impd.date)).filter(
+        Impd.unit == f'Impala {str(unit)}').first()
+    if last_db_insert is None:
+        return '2000-01-01'
+    else:
+        return last_db_insert[0].strftime("%Y-%m-%d")
+
+
 def update():
     files = glob.glob(data_folder, recursive=True)
+
     for file in files:
-        unit = get_unit_number(file)
-        db = mdb_to_pandas(file)
-        db = sort_multiply_data(db, *unit)
-        add_all_to_db_by_month(db)
-    add_sums_to_db_all()
-
-
-
+        unit_number = get_unit_number(file)
+        last_insert = get_last_insert(*unit_number)
+        df = mdb_to_pandas(file)
+        df = sort_multiply_data(df, *unit_number, last_insert)
+        if not df.empty:
+            add_all_to_db_by_month(df)
+            new_summ_all(f'Impala {str(*unit_number)}')
