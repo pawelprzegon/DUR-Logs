@@ -14,8 +14,8 @@ from datetime import date
 
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-incomming_file_path: str = f"{basedir}/volumes/impala"
-data_folder: str = f"{incomming_file_path}/**/*.mdb"
+ARCHIVES_FILES_PATH: str = f"{basedir}/volumes/archiv_impala"
+DATA_FOLDER: str = f"{basedir}/volumes/impala/**/*.mdb"
 
 
 def mdb_to_pandas(database_path):
@@ -144,7 +144,7 @@ def get_last_insert(unit):
 
 
 def update():
-    files = glob.glob(data_folder, recursive=True)
+    files = glob.glob(DATA_FOLDER, recursive=True)
 
     for file in files:
         unit_number = get_unit_number(file)

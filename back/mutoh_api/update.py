@@ -1,10 +1,7 @@
 import fileinput
 import glob
 import os
-import pathlib
-import sqlite3
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import List
 import numpy as np
 import pandas as pd
@@ -12,8 +9,7 @@ from fastapi_sqlalchemy import db
 from mutoh_api.models_Mutoh import Mutoh as Mh
 from mutoh_api.models_Mutoh import Mutoh_details as Mhd
 from mutoh_api.models_Mutoh import MutohSettings as MutSet
-import shutil
-
+from common.csv_backup import CsvBackup
 
 # basedir = os.path.abspath(os.path.dirname(__file__))
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -35,20 +31,14 @@ def get_mutoh_numbers() -> list:
     return sorted(set(mutohNumbers))
 
 
-def filter_unit_log_files() -> dict:
-    tst = {}
-    all_log_files = glob.glob(DATA_FOLDER, recursive=True)
-    for log_file in all_log_files:
-        temp = (datetime.fromtimestamp(pathlib.Path(
-            log_file).stat().st_mtime)).strftime("%Y-%m-%d %H:%M:%S")
-        tst[log_file] = temp
-    return tst
+def get_log_files() -> list:
+    return glob.glob(DATA_FOLDER, recursive=True)
 
 
-def log_files_to_dict(mutohNumbers: list, tst: dict) -> dict:
-    dct = {f"Mutoh {i}": [] for i in mutohNumbers}
-    for keys in tst:
-        y = keys
+def unit_logFiles_to_dict(mutohNumbers: list, log_files: list) -> dict:
+    unit_logFiles_dict = {f"Mutoh {i}": [] for i in mutohNumbers}
+    for log_file in log_files:
+        y = log_file
         z = y[-21:-19]
         if z == "to":
             z = y[-17:-15]
@@ -56,8 +46,8 @@ def log_files_to_dict(mutohNumbers: list, tst: dict) -> dict:
             z = y[-24:-22]
         for i in mutohNumbers:
             if i == z:
-                dct[f"Mutoh {i}"].append(keys)
-    return dct
+                unit_logFiles_dict[f"Mutoh {i}"].append(log_file)
+    return unit_logFiles_dict
 
 
 def create_new_df(logs):
@@ -191,63 +181,6 @@ class MutohDatabase:
         db.session.commit()
 
 
-class CsvBackup:
-    def __init__(self, unit, logs, new_df) -> None:
-        self.unit = unit
-        self.logs = logs
-        self.new_df = new_df
-        self.backup_file = f'{ARCHIVES_FILES_PATH}/mutoh_{self.unit}.csv'
-
-    def get_CSV(self):
-        if os.path.isfile(self.backup_file):
-            return pd.read_csv(self.backup_file, header=0, index_col=False, parse_dates=['Data'])
-
-    def remove_CSV(self):
-        if os.path.isfile(self.backup_file):
-            os.remove(self.backup_file)
-
-    def save_csv_backup(self):
-        current_data = self.get_CSV()
-        if current_data is None or current_data.empty:
-            print("brak pliku albo pusty plik csv")
-            self.new_df.to_csv(self.backup_file, header='true',
-                               index=False, date_format='%Y-%m-%d')
-
-        else:
-            self.new_df["Data"] = pd.to_datetime(
-                self.new_df["Data"].dt.strftime('%Y-%m-%d'))
-            merged_df = pd.concat([current_data, self.new_df]
-                                  ).drop_duplicates('Data', keep='last').reset_index(drop=True)
-            self.remove_CSV()
-            merged_df.to_csv(self.backup_file, header='true',
-                             index=False, date_format='%Y-%m-%d')
-
-    def fileName(self, file):
-        file_modify_date = datetime.fromtimestamp(os.path.getmtime(file))
-        return (file_modify_date.strftime("%Y_%m"))
-
-    def moveFiles(self):
-        # print(self.logs)
-
-        for file in self.logs:
-            try:
-                fcreation_date = self.fileName(file)
-                logs_subfolder = (os.path.dirname(file)).split('/')
-                logs_subfolder = logs_subfolder[-1]
-                logs_backup_path = f"{ARCHIVES_FILES_PATH}/logs/{logs_subfolder}/{self.unit}/{fcreation_date}/"
-                os.makedirs(os.path.dirname(logs_backup_path), exist_ok=True)
-                shutil.move(file, logs_backup_path)
-            except Exception as e:
-                # os.remove(file)
-                print(f'------> {e} <------')
-                continue
-
-    def del_files(self):
-        src_fpath = self.dct[f"Mutoh_{self.unit}"]
-        for file in src_fpath:
-            os.remove(file)
-
-
 def get_last_insert(unit):
     last_db_insert = db.session.query(Mh.date).filter(
         Mh.unit == unit).first()
@@ -257,16 +190,15 @@ def get_last_insert(unit):
         return str(last_db_insert['date'])  # 2021-05-17 11:45:25
 
 
-def prepare_logs_data():
+def prepare_unit_logFiles_dict():
     mutoh_numbers = get_mutoh_numbers()
-    each_unit_log_files = filter_unit_log_files()
-    return log_files_to_dict(mutoh_numbers, each_unit_log_files)
+    log_files = get_log_files()
+    return unit_logFiles_to_dict(mutoh_numbers, log_files)
 
 
 def update_Mutoh_data():
-    prepared_logs_data = prepare_logs_data()
-    for unit, logs in prepared_logs_data.items():
-
+    unit_logFiles_dict = prepare_unit_logFiles_dict()
+    for unit, logs in unit_logFiles_dict.items():
         new_df = create_new_df(logs)
         last_db_insert = get_last_insert(unit)
         new_loc_df, new_last_db_insert = loc_new_df(
@@ -279,7 +211,7 @@ def update_Mutoh_data():
             update_db = MutohDatabase()
             update_db.add_to_mutoh_details(new_loc_df)
             update_db.add_to_mutoh(new_loc_df, new_last_db_insert)
-            csv_backup = CsvBackup(unit, logs, new_loc_df)
+            csv_backup = CsvBackup(unit, logs, new_loc_df, ARCHIVES_FILES_PATH)
             csv_backup.save_csv_backup()
             csv_backup.moveFiles()
             # mutoh_items.del_files(mutoh_numbers[x])
