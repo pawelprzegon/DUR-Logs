@@ -1,14 +1,11 @@
 import fileinput
 import glob
 import os
-from dataclasses import dataclass, field
-from typing import List
 import numpy as np
 import pandas as pd
 from fastapi_sqlalchemy import db
 from mutoh_api.models_Mutoh import Mutoh as Mh
-from mutoh_api.models_Mutoh import Mutoh_details as Mhd
-from mutoh_api.models_Mutoh import MutohSettings as MutSet
+from common.update_db import MutohDatabase
 from common.csv_backup import CsvBackup
 
 # basedir = os.path.abspath(os.path.dirname(__file__))
@@ -51,7 +48,7 @@ def unit_logFiles_to_dict(mutohNumbers: list, log_files: list) -> dict:
 
 
 def create_new_df(logs):
-    lines: List[str] = field(init=False)
+    lines = []
     lines = list(fileinput.FileInput(
         logs, encoding="ISO-8859-1"))  # read file
     lines = list(set(lines))  # remove duplicates
@@ -87,7 +84,6 @@ def loc_new_df(df, last_db_insert: str, unit):
     df = df.loc[df['Data'] > last_db_insert]
     if not df.empty:
         new_last_db_insert = df['Data'].max()
-        print(new_last_db_insert)
         df = df.replace(r"^\s*$", np.nan, regex=True)
         df[["Time", "Copies", "Ink", "Printed"]] = df[["Time", "Copies",
                                                        "Ink", "Printed"]].apply(pd.to_numeric)  # make columns numeric
@@ -109,76 +105,10 @@ def loc_new_df(df, last_db_insert: str, unit):
             ["Ink", "Printed"]].sum().reset_index()
         new_df["unit"] = unit
         new_df = new_df.sort_values(by=['Data'])
+        new_df.Ink = new_df.Ink.round()
+        new_df.Printed = new_df.Printed.round()
         return new_df, new_last_db_insert
-    print(df)
     return df, None
-
-
-@dataclass
-class MutohDatabase:
-    def add_to_mutoh_details(self, new_data):
-        new_data.Ink = new_data.Ink.round()
-        new_data.Printed = new_data.Printed.round()
-        for index, row in new_data.iterrows():
-            mutoh_data = Mhd(
-                unit=row["unit"],
-                ink=row["Ink"],
-                printed=row["Printed"],
-                # lst_date=row["lst_date"],
-                date=row["Data"],
-            )
-            if (
-                exists := db.session.query(Mhd)
-                .filter(Mhd.unit == row["unit"], Mhd.date == row["Data"])
-                .first()
-            ):
-                self.assign_data(row, exists)
-            else:
-                db.session.add(mutoh_data)
-            db.session.commit()
-
-    def assign_data(self, row, exists):
-        exists.unit = row["unit"]
-        exists.ink += row["Ink"]
-        exists.printed += row["Printed"]
-        # exists.lst_date = row["lst_date"]
-
-    def add_to_mutoh(self, new_df, new_last_db_insert) -> dict:
-        unit = (new_df["unit"].unique())[0]
-        target = target.target if (
-            target := db.session.query(MutSet).first()) else 1
-
-        preparedData = self.sumData(new_df, new_last_db_insert)
-        self._insertIntoDB(preparedData, unit, target)
-
-    def sumData(self, new_df, new_last_db_insert) -> dict:
-        suma_m2 = new_df.sum(numeric_only=True)["Printed"]
-        suma_ml = new_df.sum(numeric_only=True)["Ink"]
-        return {'suma_m2': suma_m2,
-                'suma_ml': suma_ml,
-                'date': new_last_db_insert
-                }
-
-    def _insertIntoDB(self, preparedData, unit, target):
-        mutoh_data = {}
-        if (
-            exists := db.session.query(Mh).filter(Mh.unit == str(unit)).first()
-        ):
-            exists.suma_m2 += int(preparedData.get('suma_m2'))
-            exists.suma_ml += int(preparedData.get('suma_ml'))
-            exists.date = preparedData.get('date')
-            exists.target_reached = round(exists.suma_m2/target, 2)*100
-        else:
-            mutoh_data[unit] = Mh(
-                unit=str(unit),
-                suma_m2=int(preparedData.get('suma_m2')),
-                suma_ml=int(preparedData.get('suma_ml')),
-                date=preparedData.get('date'),
-                target_reached=round(
-                    int(preparedData.get('suma_m2'))/target, 2)*100,
-            )
-            db.session.add(mutoh_data[unit])
-        db.session.commit()
 
 
 def get_last_insert(unit):
@@ -197,21 +127,31 @@ def prepare_unit_logFiles_dict():
 
 
 def update_Mutoh_data():
+    all_data = pd.DataFrame()
+    last_inserts = {}
     unit_logFiles_dict = prepare_unit_logFiles_dict()
     for unit, logs in unit_logFiles_dict.items():
         new_df = create_new_df(logs)
         last_db_insert = get_last_insert(unit)
         new_loc_df, new_last_db_insert = loc_new_df(
             new_df, last_db_insert, unit)
-        print(f'unit {unit}')
+        all_data = pd.concat([all_data, new_loc_df]).reset_index(drop=True)
+        last_inserts[unit] = new_last_db_insert
         print(
-            f'last_db_insert: {last_db_insert}  ---> new_last_db_insert: {new_last_db_insert}')
-        print(f'new_df: \n{new_loc_df}')
-        if not new_loc_df.empty:
-            update_db = MutohDatabase()
-            update_db.add_to_mutoh_details(new_loc_df)
-            update_db.add_to_mutoh(new_loc_df, new_last_db_insert)
-            csv_backup = CsvBackup(unit, logs, new_loc_df, ARCHIVES_FILES_PATH)
-            csv_backup.save_csv_backup()
-            csv_backup.moveFiles()
-            # mutoh_items.del_files(mutoh_numbers[x])
+            f'{unit} last_db_insert: {last_db_insert}  ---> new_last_db_insert: {new_last_db_insert}')
+        # print(f'unit {unit}')
+        # print(
+        #     f'last_db_insert: {last_db_insert}  ---> new_last_db_insert: {new_last_db_insert}')
+        # print(f'new_df: \n{new_loc_df}')
+    print(all_data)
+    print(all_data.empty)
+    if not all_data.empty:
+        print('test')
+        update_db = MutohDatabase(all_data, last_inserts)
+        # update_db.add_to_mutoh_details()
+        update_db.add_to_mutoh()
+
+    # csv_backup = CsvBackup(unit, logs, all_data, ARCHIVES_FILES_PATH)
+    # csv_backup.save_csv_backup()
+    # csv_backup.moveFiles()
+    # mutoh_items.del_files(mutoh_numbers[x])
