@@ -4,8 +4,9 @@ import os
 import numpy as np
 import pandas as pd
 from fastapi_sqlalchemy import db
+from mutoh_api.models_Mutoh import Mutoh_details as MutDet
 from mutoh_api.models_Mutoh import Mutoh as Mh
-from common.update_db import MutohDatabase
+from common.update_db import Database
 from common.csv_backup import CsvBackup
 
 # basedir = os.path.abspath(os.path.dirname(__file__))
@@ -114,6 +115,8 @@ def loc_new_df(df, last_db_insert: str, unit):
 def get_last_insert(unit):
     last_db_insert = db.session.query(Mh.date).filter(
         Mh.unit == unit).first()
+
+    # last_db_insert = None
     if last_db_insert is None:
         return '2000-01-01 00:00:00'
     else:
@@ -138,7 +141,7 @@ def update_Mutoh_data():
         all_data = pd.concat([all_data, new_loc_df]).reset_index(drop=True)
         last_inserts[unit] = new_last_db_insert
         print(
-            f'{unit} last_db_insert: {last_db_insert}  ---> new_last_db_insert: {new_last_db_insert}')
+            f'{unit} last_db_insert: {last_db_insert}--->new:{new_last_db_insert}')
         # print(f'unit {unit}')
         # print(
         #     f'last_db_insert: {last_db_insert}  ---> new_last_db_insert: {new_last_db_insert}')
@@ -146,12 +149,11 @@ def update_Mutoh_data():
     print(all_data)
     print(all_data.empty)
     if not all_data.empty:
-        print('test')
-        update_db = MutohDatabase(all_data, last_inserts)
-        # update_db.add_to_mutoh_details()
-        update_db.add_to_mutoh()
-
-    # csv_backup = CsvBackup(unit, logs, all_data, ARCHIVES_FILES_PATH)
-    # csv_backup.save_csv_backup()
-    # csv_backup.moveFiles()
-    # mutoh_items.del_files(mutoh_numbers[x])
+        update_db = Database(all_data, last_inserts)
+        update_db.update(MutDet)
+        update_db.update(Mh)
+        for unit, logs in unit_logFiles_dict.items():
+            csv_backup = CsvBackup(unit, logs, all_data, ARCHIVES_FILES_PATH)
+            csv_backup.save_csv_backup()
+            csv_backup.moveFiles()
+        # mutoh_items.del_files(mutoh_numbers[x])

@@ -11,7 +11,7 @@ class Mutoh(Base):
     sn = Column(String(20), nullable=False, default="Xx-xyz0000")
     suma_m2 = Column(Integer, nullable=False)
     suma_ml = Column(Integer, nullable=False)
-    date = Column(Date, nullable=False)
+    date = Column(DateTime, nullable=False)
     target_reached = Column(Integer, nullable=False)
 
     def __repr__(self):

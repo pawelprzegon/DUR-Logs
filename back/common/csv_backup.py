@@ -22,6 +22,7 @@ class CsvBackup:
             os.remove(self.backup_file)
 
     def save_csv_backup(self):
+        print(self.unit)
         current_data = self.get_CSV()
         if current_data is None or current_data.empty:
             print("brak pliku albo pusty plik csv")

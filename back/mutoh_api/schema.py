@@ -8,8 +8,9 @@ class Mutoh(BaseModel):
     sn: str
     suma_m2: int
     suma_ml: int
-    date: date
+    date: datetime
     target_reached: int
+
     class Config:
         orm_mode = True
 
@@ -19,13 +20,13 @@ class Mutoh_details(BaseModel):
     printed: int
     ink: int
     date: date
+
     class Config:
         orm_mode = True
 
 
-    
 class MutohSettings(BaseModel):
     target: int
+
     class Config:
         orm_mode = True
-
