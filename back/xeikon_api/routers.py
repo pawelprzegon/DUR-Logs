@@ -2,12 +2,12 @@ from typing import List
 from fastapi_sqlalchemy import db
 import xeikon_api.schema as schema
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status, Query
-from xeikon_api.update import XeikonDatabase
+from xeikon_api.update import update_Xeikon_data
 from xeikon_api.reorganizeData import reorganizeTonerData, \
-                                    reorganizeDVLData, reorganizeFuserData, \
-                                    reorganizeClicksData
+    reorganizeDVLData, reorganizeFuserData, \
+    reorganizeClicksData
 from xeikon_api.models_Xeikon import Xeikon, DVL, Fuser, Toner, \
-                                     Xeikon_Details, Clicks
+    Xeikon_Details, Clicks
 from typing import Optional
 from sqlalchemy import func
 from datetime import datetime
@@ -15,22 +15,21 @@ from dateutil.relativedelta import relativedelta
 from db import get_session
 
 
-
 xeikon_api = APIRouter()
+
 
 def update():
     global status
     status = True
-    directory = ['Xeikon 1', 'Xeikon 2', 'Xeikon 3']
-    for each in directory:
-        data = XeikonDatabase(each)
-        data.update()
+    update_Xeikon_data()
     print("done! ")
     status = False
 
-@xeikon_api.get('/xeikons/status', include_in_schema=False)
+
+@xeikon_api.get('/xeikon/status', include_in_schema=False)
 def status():
     return status
+
 
 @xeikon_api.get('/xeikon/update', include_in_schema=False)
 async def xeikon_Update(background_tasks: BackgroundTasks):
@@ -42,28 +41,28 @@ async def xeikon_Update(background_tasks: BackgroundTasks):
 
 
 @xeikon_api.get('/xeikon/', response_model=List[schema.Xeikon], tags=["Xeikon"])
-async def xeikon_all_data(unit: Optional[str]=None):
+async def xeikon_all_data(unit: Optional[str] = None):
     """
      endpoint: list all data for every printer without 'unit' parameter, or for specyfic Xeikon printer with 'unit' parameter\n
      variable example: "Xeikon 2"
     """
     if unit is None:
         if response := db.session.query(Xeikon).all():
-            return response 
+            return response
         else:
             raise HTTPException(
-            status_code=404,
-            detail='Not found',
+                status_code=404,
+                detail='Not found',
             )
     unit = unit.lower()
     if response := db.session.query(Xeikon).filter(Xeikon.unit == unit.capitalize()).all():
         return response
     else:
-            raise HTTPException(
+        raise HTTPException(
             status_code=404,
             detail='Not found',
-            )
-        
+        )
+
 
 @xeikon_api.get("/xeikon/chart/{unit}/{period}", response_model=List[schema.XeikonDetails], tags=["Xeikon"])
 async def xeikon_chart_data(unit, period):
@@ -71,7 +70,7 @@ async def xeikon_chart_data(unit, period):
      endpoint: lists specific xeikon summed data(A3/grams) ziped in months and years \n
      variable example: "Xeikon 1"
     """
-    
+
     last_active = db.session.query(func.max(Xeikon_Details.date))\
                     .filter(Xeikon_Details.unit == str(unit)).first()
     last_active = datetime.strptime(str(*last_active), '%Y-%m-%d')
@@ -80,18 +79,17 @@ async def xeikon_chart_data(unit, period):
     else:
         date_period = last_active + relativedelta(years=-10)
 
-    if response := db.session.query(Xeikon_Details).filter(Xeikon_Details.unit == str(unit)
-                                                            ,Xeikon_Details.date >= date_period) \
-                                                    .order_by(Xeikon_Details.date).all():
-    
+    if response := db.session.query(Xeikon_Details).filter(Xeikon_Details.unit == str(unit), Xeikon_Details.date >= date_period) \
+            .order_by(Xeikon_Details.date).all():
+
         return response
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
+            status_code=404,
+            detail='Not found',
         )
-        
-       
+
+
 @xeikon_api.get('/xeikon/toner/', response_model=List[schema.Toner], tags=["Xeikon"])
 def xeikon_Toner_data():
     """
@@ -102,10 +100,11 @@ def xeikon_Toner_data():
             return reorganizeTonerData(data)
         else:
             raise HTTPException(
-            status_code=404,
-            detail='Not found',
-            ) 
-        
+                status_code=404,
+                detail='Not found',
+            )
+
+
 @xeikon_api.get('/xeikon/toner/chart/{unit}/{period}', response_model=List[schema.TonerDetails], tags=["Xeikon"])
 def xeikon_Toner_details(unit, period):
     """
@@ -119,17 +118,16 @@ def xeikon_Toner_details(unit, period):
     else:
         date_period = last_active + relativedelta(years=-10)
     if response := db.session.query(Toner)\
-                .filter(Toner.unit == str(unit), Toner.date >= date_period)\
-                .order_by(Toner.unit, Toner.date)\
-                .all():
+        .filter(Toner.unit == str(unit), Toner.date >= date_period)\
+        .order_by(Toner.unit, Toner.date)\
+            .all():
         return response
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
-        )    
-      
-    
+            status_code=404,
+            detail='Not found',
+        )
+
 
 @xeikon_api.get('/xeikon/dvl/', response_model=List[schema.DVL], tags=["Xeikon"])
 async def xeikon_DVL_data():
@@ -140,24 +138,26 @@ async def xeikon_DVL_data():
         return reorganizeDVLData(response)
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
-        )  
+            status_code=404,
+            detail='Not found',
+        )
+
 
 @xeikon_api.get('/xeikon/fuser/', tags=["Xeikon"])
 async def xeikon_Fuser_data():
     """
      endpoint: list all Fuser data \n
     """
-    
+
     if response := db.session.query(Fuser).all():
         return reorganizeFuserData(response)
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
-        )  
-        
+            status_code=404,
+            detail='Not found',
+        )
+
+
 @xeikon_api.get('/xeikon/clicks/', response_model=List[schema.Clicks], tags=["Xeikon"])
 async def xeikon_Clicks_data():
     """
@@ -168,12 +168,11 @@ async def xeikon_Clicks_data():
             return reorganizeClicksData(result)
         else:
             raise HTTPException(
-            status_code=404,
-            detail='Not found',
-            )     
-    
-    
-    
+                status_code=404,
+                detail='Not found',
+            )
+
+
 @xeikon_api.get('/xeikon/clicks/chart/{unit}/{period}', response_model=List[schema.ClicksDetails], tags=["Xeikon"])
 async def xeikon_Clicks_data(unit, period):
     """
@@ -187,12 +186,12 @@ async def xeikon_Clicks_data(unit, period):
     else:
         date_period = last_active + relativedelta(years=-10)
     if result := db.session.query(Clicks)\
-                    .filter(Clicks.unit == str(unit), Clicks.date  >= date_period)\
-                    .order_by(Clicks.date)\
-                    .all():
+        .filter(Clicks.unit == str(unit), Clicks.date >= date_period)\
+        .order_by(Clicks.date)\
+            .all():
         return result
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
+            status_code=404,
+            detail='Not found',
         )

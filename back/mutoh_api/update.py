@@ -6,7 +6,7 @@ import pandas as pd
 from fastapi_sqlalchemy import db
 from mutoh_api.models_Mutoh import Mutoh_details as MutDet
 from mutoh_api.models_Mutoh import Mutoh as Mh
-from common.update_db import Database
+from mutoh_api.insert_into_db import Database
 from common.csv_backup import CsvBackup
 
 # basedir = os.path.abspath(os.path.dirname(__file__))
@@ -109,7 +109,7 @@ def loc_new_df(df, last_db_insert: str, unit):
         new_df.Ink = new_df.Ink.round()
         new_df.Printed = new_df.Printed.round()
         return new_df, new_last_db_insert
-    return df, None
+    return None, None
 
 
 def get_last_insert(unit):
@@ -142,18 +142,16 @@ def update_Mutoh_data():
         last_inserts[unit] = new_last_db_insert
         print(
             f'{unit} last_db_insert: {last_db_insert}--->new:{new_last_db_insert}')
-        # print(f'unit {unit}')
-        # print(
-        #     f'last_db_insert: {last_db_insert}  ---> new_last_db_insert: {new_last_db_insert}')
-        # print(f'new_df: \n{new_loc_df}')
-    print(all_data)
-    print(all_data.empty)
+
     if not all_data.empty:
         update_db = Database(all_data, last_inserts)
-        update_db.update(MutDet)
-        update_db.update(Mh)
+        update_db.add_to_mutoh_details()
+        update_db.add_to_mutoh()
+
         for unit, logs in unit_logFiles_dict.items():
-            csv_backup = CsvBackup(unit, logs, all_data, ARCHIVES_FILES_PATH)
+            loc_all_data = all_data.loc[all_data['unit'] == unit]
+            csv_backup = CsvBackup(
+                unit, logs, loc_all_data, ARCHIVES_FILES_PATH)
             csv_backup.save_csv_backup()
             csv_backup.moveFiles()
         # mutoh_items.del_files(mutoh_numbers[x])

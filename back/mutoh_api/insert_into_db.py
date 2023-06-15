@@ -1,5 +1,3 @@
-from sqlalchemy.ext.declarative import declarative_base
-from typing import Type
 from mutoh_api.models_Mutoh import MutohSettings as MutSet
 from mutoh_api.models_Mutoh import Mutoh_details as MutDet
 from mutoh_api.models_Mutoh import Mutoh as Mh
@@ -11,12 +9,6 @@ class Database:
     def __init__(self, df: DataFrame, last_inserts: dict) -> None:
         self.df = df
         self.new_last_db_insert = last_inserts
-
-    def update(self, model: Type[declarative_base]):
-        if model == MutDet:
-            self.add_to_mutoh_details()
-        elif model == Mh:
-            self.add_to_mutoh()
 
     def add_to_mutoh_details(self):
         for index, row in self.df.iterrows():

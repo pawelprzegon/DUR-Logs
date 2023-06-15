@@ -4,11 +4,10 @@ from sqlalchemy import func
 import impala_api.schema as schema
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from impala_api.models_Impala import Impala, Impala_details, ImpalaSettings
-from impala_api.update import update
+from impala_api.update import update_Impala_data
 from impala_api.replacements import impalaUpdateReplacements, impalaReplacements, impalaUpdateTarget
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
 
 
 impala_api = APIRouter()
@@ -19,7 +18,7 @@ status = None
 def update_data():
     global status
     status = True
-    update()
+    update_Impala_data()
     print("done! ")
     status = False
 
@@ -38,7 +37,6 @@ async def impalaDataUpdate(background_tasks: BackgroundTasks):
     return {"impala update": "in progress refresh website after view minutes"}
 
 
-
 @impala_api.get("/impala", response_model=List[schema.Impala], response_model_exclude_none=True, tags=["Impala"])
 async def impala_all():
     """
@@ -47,10 +45,11 @@ async def impala_all():
     if response := db.session.query(Impala).order_by(Impala.unit).all():
         return response
     else:
-            raise HTTPException(
+        raise HTTPException(
             status_code=404,
             detail='Not found',
-            )
+        )
+
 
 @impala_api.get("/impala/chart/{unit}/{period}", response_model=List[schema.Impala_details], tags=["Impala"])
 async def impala_chart(unit, period):
@@ -72,8 +71,8 @@ async def impala_chart(unit, period):
 
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
+            status_code=404,
+            detail='Not found',
         )
 
 
@@ -95,7 +94,7 @@ async def impala_Replacements():
     """
      endpoint: gets all replacements datas for filters and bearings(if any)
     """
-    return  impalaReplacements()
+    return impalaReplacements()
 
 
 @impala_api.put('/impala/settings/{what}&{target}', tags=["Impala"])
@@ -111,9 +110,9 @@ async def update_Settings(what, target):
 @impala_api.get('/impala/settings/', response_model=schema.ImpalaSettings, include_in_schema=False, tags=["Impala"])
 async def read_Settings():
     if response := db.session.query(ImpalaSettings).first():
-        return response 
+        return response
     else:
         raise HTTPException(
-        status_code=404,
-        detail='Not found',
+            status_code=404,
+            detail='Not found',
         )
