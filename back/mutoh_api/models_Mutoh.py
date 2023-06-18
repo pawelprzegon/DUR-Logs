@@ -8,7 +8,7 @@ class Mutoh(Base):
     __tablename__ = "mutoh"
     id = Column(Integer, primary_key=True)
     unit = Column(String(15), nullable=False, unique=True)
-    sn = Column(String(20), nullable=False, default="Xx-xyz0000")
+    sn = Column(String(20), nullable=False, default="xx-xxx0000")
     suma_m2 = Column(Integer, nullable=False)
     suma_ml = Column(Integer, nullable=False)
     date = Column(DateTime, nullable=False)

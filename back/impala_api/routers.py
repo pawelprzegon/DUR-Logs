@@ -44,6 +44,11 @@ async def impala_all():
     """
     if response := db.session.query(Impala).order_by(Impala.unit).all():
         return response
+    elif status is True:
+        raise HTTPException(
+            status_code=403,
+            detail='Impala update in progress',
+        )
     else:
         raise HTTPException(
             status_code=404,

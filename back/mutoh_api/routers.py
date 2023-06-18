@@ -45,6 +45,11 @@ async def mutoh_all():
         .order_by(Mutoh.unit)\
             .all():
         return response
+    elif status is True:
+        raise HTTPException(
+            status_code=403,
+            detail='Mutoh update in progress',
+        )
     else:
         raise HTTPException(
             status_code=404,

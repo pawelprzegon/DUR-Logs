@@ -49,6 +49,11 @@ async def xeikon_all_data(unit: Optional[str] = None):
     if unit is None:
         if response := db.session.query(Xeikon).all():
             return response
+        elif status is True:
+            raise HTTPException(
+                status_code=403,
+                detail='Xeikon update in progress',
+            )
         else:
             raise HTTPException(
                 status_code=404,

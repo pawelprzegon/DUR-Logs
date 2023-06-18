@@ -16,7 +16,7 @@ services:
     build: ./back
     restart: on-failure:10
     environment:
-      - DATABASE_URL=postgresql+psycopg2://docker:docker@postgres:5432/Artgeist_API
+      - DATABASE_URL=postgresql+psycopg2://docker:docker@postgres:5432/logs
       - CORS_URL=http://localhost:3001
       - DB_TIMEOUT=30
     volumes:
