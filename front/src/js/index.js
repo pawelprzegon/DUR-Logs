@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
       navigateTo(e.target.href);
     }
   });
-
   router();
 });
 

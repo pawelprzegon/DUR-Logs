@@ -4,6 +4,7 @@ from fastapi import status, HTTPException
 from mutoh_api.models_Mutoh import Mutoh as Mh
 from mutoh_api.models_Mutoh import MutohSettings as MutSet
 
+
 def mutohUpdateSettings(target):
     try:
         settings = MutSet(
@@ -18,25 +19,26 @@ def mutohUpdateSettings(target):
         db.session.commit()
         update_targets(target)
         return {'status': f'successfully updated target to {int(target)}'}
-    
+
     except SQLAlchemyError as e:
-         raise HTTPException(
-           status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=str(e.__dict__['orig']),
-            ) from e
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e.__dict__['orig']),
+        ) from e
     except Exception as ex:
         raise HTTPException(
-           status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=str(ex),
-            ) from ex
-    
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(ex),
+        ) from ex
+
 
 def update_targets(target):
     data = db.session.query(Mh).all()
     for each in data:
         each.target_reached = round(each.suma_m2/int(target), 2)*100
         db.session.commit()
-        
+
+
 def addDefaultTargetToDb():
     default_target = MutSet(
         target=19000
@@ -44,3 +46,21 @@ def addDefaultTargetToDb():
     db.session.add(default_target)
     db.session.commit()
     return db.session.query(MutSet).first()
+
+
+def update_SN(unit, sn):
+    try:
+        if exists := db.session.query(Mh).filter(Mh.unit == unit).first():
+            exists.sn = sn
+        db.session.commit()
+        return {'status': f'successfully updated sn {sn} for {unit}'}
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e.__dict__['orig']),
+        ) from e
+    except Exception as ex:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(ex),
+        ) from ex

@@ -1,7 +1,7 @@
 import { navigateTo } from "./index.js";
 import { callApiPut } from "./endpoints.js";
-import { alerts } from "./alerts/alerts.js";
-import { generateNewChart } from "./common.js";
+import { Alerts } from "./alerts/alerts.js";
+import { generateNewChart, hideAllSnInputs } from "./common.js";
 
 export class createTablesMutoh {
   constructor(data, target, chart) {
@@ -31,7 +31,6 @@ export class createTablesMutoh {
     tablesmallBox.appendChild(tableTbodyBox);
     tableBox.appendChild(tablesmallBox);
     tableBox.appendChild(this.descriptionsBox());
-
     this.result.push(tableBox);
   }
 
@@ -90,7 +89,8 @@ export class createTablesMutoh {
           each.appendChild(progressBarBox);
           each.appendChild(progressLabel);
         } else if (key == "sn" && value == "xx-xxx0000") {
-          each.innerText = "add s/n";
+          let unit_number = unit.unit.split(" ").pop();
+          this.showSnInputText(each, unit_number);
         }
         tr.appendChild(each);
       }
@@ -166,7 +166,8 @@ export class createTablesMutoh {
         if (status == 200) {
           navigateTo("/mutoh");
         } else {
-          alerts(status, response.detail, "alert-red");
+          let alert = new Alerts(status, response.detail, "alert-red");
+          alert.createNew();
         }
       }
     };
@@ -193,6 +194,60 @@ export class createTablesMutoh {
       input.classList.remove("invalidNumber");
       return true;
     }
+  }
+
+  showSnInputText(each, unit_number) {
+    const snOverlay = document.querySelector(".mask");
+    each.innerText = "";
+    let snDefaultBox = document.createElement("div");
+    snDefaultBox.innerText = "add s/n";
+    snDefaultBox.classList.add("default-sn");
+    let snFieldForm = document.createElement("form");
+    snFieldForm.classList.add("snFieldForm");
+    snFieldForm.style.display = "none";
+    snFieldForm.id = `sn_${unit_number}_Form`;
+    let snField = document.createElement("input");
+    snField.type = "text";
+    snField.classList.add("sn-changeInput");
+    snField.id = `sn_${unit_number}`;
+    snFieldForm.appendChild(snField);
+    each.appendChild(snDefaultBox);
+    each.appendChild(snFieldForm);
+
+    each.onclick = () => {
+      //hide all
+      snOverlay.classList.add("mask-open");
+      each.parentElement.classList.add("active-sn-edit");
+      hideAllSnInputs();
+      snDefaultBox.style.display = "none";
+      snFieldForm.style.display = null;
+      snField.focus();
+    };
+    each.onsubmit = async (event) => {
+      event.preventDefault();
+      let newSN = document.querySelector(`#sn_${unit_number}`);
+      let data = newSN.value;
+      let validate = this.serialValidation(data);
+      if (validate == true) {
+        let [response, status] = await callApiPut(
+          `mutoh/sn/Mutoh ${unit_number}/${data}`
+        );
+        console.log(status, response);
+        hideAllSnInputs();
+        snOverlay.classList.remove("mask-open");
+        if (status == 200) {
+          navigateTo("/mutoh");
+        } else {
+          let alert = new Alerts(status, response.detail, "alert-red");
+          alert.createNew();
+        }
+      }
+    };
+  }
+
+  serialValidation(sn) {
+    //TODO tutaj musi być RegExp
+    return true;
   }
 
   getTables() {

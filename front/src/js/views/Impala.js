@@ -5,7 +5,7 @@ import {
   createTableReplacementsImpala,
 } from "../createImpalaTables.js";
 import { createChart } from "../chart/createChart.js";
-import { alerts } from "../alerts/alerts.js";
+import { Alerts } from "../alerts/alerts.js";
 import {
   Replacement,
   hideloader,
@@ -112,17 +112,25 @@ export default class extends AbstractView {
         bTarget.inputValue("impala/setting/bearings&");
         navOptions.appendChild(bTarget.getReplaceBox());
       } else if (status != 200 && status != 403) {
-        alerts(status, dataAll.detail, "alert-red");
+        let alert = new Alerts(status, dataAll.detail, "alert-red");
+        alert.createNew();
         hideloader();
         app.appendChild(NoDataFound("Impala"));
       } else if (status == 403) {
-        alerts(status, dataAll.detail, "alert-orange");
+        let alert = new Alerts(status, dataAll.detail, "alert-orange");
+        alert.createNew();
       } else if (statusRepl != 200) {
-        alerts(statusRepl, dataReplacements.detail, "alert-red");
+        let alert = new Alerts(
+          statusRepl,
+          dataReplacements.detail,
+          "alert-red"
+        );
+        alert.createNew();
       }
     } catch (error) {
       console.log(error);
-      alerts("error", error, "alert-red");
+      let alert = new Alerts(error, error, "alert-red");
+      alert.createNew();
     }
   }
 }
