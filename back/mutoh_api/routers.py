@@ -2,7 +2,7 @@ from typing import List
 from fastapi_sqlalchemy import db
 import mutoh_api.schema as schema
 from mutoh_api.update import update_Mutoh_data
-from mutoh_api.settings import mutohUpdateSettings, addDefaultTargetToDb
+from mutoh_api.settings import mutohUpdateSettings, addDefaultTargetToDb, update_SN
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from mutoh_api.models_Mutoh import Mutoh, Mutoh_details, MutohSettings
 from datetime import datetime
@@ -24,7 +24,16 @@ def update():
 
 @mutoh_api.get('/mutoh/status', include_in_schema=False)
 def status():
-    return status
+    if isinstance(status, bool):
+        raise HTTPException(
+            status_code=200,
+            detail=status,
+        )
+    else:
+        raise HTTPException(
+            status_code=500,
+            detail='status type error',
+        )
 
 
 @mutoh_api.get("/mutoh/update", include_in_schema=False)
@@ -41,15 +50,15 @@ async def mutoh_all():
     """
      endpoint: lists all mutohs summed data(m2/ml)
     """
-    if response := db.session.query(Mutoh)\
-        .order_by(Mutoh.unit)\
-            .all():
-        return response
-    elif status is True:
+    if status is True:
         raise HTTPException(
             status_code=403,
             detail='Mutoh update in progress',
         )
+    elif response := db.session.query(Mutoh)\
+        .order_by(Mutoh.unit)\
+            .all():
+        return response
     else:
         raise HTTPException(
             status_code=404,
@@ -91,8 +100,7 @@ async def mutoh_chart(unit, period):
 @mutoh_api.put('/mutoh/target/{target}', tags=["Mutoh"])
 async def update_Settings(target):
     """
-     endpoint: updating alarm value level for filters and bearings actual quantity(counted from the last exchange, if any)\n
-     variable example : "20000"
+     endpoint: updating target value level 
     """
     if response := mutohUpdateSettings(target):
         return response
@@ -112,3 +120,17 @@ async def mutoh_target():
         return {'target': target.target}
     else:
         return addDefaultTargetToDb()
+
+
+@mutoh_api.put("/mutoh/sn/{unit}/{sn}", tags=["Mutoh"])
+async def mutoh_sn(unit, sn):
+    """
+     endpoint: update serial number for mutohs units
+    """
+    if response := update_SN(unit, sn):
+        return response
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail='Not found',
+        )

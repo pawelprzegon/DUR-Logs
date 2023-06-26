@@ -2,7 +2,7 @@ import AbstractView from "./AbstractView.js";
 import { callApiGet } from "../endpoints.js";
 import { Xeikon_All_Data, Xeikon_Data } from "../createXeikonTables.js";
 import { createChart } from "../chart/createChart.js";
-import { alerts } from "../alerts/alerts.js";
+import { Alerts } from "../alerts/alerts.js";
 import {
   hideloader,
   showloader,
@@ -40,11 +40,13 @@ export default class extends AbstractView {
         dataBox.appendChild(tableAllReady);
         app.appendChild(dataBox);
       } else if (status != 200 && status != 403) {
-        alerts(status, dataAll.detail, "alert-red");
+        let alert = new Alerts(status, dataAll.detail, "alert-red");
+        alert.createNew();
         hideloader();
         app.appendChild(NoDataFound("Xeikon"));
       } else if (status == 403) {
-        alerts(status, dataAll.detail, "alert-orange");
+        let alert = new Alerts(status, dataAll.detail, "alert-orange");
+        alert.createNew();
       }
       let tonerPath = "xeikon/toner/";
       let dvlPath = "xeikon/dvl/";
@@ -74,11 +76,14 @@ export default class extends AbstractView {
         DataBox.appendChild(dvlTableReady);
         app.appendChild(DataBox);
       } else if (statusDVL != 200 && statusDVL != 403) {
-        alerts(statusDVL, dataDVL.detail, "alert-red");
+        let alert = new Alerts(statusDVL, dataDVL.detail, "alert-red");
+        alert.createNew();
       } else if (statusDVL == 403) {
-        alerts(statusDVL, dataDVL.detail, "alert-orange");
+        let alert = new Alerts(statusDVL, dataDVL.detail, "alert-orange");
+        alert.createNew();
       } else if (statusToner != 200) {
-        alerts(statusToner, dataToner.detail, "alert-red");
+        let alert = new Alerts(statusToner, dataToner.detail, "alert-red");
+        alert.createNew();
       }
 
       let fuserPath = "xeikon/fuser/";
@@ -109,17 +114,22 @@ export default class extends AbstractView {
         dataBox.appendChild(clicksTableReady);
         app.appendChild(dataBox);
       } else if (statusFuser != 200 && statusFuser != 403) {
-        alerts(statusFuser, dataFuser.detail, "alert-red");
+        let alert = new Alerts(statusFuser, dataFuser.detail, "alert-red");
+        alert.createNew();
       } else if (statusFuser == 403) {
-        alerts(statusFuser, dataFuser.detail, "alert-orange");
+        let alert = new Alerts(statusFuser, dataFuser.detail, "alert-orange");
+        alert.createNew();
       } else if (statusClicks != 200) {
-        alerts(statusClicks, dataClicks.detail, "alert-red");
+        let alert = new Alerts(statusClicks, dataClicks.detail, "alert-red");
+        alert.createNew();
       } else if (statusClicks == 403) {
-        alerts(statusClicks, dataClicks.detail, "alert-orange");
+        let alert = new Alerts(statusClicks, dataClicks.detail, "alert-red");
+        alert.createNew();
       }
     } catch (error) {
       console.log(error);
-      alerts("error", error, "alert-red");
+      let alert = new Alerts(error, error, "alert-red");
+      alert.createNew();
     }
   }
 }

@@ -2,13 +2,14 @@ import AbstractView from "./AbstractView.js";
 import { callApiGet } from "../endpoints.js";
 import { createTablesMutoh } from "../createMutohTables.js";
 import { createChart } from "../chart/createChart.js";
-import { alerts } from "../alerts/alerts.js";
+import { Alerts } from "../alerts/alerts.js";
 import {
   Replacement,
   hideloader,
   removeDbSettings,
   showloader,
   NoDataFound,
+  hideOverlayForSn,
 } from "../common.js";
 
 export default class extends AbstractView {
@@ -26,6 +27,11 @@ export default class extends AbstractView {
       if (status == 200 && statusTarget == 200) {
         hideloader();
         dataAll.sort(dynamicSort("-name"));
+        const container = document.querySelector(".container");
+        const overlay = document.createElement("div");
+        overlay.classList.add("mask");
+        container.appendChild(overlay);
+
         let app = document.querySelector("#app");
         let newChart = new createChart();
         newChart.getData();
@@ -51,19 +57,24 @@ export default class extends AbstractView {
         optionsData.createBox();
         optionsData.inputValue("mutoh/target/");
         navOptions.appendChild(optionsData.getReplaceBox());
+        hideOverlayForSn();
       } else if (status != 200 && status != 403) {
-        alerts(status, dataAll.detail, "alert-red");
+        let alert = new Alerts(status, dataAll.detail, "alert-red");
+        alert.createNew();
         hideloader();
         app.appendChild(NoDataFound("Mutoh"));
       } else if (status == 403) {
-        alerts(status, dataAll.detail, "alert-orange");
+        let alert = new Alerts(status, dataAll.detail, "alert-orange");
+        alert.createNew();
       } else if (statusTarget != 200) {
         hideloader();
-        alerts(status, target.detail, "alert-red");
+        let alert = new Alerts(status, target.detail, "alert-red");
+        alert.createNew();
       }
     } catch (error) {
       console.log(error);
-      alerts("error", error, "alert-red");
+      let alert = new Alerts(error, error, "alert-red");
+      alert.createNew();
     }
   }
 }

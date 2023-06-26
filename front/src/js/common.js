@@ -1,4 +1,4 @@
-import { alerts } from "./alerts/alerts.js";
+import { Alerts } from "./alerts/alerts.js";
 import { callApiPut, callApiGet } from "./endpoints.js";
 import { navigateTo } from "./index.js";
 
@@ -99,7 +99,8 @@ export class Replacement {
       if (status == 200) {
         navigateTo(this.path);
       } else {
-        alerts(status, response.detail, "alert-red");
+        let alert = new Alerts(status, response.detail, "alert-red");
+        alert.createNew();
       }
     };
   }
@@ -127,11 +128,11 @@ export class Replacement {
         let [response, status] = await callApiPut(
           apiPath + this.changeInput.value
         );
-        // console.log(status, response);
         if (status == 200) {
           navigateTo(this.path);
         } else {
-          alerts(status, response.detail, "alert-red");
+          let alert = new Alerts(status, response.detail, "alert-red");
+          alert.createNew();
         }
       }
     };
@@ -303,4 +304,24 @@ export function NoDataFound(place) {
   msg.innerText = `No data found in ${place} database`;
   noData.appendChild(msg);
   return noData;
+}
+
+export function hideAllSnInputs() {
+  let all_forms = document.querySelectorAll(".snFieldForm");
+  all_forms.forEach((element) => {
+    element.style.display = "none";
+    element.parentElement.firstChild.style.display = null;
+  });
+}
+
+export function hideOverlayForSn() {
+  const snOverlay = document.querySelector(".mask");
+  snOverlay.addEventListener("click", () => {
+    let activeSnEdit = document.querySelector(".active-sn-edit");
+    hideAllSnInputs();
+    snOverlay.classList.remove("mask-open");
+    if (activeSnEdit != null) {
+      activeSnEdit.classList.remove("active-sn-edit");
+    }
+  });
 }
