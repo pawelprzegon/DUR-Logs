@@ -2,10 +2,9 @@ from fastapi_sqlalchemy import db
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 import latex_api.schema as schema
 from typing import List
-from datetime import datetime
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
-from latex_api.models_Latex import Latex, Latex_details
-from latex_api.update import update
+from latex_api.models_Latex import Latex
+from latex_api.update import update_Latex_data
 
 latex_api = APIRouter()
 
@@ -16,7 +15,7 @@ status = None
 def update_data():
     global status
     status = True
-    update()
+    update_Latex_data()
     print("done! ")
     status = False
 
@@ -43,7 +42,7 @@ async def latex_all():
     if response := db.session.query(Latex).order_by(Latex.unit).all():
         return response
     else:
-            raise HTTPException(
+        raise HTTPException(
             status_code=404,
             detail='Not found',
-            )
+        )

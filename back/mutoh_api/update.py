@@ -112,7 +112,7 @@ def loc_new_df(df, last_db_insert: str, unit):
     return None, None
 
 
-def get_last_insert(unit):
+def get_last_insert(unit) -> str:
     last_db_insert = db.session.query(Mh.date).filter(
         Mh.unit == unit).first()
 

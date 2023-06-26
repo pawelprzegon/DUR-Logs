@@ -31,9 +31,9 @@ class Database:
             db.session.commit()
 
     def add_to_mutoh(self) -> dict:
-        self.prepare_data()
+        unit_summed_df = self.prepare_data()
         mutoh_data = {}
-        for index, row in self.summed_df.iterrows():
+        for index, row in unit_summed_df.iterrows():
             if (
                 exists := db.session.query(Mh).filter(Mh.unit == row["unit"]).first()
             ):
@@ -53,17 +53,18 @@ class Database:
             db.session.commit()
 
     def prepare_data(self):
-        self.summed_df = self.df.groupby([
+        unit_summed_df = self.df.groupby([
             'unit']).sum(["Ink", "Printed"]).reset_index()
 
-        self.summed_df = self.summed_df.rename(
+        unit_summed_df = unit_summed_df.rename(
             columns={"Ink": "suma_ml", "Printed": "suma_m2"})
-        self.summed_df = self.summed_df.round({'suma_ml': 0, 'suma_m2': 0})
+        unit_summed_df = unit_summed_df.round({'suma_ml': 0, 'suma_m2': 0})
         # self.last_inserts
         target = target.target if (
             target := db.session.query(MutSet).first()) else 1
-        self.summed_df['target_reached'] = round(
-            self.summed_df['suma_m2']/target, 2)*100
-        self.summed_df['date'] = self.summed_df['unit'].map(
+        unit_summed_df['target_reached'] = round(
+            unit_summed_df['suma_m2']/target, 2)*100
+        unit_summed_df['date'] = unit_summed_df['unit'].map(
             self.new_last_db_insert)
-        print(self.summed_df)
+        print(unit_summed_df)
+        return unit_summed_df

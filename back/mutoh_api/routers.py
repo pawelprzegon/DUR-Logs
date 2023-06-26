@@ -24,7 +24,16 @@ def update():
 
 @mutoh_api.get('/mutoh/status', include_in_schema=False)
 def status():
-    return status
+    if isinstance(status, bool):
+        raise HTTPException(
+            status_code=200,
+            detail=status,
+        )
+    else:
+        raise HTTPException(
+            status_code=500,
+            detail='status type error',
+        )
 
 
 @mutoh_api.get("/mutoh/update", include_in_schema=False)

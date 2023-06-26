@@ -88,6 +88,8 @@ def get_last_insert(unit):
     else:
         return last_db_insert[0].strftime("%Y-%m-%d")
 
+# TODO sprawdzić dla impali last_data_insert
+
 
 def update_Impala_data():
     files = glob.glob(DATA_FOLDER, recursive=True)
