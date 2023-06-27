@@ -3,8 +3,11 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 import latex_api.schema as schema
 from typing import List
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
-from latex_api.models_Latex import Latex
+from latex_api.models_Latex import Latex, Latex_details
 from latex_api.update import update_Latex_data
+from sqlalchemy import func
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 latex_api = APIRouter()
 
@@ -41,6 +44,33 @@ async def latex_all():
     """
     if response := db.session.query(Latex).order_by(Latex.unit).all():
         return response
+    else:
+        raise HTTPException(
+            status_code=404,
+            detail='Not found',
+        )
+
+
+@latex_api.get("/latex/chart/{unit}/{period}", response_model=List[schema.Latex_details], tags=["Latex"])
+async def latex_chart(unit, period):
+    """
+     endpoint: lists specific mutoh summed data(m2/ml) ziped in months and years ; -> 
+     variable example: "Latex 3100"
+    """
+
+    last_active = db.session.query(func.max(Latex_details.date))\
+        .filter(Latex_details.unit == str(unit)).first()
+    print(last_active)
+    last_active = datetime.strptime(str(*last_active), '%Y-%m-%d')
+    if period != 'all':
+        date_period = last_active + relativedelta(months=-int(period))
+    else:
+        date_period = last_active + relativedelta(years=-10)
+    if response := db.session.query(Latex_details)\
+            .filter(Latex_details.unit == str(unit), Latex_details.date >= date_period)\
+            .order_by(Latex_details.date).all():
+        return response
+
     else:
         raise HTTPException(
             status_code=404,

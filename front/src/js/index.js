@@ -1,6 +1,7 @@
-import Mutoh from "./views/Mutoh.js";
-import Impala from "./views/Impala.js";
-import Xeikon from "./views/Xeikon.js";
+import Mutoh from './views/Mutoh.js';
+import Impala from './views/Impala.js';
+import Xeikon from './views/Xeikon.js';
+import Latex from './views/Latex.js';
 
 export const navigateTo = (url) => {
   history.pushState(null, null, url);
@@ -10,9 +11,10 @@ export const navigateTo = (url) => {
 const router = async () => {
   const routes = [
     // {path: '/', view: Dashboard },
-    { path: "/mutoh", view: Mutoh },
-    { path: "/impala", view: Impala },
-    { path: "/xeikon", view: Xeikon },
+    { path: '/mutoh', view: Mutoh },
+    { path: '/impala', view: Impala },
+    { path: '/xeikon', view: Xeikon },
+    { path: '/latex', view: Latex },
   ];
 
   const potentialMatches = routes.map((route) => {
@@ -35,11 +37,11 @@ const router = async () => {
   await view.getData();
 };
 
-window.addEventListener("popstate", router);
+window.addEventListener('popstate', router);
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.addEventListener("click", (e) => {
-    if (e.target.matches("[data-link]")) {
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.addEventListener('click', (e) => {
+    if (e.target.matches('[data-link]')) {
       e.preventDefault();
       selectLink(e);
       navigateTo(e.target.href);
@@ -49,8 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function selectLink(e) {
-  if (document.querySelector(".active-href")) {
-    document.querySelector(".active-href").classList.remove("active-href");
+  if (document.querySelector('.active-href')) {
+    document.querySelector('.active-href').classList.remove('active-href');
   }
-  document.querySelector(`#${e.target.id}`).classList.add("active-href");
+  document.querySelector(`#${e.target.id}`).classList.add('active-href');
 }

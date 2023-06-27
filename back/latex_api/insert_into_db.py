@@ -36,7 +36,7 @@ class Database:
                 exists.lst_job = self.new_date_job['new_job']
             else:
                 latex_data = Latex(
-                    unit='Latex L3100',
+                    unit='Latex 3100',
                     suma_m2=int(summed_df['Printed']),
                     suma_ml=int(summed_df['Ink']*1000),
                     date=self.new_date_job['new_date'],
