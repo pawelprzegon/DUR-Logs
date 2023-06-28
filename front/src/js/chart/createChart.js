@@ -66,17 +66,22 @@ export class createChart {
 
     let okresList = document.createElement('ul');
     okresList.classList.add('options');
-    let unique = uniqueSortedList(this.period, label);
-    unique.forEach((element) => {
-      let unit = document.createElement('li');
-      unit.classList.add('option');
-      unit.innerText = element.split(' ')[1];
-      unit.onclick = () => {
-        btnText.innerText = unit.innerText;
+    let periods = uniqueSortedList(this.period, label);
+    periods.forEach((element) => {
+      let period = document.createElement('li');
+      period.classList.add('option');
+      period.innerText = element.split(' ')[1];
+      period.onclick = () => {
+        btnText.innerText = period.innerText;
         document.querySelector('#Okres').classList.remove('active');
-        generateNewChart(this);
+        if (
+          'activeChartData' in sessionStorage ||
+          'activeUnit' in sessionStorage
+        ) {
+          generateNewChart(this);
+        }
       };
-      okresList.appendChild(unit);
+      okresList.appendChild(period);
     });
 
     dropdown.appendChild(okresList);
@@ -89,7 +94,6 @@ export class createChart {
     }
 
     let [labels, label, dataset, values] = prepareChartData(unit, data);
-    console.log(label);
     let ctx = document.getElementById('charts').getContext('2d');
     let readyDataSet = [];
     let size = Object.keys(dataset).length;
@@ -182,7 +186,6 @@ function reduceDate(date) {
 }
 
 function prepareChartData(unit, data) {
-  console.log(unit, data);
   let legend = new chartLegend();
 
   data.forEach((element) => {

@@ -10,7 +10,6 @@ export const navigateTo = (url) => {
 
 const router = async () => {
   const routes = [
-    // {path: '/', view: Dashboard },
     { path: '/mutoh', view: Mutoh },
     { path: '/impala', view: Impala },
     { path: '/xeikon', view: Xeikon },
@@ -34,6 +33,10 @@ const router = async () => {
   }
 
   const view = new match.route.view();
+  let href = match.route.path;
+  let striped_href = `${href.replace('/', '').capitalize()}-nav`;
+  selectLink(striped_href);
+  setSessionStorage();
   await view.getData();
 };
 
@@ -43,16 +46,23 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.addEventListener('click', (e) => {
     if (e.target.matches('[data-link]')) {
       e.preventDefault();
-      selectLink(e);
+      selectLink(e.target.id);
       navigateTo(e.target.href);
     }
   });
   router();
 });
 
-function selectLink(e) {
+// set active navbar after click
+function selectLink(href) {
   if (document.querySelector('.active-href')) {
     document.querySelector('.active-href').classList.remove('active-href');
   }
-  document.querySelector(`#${e.target.id}`).classList.add('active-href');
+  document.querySelector(`#${href}`).classList.add('active-href');
+}
+
+//set sessionStorage for chart everytime href click
+function setSessionStorage() {
+  sessionStorage.removeItem('activeChartData');
+  sessionStorage.removeItem('activeUnit');
 }

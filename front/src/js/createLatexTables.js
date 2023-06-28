@@ -48,8 +48,8 @@ export class Latex_All_Data {
             each.classList.add('unit');
             each.onclick = () => {
               let path = `latex/chart/${value}`;
-              localStorage.setItem('activeChartData', path);
-              localStorage.setItem('activeUnit', value);
+              sessionStorage.setItem('activeChartData', path);
+              sessionStorage.setItem('activeUnit', value);
               generateNewChart(this.chart);
             };
           }
@@ -75,10 +75,3 @@ export class Latex_All_Data {
     return this.tableBox;
   }
 }
-
-// Object.defineProperty(String.prototype, 'capitalize', {
-//   value: function () {
-//     return this.charAt(0).toUpperCase() + this.slice(1);
-//   },
-//   enumerable: false,
-// });
