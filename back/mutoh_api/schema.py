@@ -15,7 +15,7 @@ class Mutoh(BaseModel):
         orm_mode = True
 
 
-class Mutoh_details(BaseModel):
+class MutohDetails(BaseModel):
     unit: str
     printed: int
     ink: int

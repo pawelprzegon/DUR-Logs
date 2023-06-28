@@ -1,15 +1,16 @@
 from impala_api.models_Impala import ImpalaSettings as Set
 from impala_api.models_Impala import ImpalaFiltersRepl as FRepl
 from impala_api.models_Impala import ImpalaBearingsRepl as BRepl
-from impala_api.models_Impala import Impala_details as Impd
+from impala_api.models_Impala import ImpalaDetails as Impd
 import pandas as pd
 from fastapi_sqlalchemy import db
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 from db import get_session
 
-def impalaUpdateTarget(what, target):
+
+def impala_update_target(what, target):
     try:
         match what:
             case 'filters':
@@ -18,8 +19,8 @@ def impalaUpdateTarget(what, target):
                 )
                 if (
                     exists := db.session.query(Set).filter(Set.id == 1).first()
-                    ):
-                    
+                ):
+
                     exists.filters = int(target)
                 else:
                     db.session.add(settings)
@@ -29,26 +30,24 @@ def impalaUpdateTarget(what, target):
                 )
                 if (
                     exists := db.session.query(Set).filter(Set.id == 1).first()
-                    ):
+                ):
                     exists.bearings = int(target)
                 else:
                     db.session.add(settings)
-                
-        
+
         db.session.commit()
         return {'status': 'successfully updated'}
-        
+
     except SQLAlchemyError as e:
         return {'status': str(e.__dict__['orig'])}
     except Exception as ex:
         raise HTTPException(
             status_code=500,
             detail=f'Server error when update {str(ex)}',
-            ) from ex
-    
+        ) from ex
 
 
-def impalaUpdateReplacements(data):
+def impala_update_replacements(data):
     try:
         what = data[0]
         date = datetime.strptime(data[1], '%Y-%m-%d')
@@ -56,42 +55,42 @@ def impalaUpdateReplacements(data):
         color = data[3]
         if what == 'bearings':
             settings = BRepl(
-                unit=unit, 
+                unit=unit,
                 date=date
-                )
+            )
 
         elif what == 'filters':
             settings = FRepl(
-                unit=unit, 
-                date=date, 
+                unit=unit,
+                date=date,
                 color=color
-                )
+            )
         db.session.add(settings)
         db.session.commit()
         return {'status': 'succesfully added'}
-    
+
     except SQLAlchemyError as e:
         return {'status': str(e.__dict__['orig'])}
-    
+
     except Exception as ex:
         raise HTTPException(
             status_code=500,
             detail=f'Server error when update {str(ex)}',
-            ) from ex
+        ) from ex
 
 
-def writeDefaultThresholdValuesToDb():
+def write_default_threshold_values_to_db():
     newThreshold = Set(
         filters=50000,
         bearings=40000
     )
     db.session.add(newThreshold)
     db.session.commit()
-    
-    return db.session.query(Set).first()
-    
 
-def impalaReplacements() -> dict:
+    return db.session.query(Set).first()
+
+
+def impala_replacements() -> dict:
 
     with get_session() as session:
         df = pd.read_sql(session.query(Impd).statement, session.bind)
@@ -103,7 +102,6 @@ def impalaReplacements() -> dict:
         bf = pd.read_sql(session.query(BRepl).statement, session.bind)
         bf['date'] = pd.to_datetime(bf['date'])
 
-
     printers = []
     units = df['unit'].unique()
     data_ = {}
@@ -111,15 +109,15 @@ def impalaReplacements() -> dict:
         data_.clear()
         data_[each] = {
             'unit': each,
-            'filters' : getFiltersData(df, ff, each),
-            'bearings': getBearingsData(df, bf, each)
+            'filters': get_filters_data(df, ff, each),
+            'bearings': get_bearings_data(df, bf, each)
         }
         printers.append(data_[each])
 
     printers = sorted(printers, key=lambda d: list(d['unit']))
     threshold = session.query(Set).first()
     if threshold is None:
-        threshold = writeDefaultThresholdValuesToDb()
+        threshold = write_default_threshold_values_to_db()
     return {
         'units': printers,
         'filters_threshold': threshold.filters,
@@ -127,7 +125,7 @@ def impalaReplacements() -> dict:
     }
 
 
-def allDatesForColor(ff, each, color):
+def all_dates_for_color(ff, each, color):
     result = []
     data = ff['date'].loc[(ff['unit'] == each) & (ff['color'] == color)]
     for _ in data.values:
@@ -135,34 +133,38 @@ def allDatesForColor(ff, each, color):
         result.append(_)
     return result
 
-def maxDateForColor(ff, each, color):
+
+def max_date_for_color(ff, each, color):
     return ff.loc[(ff['unit'] == each) & (ff['color'] == color)].max()['date']
- 
-def getFiltersLastDate(df, ff, each, color):
+
+
+def get_filters_last_date(df, ff, each, color):
     maxDate = (
         datetime.strptime('1990-01-01', '%Y-%m-%d')
         if ff.empty
-        else maxDateForColor(ff, each, color)
+        else max_date_for_color(ff, each, color)
     )
     return {
-            'liter': (df[(df['date'] >= maxDate) & (df['unit'] == each)].sum(
-                numeric_only=True)[color]/1000).round(1), 
-            'last_replacement': maxDate.date(),
-            'all_replacements': allDatesForColor(ff,each, color)
+        'liter': (df[(df['date'] >= maxDate) & (df['unit'] == each)].sum(
+            numeric_only=True)[color]/1000).round(1),
+        'last_replacement': maxDate.date(),
+        'all_replacements': all_dates_for_color(ff, each, color)
 
-            }
-def getFiltersData(df, ff, each):
+    }
+
+
+def get_filters_data(df, ff, each):
     colors = ['Black', 'Cyan', 'Magenta', 'Yellow', 'White']
     return [
-        {color: getFiltersLastDate(df, ff, each, color)} for color in colors
-        ]
-  
-  
-  
-def maxDateForBearings(bf, each):
+        {color: get_filters_last_date(df, ff, each, color)} for color in colors
+    ]
+
+
+def max_date_for_bearings(bf, each):
     return bf.loc[bf['unit'] == each].max()['date']
 
-def allDatesForBearings(bf, each):
+
+def all_dates_for_bearings(bf, each):
     result = []
     data = bf['date'].loc[bf['unit'] == each]
     for _ in data.values:
@@ -171,15 +173,16 @@ def allDatesForBearings(bf, each):
 
     return result
 
-def getBearingsData(df, bf, each):
+
+def get_bearings_data(df, bf, each):
     maxDate = (
         datetime.strptime('1990-01-01', '%Y-%m-%d')
         if bf.empty
-        else maxDateForBearings(bf, each)
+        else max_date_for_bearings(bf, each)
     )
     return {
         'tys_m2': (df[(df['date'] >= maxDate) & (df['unit'] == each)].sum(
-                        numeric_only=True)['printed']/1000).round(1),
+            numeric_only=True)['printed']/1000).round(1),
         'last_replacement': maxDate.date(),
-        'all_replacements': allDatesForBearings(bf, each)
+        'all_replacements': all_dates_for_bearings(bf, each)
     }

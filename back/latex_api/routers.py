@@ -3,7 +3,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 import latex_api.schema as schema
 from typing import List
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
-from latex_api.models_Latex import Latex, Latex_details
+from latex_api.models_Latex import Latex, LatexDetails
 from latex_api.update import update_Latex_data
 from sqlalchemy import func
 from dateutil.relativedelta import relativedelta
@@ -58,17 +58,17 @@ async def latex_chart(unit, period):
      variable example: "Latex 3100"
     """
 
-    last_active = db.session.query(func.max(Latex_details.date))\
-        .filter(Latex_details.unit == str(unit)).first()
+    last_active = db.session.query(func.max(LatexDetails.date))\
+        .filter(LatexDetails.unit == str(unit)).first()
     print(last_active)
     last_active = datetime.strptime(str(*last_active), '%Y-%m-%d')
     if period != 'all':
         date_period = last_active + relativedelta(months=-int(period))
     else:
         date_period = last_active + relativedelta(years=-10)
-    if response := db.session.query(Latex_details)\
-            .filter(Latex_details.unit == str(unit), Latex_details.date >= date_period)\
-            .order_by(Latex_details.date).all():
+    if response := db.session.query(LatexDetails)\
+            .filter(LatexDetails.unit == str(unit), LatexDetails.date >= date_period)\
+            .order_by(LatexDetails.date).all():
         return response
 
     else:

@@ -1,5 +1,5 @@
 from mutoh_api.models_Mutoh import MutohSettings as MutSet
-from mutoh_api.models_Mutoh import Mutoh_details as MutDet
+from mutoh_api.models_Mutoh import MutohDetails as MutDet
 from mutoh_api.models_Mutoh import Mutoh as Mh
 from fastapi_sqlalchemy import db
 from pandas import DataFrame

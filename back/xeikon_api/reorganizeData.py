@@ -2,7 +2,8 @@ from collections import defaultdict
 import pandas as pd
 from db import get_session
 
-def reorganizeTonerData(response):
+
+def reorganize_toner_data(response):
     with get_session() as session:
         result = []
         df = pd.read_sql(response.statement, session.bind)
@@ -24,7 +25,8 @@ def reorganizeTonerData(response):
             result.append(data)
         return result
 
-def reorganizeClicksData(response):
+
+def reorganize_clicks_data(response):
     with get_session() as session:
         result = []
         df = pd.read_sql(response.statement, session.bind)
@@ -39,15 +41,15 @@ def reorganizeClicksData(response):
             }
             result.append(data)
         return result
-            
 
-def reorganizeDVLData(response):
+
+def reorganize_dvl_data(response):
     tst = defaultdict(list)
     result = []
     for each in response:
         data = {
             'current': each.current,
-            'replaced': each.replaced_total   
+            'replaced': each.replaced_total
         }
         tst[each.unit].append([each.color, data])
     for k, v in tst.items():
@@ -59,13 +61,14 @@ def reorganizeDVLData(response):
         result.append(dict(zip(col, data)))
     return result
 
-def reorganizeFuserData(response):
+
+def reorganize_fuser_data(response):
     result = []
     for each in response:
         data = {
             'unit': each.unit,
             'current': each.current,
-            'replaced': each.replaced_total   
+            'replaced': each.replaced_total
         }
         result.append(data)
     return result

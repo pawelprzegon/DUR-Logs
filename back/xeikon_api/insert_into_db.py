@@ -1,6 +1,6 @@
 from fastapi_sqlalchemy import db
-from xeikon_api.models_Xeikon import Xeikon, Xeikon_Details, Toner,\
-    DVL, Fuser, DVL_Repl, Clicks
+from xeikon_api.models_Xeikon import Xeikon, XeikonDetails, Toner,\
+    DVL, Fuser, DVLRepl, Clicks
 from fastapi_sqlalchemy import db
 from sqlalchemy import func
 from datetime import datetime
@@ -19,7 +19,7 @@ class Database:
         dt = datetime.strptime(dt, "%a %b %d %H:%M:%S %Y")
         return dt.strftime("%Y-%m-%d")
 
-    def Xeikon(self):
+    def xeikon(self):
         if (exists := db.session.query(Xeikon).filter(Xeikon.unit == self.unit
                                                       ).first()):
             exists.date = self.data['last_file_datetime']
@@ -37,23 +37,23 @@ class Database:
             db.session.add(xeikon_data)
         db.session.commit()
 
-    def XeikonDetails(self):
+    def xeikon_details(self):
         mY = datetime.strptime(self.change_Dt(
             self.data['last_file_datetime']), "%Y-%m-%d")
-        prev_data_printed = db.session.query(func.sum(Xeikon_Details.printed)).filter(Xeikon_Details.unit == self.unit,
-                                                                                      Xeikon_Details.date < mY).first()[0]
-        prev_data_toner = db.session.query(func.sum(Xeikon_Details.toner)).filter(Xeikon_Details.unit == self.unit,
-                                                                                  Xeikon_Details.date < mY).first()[0]
+        prev_data_printed = db.session.query(func.sum(XeikonDetails.printed)).filter(XeikonDetails.unit == self.unit,
+                                                                                     XeikonDetails.date < mY).first()[0]
+        prev_data_toner = db.session.query(func.sum(XeikonDetails.toner)).filter(XeikonDetails.unit == self.unit,
+                                                                                 XeikonDetails.date < mY).first()[0]
         if prev_data_printed is None:
             prev_data_printed = 0
         if prev_data_toner is None:
             prev_data_toner = 0
-        if (exists := db.session.query(Xeikon_Details).filter(Xeikon_Details.unit == self.unit,
-                                                              Xeikon_Details.date == mY).first()):
+        if (exists := db.session.query(XeikonDetails).filter(XeikonDetails.unit == self.unit,
+                                                             XeikonDetails.date == mY).first()):
             exists.printed = self.data['total_printed'] - prev_data_printed
             exists.toner = self.data['total_toner_all'] - prev_data_toner
         else:
-            xeikon_details_data = Xeikon_Details(
+            xeikon_details_data = XeikonDetails(
                 unit=self.unit,
                 printed=self.data['total_printed'] - prev_data_printed,
                 toner=self.data['total_toner_all'] - prev_data_toner,
@@ -62,7 +62,7 @@ class Database:
             db.session.add(xeikon_details_data)
         db.session.commit()
 
-    def Toner(self):
+    def toner(self):
         mY = self.change_Dt(self.data['last_file_datetime'])
         prev_toner = {
             'cyan':
@@ -120,7 +120,7 @@ class Database:
             db.session.add(toner_data)
         db.session.commit()
 
-    def DVL_Repl(self):
+    def dvl_repl(self):
         for key, value in self.data['dvl_CMYK'].items():
             if (
                 exists := db.session.query(DVL.replaced_total)
@@ -128,7 +128,7 @@ class Database:
                             ).first()
             ):
                 if exists != None and exists[0] < int(value[1]):
-                    dvl_repl_data = DVL_Repl(
+                    dvl_repl_data = DVLRepl(
                         unit=self.unit,
                         color=key,
                         quantity=int(value[1])-exists[0],
@@ -137,7 +137,7 @@ class Database:
                     db.session.add(dvl_repl_data)
                     db.session.commit()
 
-    def DVL(self):
+    def dvl(self):
         for key, value in self.data['dvl_CMYK'].items():
             if (
                 exists := db.session.query(DVL).filter(DVL.unit == self.unit,
@@ -155,7 +155,7 @@ class Database:
                 db.session.add(dvl_data)
             db.session.commit()
 
-    def Fuser(self):
+    def fuser(self):
         for value in self.data['fuser'].values():
             if (
                 exists := db.session.query(Fuser).filter(Fuser.unit == self.unit).first()
@@ -171,7 +171,7 @@ class Database:
                 db.session.add(fuser_data)
             db.session.commit()
 
-    def Clicks(self):
+    def clicks(self):
         mY = self.change_Dt(self.data['last_file_datetime'])
 
         prev_color = db.session.query(func.sum(Clicks.color)).filter(Clicks.unit == self.unit,

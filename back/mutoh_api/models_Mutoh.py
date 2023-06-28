@@ -18,7 +18,7 @@ class Mutoh(Base):
         return f"Mutoh ('{self.name}', {self.sn}', '{self.suma_m2}', '{self.suma_ml}', '{self.lst_date}', '{self.target_reached}')"
 
 
-class Mutoh_details(Base):
+class MutohDetails(Base):
     __tablename__ = "mutoh_Details"
     id = Column(Integer, primary_key=True)
     unit = Column(String(15), nullable=False, unique=False)

@@ -6,8 +6,7 @@ import re
 from io import StringIO
 import pandas as pd
 import numpy as np
-from impala_api.models_Impala import Impala as Imp
-from impala_api.models_Impala import Impala_details as Impd
+from impala_api.models_Impala import ImpalaDetails as Impd
 from fastapi_sqlalchemy import db
 from sqlalchemy import func
 from datetime import date

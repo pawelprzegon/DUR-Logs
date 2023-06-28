@@ -2,9 +2,9 @@ from typing import List
 from fastapi_sqlalchemy import db
 import mutoh_api.schema as schema
 from mutoh_api.update import update_Mutoh_data
-from mutoh_api.settings import mutohUpdateSettings, addDefaultTargetToDb, update_SN
+from mutoh_api.settings import mutoh_update_settings, add_default_darget_to_db, update_SN
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
-from mutoh_api.models_Mutoh import Mutoh, Mutoh_details, MutohSettings
+from mutoh_api.models_Mutoh import Mutoh, MutohDetails, MutohSettings
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from sqlalchemy import func
@@ -66,7 +66,7 @@ async def mutoh_all():
         )
 
 
-@mutoh_api.get("/mutoh/chart/{unit}/{period}", response_model=List[schema.Mutoh_details], tags=["Mutoh"])
+@mutoh_api.get("/mutoh/chart/{unit}/{period}", response_model=List[schema.MutohDetails], tags=["Mutoh"])
 async def mutoh_chart(unit, period):
     """
      endpoint: lists specific mutoh summed data(m2/ml) ziped in months and years, including last working day\n
@@ -74,8 +74,8 @@ async def mutoh_chart(unit, period):
      variable example {period}: "6" - as 6 months
     """
 
-    last_active = db.session.query(func.max(Mutoh_details.date)).filter(
-        Mutoh_details.unit == str(unit)).first()
+    last_active = db.session.query(func.max(MutohDetails.date)).filter(
+        MutohDetails.unit == str(unit)).first()
 
     last_active = datetime.strptime(str(*last_active), '%Y-%m-%d')
     if period != 'all':
@@ -83,11 +83,11 @@ async def mutoh_chart(unit, period):
     else:
         date_period = last_active + relativedelta(years=-10)
 
-    if response := db.session.query(Mutoh_details)\
+    if response := db.session.query(MutohDetails)\
         .filter(
-        Mutoh_details.unit == str(unit),
-        Mutoh_details.date >= date_period)\
-        .order_by(Mutoh_details.date)\
+        MutohDetails.unit == str(unit),
+        MutohDetails.date >= date_period)\
+        .order_by(MutohDetails.date)\
             .all():
         return response
     else:
@@ -102,7 +102,7 @@ async def update_Settings(target):
     """
      endpoint: updating target value level 
     """
-    if response := mutohUpdateSettings(target):
+    if response := mutoh_update_settings(target):
         return response
     else:
         raise HTTPException(
@@ -119,7 +119,7 @@ async def mutoh_target():
     if target := db.session.query(MutohSettings).first():
         return {'target': target.target}
     else:
-        return addDefaultTargetToDb()
+        return add_default_darget_to_db()
 
 
 @mutoh_api.put("/mutoh/sn/{unit}/{sn}", tags=["Mutoh"])

@@ -5,11 +5,12 @@ from typing import List, Optional
 
 # Impala
 
-class Impala_details(BaseModel):
+class ImpalaDetails(BaseModel):
     unit: str
     printed: float
     ink: float
     date: date
+
     class Config:
         orm_mode = True
 
@@ -17,22 +18,27 @@ class Impala_details(BaseModel):
 class ImpalaSettings(BaseModel):
     filters: int
     bearings: int
+
     class Config:
         orm_mode = True
-        
+
+
 class ImpalaFiltersRepl(BaseModel):
     unit: str
     date: date
     color: str
+
     class Config:
         orm_mode = True
-    
+
+
 class ImpalaBearingsRepl(BaseModel):
     unit: str
     date: date
+
     class Config:
         orm_mode = True
-        
+
 
 class Impala(BaseModel):
     unit: str
@@ -41,7 +47,6 @@ class Impala(BaseModel):
     date: date
     filters: List[ImpalaFiltersRepl] = []
     bearings: List[ImpalaBearingsRepl] = []
+
     class Config:
         orm_mode = True
-        
-

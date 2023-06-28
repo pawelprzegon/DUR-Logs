@@ -4,7 +4,6 @@ import os
 import numpy as np
 import pandas as pd
 from fastapi_sqlalchemy import db
-from mutoh_api.models_Mutoh import Mutoh_details as MutDet
 from mutoh_api.models_Mutoh import Mutoh as Mh
 from mutoh_api.insert_into_db import Database
 from common.csv_backup import CsvBackup
@@ -33,7 +32,7 @@ def get_log_files() -> list:
     return glob.glob(DATA_FOLDER, recursive=True)
 
 
-def unit_logFiles_to_dict(mutohNumbers: list, log_files: list) -> dict:
+def unit_log_files_to_dict(mutohNumbers: list, log_files: list) -> dict:
     unit_logFiles_dict = {f"Mutoh {i}": [] for i in mutohNumbers}
     for log_file in log_files:
         y = log_file
@@ -126,7 +125,7 @@ def get_last_insert(unit) -> str:
 def prepare_unit_logFiles_dict():
     mutoh_numbers = get_mutoh_numbers()
     log_files = get_log_files()
-    return unit_logFiles_to_dict(mutoh_numbers, log_files)
+    return unit_log_files_to_dict(mutoh_numbers, log_files)
 
 
 def update_Mutoh_data():

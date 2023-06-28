@@ -5,7 +5,7 @@ from mutoh_api.models_Mutoh import Mutoh as Mh
 from mutoh_api.models_Mutoh import MutohSettings as MutSet
 
 
-def mutohUpdateSettings(target):
+def mutoh_update_settings(target):
     try:
         settings = MutSet(
             target=int(target),
@@ -39,7 +39,7 @@ def update_targets(target):
         db.session.commit()
 
 
-def addDefaultTargetToDb():
+def add_default_darget_to_db():
     default_target = MutSet(
         target=19000
     )

@@ -1,13 +1,13 @@
 from typing import List
 from fastapi_sqlalchemy import db
 import xeikon_api.schema as schema
-from fastapi import APIRouter, BackgroundTasks, HTTPException, status, Query
-from xeikon_api.update import update_Xeikon_data
-from xeikon_api.reorganizeData import reorganizeTonerData, \
-    reorganizeDVLData, reorganizeFuserData, \
-    reorganizeClicksData
+from fastapi import APIRouter, BackgroundTasks, HTTPException, status
+from xeikon_api.update import update_xeikon_data
+from xeikon_api.reorganizeData import reorganize_toner_data, \
+    reorganize_dvl_data, reorganize_fuser_data, \
+    reorganize_clicks_data
 from xeikon_api.models_Xeikon import Xeikon, DVL, Fuser, Toner, \
-    Xeikon_Details, Clicks
+    XeikonDetails, Clicks
 from typing import Optional
 from sqlalchemy import func
 from datetime import datetime
@@ -21,7 +21,7 @@ xeikon_api = APIRouter()
 def update():
     global status
     status = True
-    update_Xeikon_data()
+    update_xeikon_data()
     print("done! ")
     status = False
 
@@ -76,16 +76,16 @@ async def xeikon_chart_data(unit, period):
      variable example: "Xeikon 1"
     """
 
-    last_active = db.session.query(func.max(Xeikon_Details.date))\
-                    .filter(Xeikon_Details.unit == str(unit)).first()
+    last_active = db.session.query(func.max(XeikonDetails.date))\
+                    .filter(XeikonDetails.unit == str(unit)).first()
     last_active = datetime.strptime(str(*last_active), '%Y-%m-%d')
     if period != 'all':
         date_period = last_active + relativedelta(months=-int(period))
     else:
         date_period = last_active + relativedelta(years=-10)
 
-    if response := db.session.query(Xeikon_Details).filter(Xeikon_Details.unit == str(unit), Xeikon_Details.date >= date_period) \
-            .order_by(Xeikon_Details.date).all():
+    if response := db.session.query(XeikonDetails).filter(XeikonDetails.unit == str(unit), XeikonDetails.date >= date_period) \
+            .order_by(XeikonDetails.date).all():
 
         return response
     else:
@@ -102,7 +102,7 @@ def xeikon_Toner_data():
     """
     with get_session() as session:
         if data := session.query(Toner):
-            return reorganizeTonerData(data)
+            return reorganize_toner_data(data)
         else:
             raise HTTPException(
                 status_code=404,
@@ -140,7 +140,7 @@ async def xeikon_DVL_data():
      endpoint: list all DVL data \n
     """
     if response := db.session.query(DVL).order_by(DVL.unit, DVL.color).all():
-        return reorganizeDVLData(response)
+        return reorganize_dvl_data(response)
     else:
         raise HTTPException(
             status_code=404,
@@ -155,7 +155,7 @@ async def xeikon_Fuser_data():
     """
 
     if response := db.session.query(Fuser).all():
-        return reorganizeFuserData(response)
+        return reorganize_fuser_data(response)
     else:
         raise HTTPException(
             status_code=404,
@@ -170,7 +170,7 @@ async def xeikon_Clicks_data():
     """
     with get_session() as session:
         if result := session.query(Clicks):
-            return reorganizeClicksData(result)
+            return reorganize_clicks_data(result)
         else:
             raise HTTPException(
                 status_code=404,

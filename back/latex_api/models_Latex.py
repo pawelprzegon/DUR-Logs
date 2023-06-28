@@ -17,7 +17,7 @@ class Latex(Base):
         return f"Latex ('{self.unit}, {self.suma_m2}, {self.suma_ml}, {self.date}')"
 
 
-class Latex_details(Base):
+class LatexDetails(Base):
     __tablename__ = "latex_Details"
     id = Column(Integer, primary_key=True)
     unit = Column(String(20), nullable=False)

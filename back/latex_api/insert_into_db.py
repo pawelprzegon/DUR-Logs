@@ -1,4 +1,4 @@
-from latex_api.models_Latex import Latex, Latex_details
+from latex_api.models_Latex import Latex, LatexDetails
 from pandas import DataFrame
 from db import get_session
 
@@ -12,12 +12,12 @@ class Database:
         with get_session() as session:
             for index, row in self.df.iterrows():
                 if (
-                    exists := session.query(Latex_details).filter(Latex_details.date == row["Data"]).first()
+                    exists := session.query(LatexDetails).filter(LatexDetails.date == row["Data"]).first()
                 ):
                     exists.printed += row['Printed']
                     exists.ink += row['Ink']*1000
                 else:
-                    latex_data = Latex_details(
+                    latex_data = LatexDetails(
                         unit=row['Unit'],
                         printed=row['Printed'],
                         ink=row['Ink']*1000,

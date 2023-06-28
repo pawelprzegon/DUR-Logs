@@ -3,9 +3,9 @@ from fastapi_sqlalchemy import db
 from sqlalchemy import func
 import impala_api.schema as schema
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
-from impala_api.models_Impala import Impala, Impala_details, ImpalaSettings
+from impala_api.models_Impala import Impala, ImpalaDetails, ImpalaSettings
 from impala_api.update import update_Impala_data
-from impala_api.replacements import impalaUpdateReplacements, impalaReplacements, impalaUpdateTarget
+from impala_api.replacements import impala_update_replacements, impala_replacements, impala_update_target
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -56,22 +56,22 @@ async def impala_all():
         )
 
 
-@impala_api.get("/impala/chart/{unit}/{period}", response_model=List[schema.Impala_details], tags=["Impala"])
+@impala_api.get("/impala/chart/{unit}/{period}", response_model=List[schema.ImpalaDetails], tags=["Impala"])
 async def impala_chart(unit, period):
     """
      endpoint: lists specific mutoh summed data(m2/ml) ziped in months and years ; -> 
      variable example: "Impala 1"
     """
-    last_active = db.session.query(func.max(Impala_details.date))\
-                    .filter(Impala_details.unit == str(unit)).first()
+    last_active = db.session.query(func.max(ImpalaDetails.date))\
+                    .filter(ImpalaDetails.unit == str(unit)).first()
     last_active = datetime.strptime(str(*last_active), '%Y-%m-%d')
     if period != 'all':
         date_period = last_active + relativedelta(months=-int(period))
     else:
         date_period = last_active + relativedelta(years=-10)
-    if response := db.session.query(Impala_details)\
-            .filter(Impala_details.unit == str(unit), Impala_details.date >= date_period)\
-            .order_by(Impala_details.date).all():
+    if response := db.session.query(ImpalaDetails)\
+            .filter(ImpalaDetails.unit == str(unit), ImpalaDetails.date >= date_period)\
+            .order_by(ImpalaDetails.date).all():
         return response
 
     else:
@@ -91,7 +91,7 @@ async def impala_Replacements_Update(what, date, unit, color):
      color: Black (if needed)
     """
 
-    return impalaUpdateReplacements([what, date, unit, color], tags=["Impala"])
+    return impala_update_replacements([what, date, unit, color], tags=["Impala"])
 
 
 @impala_api.get("/impala/replacements/", tags=["Impala"])
@@ -99,7 +99,7 @@ async def impala_Replacements():
     """
      endpoint: gets all replacements datas for filters and bearings(if any)
     """
-    return impalaReplacements()
+    return impala_replacements()
 
 
 @impala_api.put('/impala/settings/{what}&{target}', tags=["Impala"])
@@ -109,7 +109,7 @@ async def update_Settings(what, target):
      'what': filters / bearings
      'target': int value
     """
-    return impalaUpdateTarget(what, target)
+    return impala_update_target(what, target)
 
 
 @impala_api.get('/impala/settings/', response_model=schema.ImpalaSettings, include_in_schema=False, tags=["Impala"])

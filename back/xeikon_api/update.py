@@ -22,11 +22,11 @@ def unzip(last_file):
     last_file_datetime = time.ctime(os.path.getmtime(last_file))
     with zipfile.ZipFile(last_file, 'r') as archive:
         with archive.open('Application/Reports/Statistics.csv') as csv_file:
-            data = get_Data(csv_file, last_file_datetime)
+            data = get_data(csv_file, last_file_datetime)
     return data
 
 
-def get_Data(csv_file, last_file_datetime):
+def get_data(csv_file, last_file_datetime):
     data = {'last_file_datetime': last_file_datetime}
     toner_CMYK = {}
     dvl_CMYK = {}
@@ -85,7 +85,7 @@ def create_df(data):
     return df
 
 
-def update_Xeikon_data():
+def update_xeikon_data():
     for unit in DIRECTORY:
         print(unit)
         last_file = get_last_log_file(unit)
@@ -93,13 +93,13 @@ def update_Xeikon_data():
         for k, v in data.items():
             print(k, v)
         update_db = Database(unit, data)
-        update_db.Xeikon()
-        update_db.XeikonDetails()
-        update_db.Toner()
-        update_db.DVL_Repl()
-        update_db.DVL()
-        update_db.Fuser()
-        update_db.Clicks()
+        update_db.xeikon()
+        update_db.xeikon_details()
+        update_db.toner()
+        update_db.dvl_repl()
+        update_db.dvl()
+        update_db.fuser()
+        update_db.clicks()
 
         df = create_df(data)
         csv_backup = CsvBackup(

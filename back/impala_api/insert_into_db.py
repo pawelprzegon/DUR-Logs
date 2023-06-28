@@ -1,5 +1,5 @@
 from impala_api.models_Impala import Impala as Imp
-from impala_api.models_Impala import Impala_details as Impd
+from impala_api.models_Impala import ImpalaDetails as Impd
 from fastapi_sqlalchemy import db
 from pandas import DataFrame
 from sqlalchemy import func

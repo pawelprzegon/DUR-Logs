@@ -3,7 +3,6 @@ import glob
 import pandas as pd
 from fastapi_sqlalchemy import db
 from pandas import DataFrame
-from datetime import datetime
 from latex_api.insert_into_db import Database
 from latex_api.models_Latex import Latex
 from common.csv_backup import CsvBackup
