@@ -23,8 +23,8 @@ class CsvBackup:
 
     def save_csv_backup(self):
         print(self.unit)
-        current_data = self.get_CSV()
-        if current_data is None or current_data.empty:
+        old_data = self.get_CSV()
+        if old_data is None or old_data.empty:
             print("brak pliku albo pusty plik csv")
             self.df.to_csv(self.backup_file, header='true',
                            index=False, date_format='%Y-%m-%d')
@@ -32,8 +32,9 @@ class CsvBackup:
         else:
             self.df["Data"] = pd.to_datetime(
                 self.df["Data"].dt.strftime('%Y-%m-%d'))
-            merged_df = pd.concat([current_data, self.df]
-                                  ).drop_duplicates('Data', keep='last').reset_index(drop=True)
+            merged_df = pd.concat([old_data, self.df]).groupby(["Data"])[
+                ["Ink", "Printed"]].sum().reset_index()
+            #   ).drop_duplicates('Data', keep='last').reset_index(drop=True)
             self.remove_CSV()
             merged_df.to_csv(self.backup_file, header='true',
                              index=False, date_format='%Y-%m-%d')
@@ -52,8 +53,8 @@ class CsvBackup:
                 os.makedirs(os.path.dirname(logs_backup_path), exist_ok=True)
                 shutil.move(file, logs_backup_path)
             except Exception as e:
-                # os.remove(file)
-                print(e)
+                os.remove(file)
+                # print(e)
 
     def del_files(self):
         src_fpath = self.dct[f"Mutoh_{self.unit}"]

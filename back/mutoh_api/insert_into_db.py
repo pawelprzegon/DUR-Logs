@@ -6,9 +6,9 @@ from pandas import DataFrame
 
 
 class Database:
-    def __init__(self, df: DataFrame, last_inserts: dict) -> None:
+    def __init__(self, df: DataFrame, new_last_db_insert: dict) -> None:
         self.df = df
-        self.new_last_db_insert = last_inserts
+        self.new_last_db_insert = new_last_db_insert
 
     def add_to_mutoh_details(self):
         for index, row in self.df.iterrows():
@@ -40,31 +40,33 @@ class Database:
                 exists.suma_m2 += int(row["suma_m2"])
                 exists.suma_ml += int(row["suma_ml"])
                 exists.date = row["date"]
-                exists.target_reached = int(row["target_reached"])
+                exists.target_reached = self.calculate_target_reached(
+                    exists.suma_m2 + int(row["suma_m2"]))
             else:
                 mutoh_data[row["unit"]] = Mh(
                     unit=str(row["unit"]),
                     suma_m2=int(row["suma_m2"]),
                     suma_ml=int(row["suma_ml"]),
                     date=row["date"],
-                    target_reached=row["target_reached"],
+                    target_reached=self.calculate_target_reached(
+                        int(row["suma_m2"])),
                 )
                 db.session.add(mutoh_data[row["unit"]])
             db.session.commit()
 
-    def prepare_data(self):
+    def prepare_data(self) -> DataFrame:
         unit_summed_df = self.df.groupby([
             'unit']).sum(["Ink", "Printed"]).reset_index()
 
         unit_summed_df = unit_summed_df.rename(
             columns={"Ink": "suma_ml", "Printed": "suma_m2"})
         unit_summed_df = unit_summed_df.round({'suma_ml': 0, 'suma_m2': 0})
-        # self.last_inserts
-        target = target.target if (
-            target := db.session.query(MutSet).first()) else 1
-        unit_summed_df['target_reached'] = round(
-            unit_summed_df['suma_m2']/target, 2)*100
         unit_summed_df['date'] = unit_summed_df['unit'].map(
             self.new_last_db_insert)
-        print(unit_summed_df)
+        # self.last_inserts
         return unit_summed_df
+
+    def calculate_target_reached(self, suma_m2):
+        target = target.target if (
+            target := db.session.query(MutSet).first()) else 1
+        return round(suma_m2/target, 2)*100

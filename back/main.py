@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from descriptions import description, tags_metadata
 
 
-
+# TODO  add API key - https://joshdimella.com/blog/adding-api-key-auth-to-fast-api
 
 def include_routers(app):
     app.include_router(mutoh_api)
@@ -23,8 +23,9 @@ def include_routers(app):
     app.include_router(xeikon_api)
     app.include_router(latex_api)
 
+
 def include_middlewares(app):
-    
+
     app.add_middleware(DBSessionMiddleware, db_url=os.environ["DATABASE_URL"])
     CORS_URL = os.environ["CORS_URL"]
     origins = [CORS_URL]
@@ -37,13 +38,13 @@ def include_middlewares(app):
         allow_headers=["*"],
     )
 
-    
+
 def create_tables():
     BaseMutoh.metadata.create_all(bind=engine)
     BaseImpala.metadata.create_all(bind=engine)
     BaseXeikon.metadata.create_all(bind=engine)
     BaseLatex.metadata.create_all(bind=engine)
-    
+
 
 def start_application():
     app = FastAPI(
@@ -54,7 +55,8 @@ def start_application():
     include_middlewares(app)
     create_tables()
     return app
-    
+
+
 app = start_application()
 
 if __name__ == "__main__":

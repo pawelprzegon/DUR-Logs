@@ -15,7 +15,7 @@ class Mutoh(Base):
     target_reached = Column(Integer, nullable=False)
 
     def __repr__(self):
-        return f"Mutoh ('{self.name}', {self.sn}', '{self.suma_m2}', '{self.suma_ml}', '{self.lst_date}', '{self.target_reached}')"
+        return f"Mutoh ({self.unit}, {self.sn}, {self.suma_m2}, {self.suma_ml}, {self.date}, {self.target_reached})"
 
 
 class MutohDetails(Base):
@@ -28,7 +28,7 @@ class MutohDetails(Base):
     # lst_date = Column(DateTime, nullable=False)
 
     def __repr__(self):
-        return f"Mutoh ('{self.name}', '{self.Total_Ink}', '{self.Squaremeter}')"
+        return f"Mutoh ({self.unit}, {self.printed}, {self.ink}, {self.date})"
 
 
 class MutohSettings(Base):
