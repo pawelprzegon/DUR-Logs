@@ -50,7 +50,13 @@ def start_application():
     app = FastAPI(
         openapi_tags=tags_metadata,
         title="Artgeist USAGE",
-        description=description,)
+        description=description,
+        version="0.1.0",
+        swagger_ui_parameters={"defaultModelsExpandDepth": -1},
+        contact={
+            "name": "Paweł Przegoń",
+            "email": "p.przegon@artgeist.com",
+        })
     include_routers(app)
     include_middlewares(app)
     create_tables()
