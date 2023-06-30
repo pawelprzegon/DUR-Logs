@@ -13,10 +13,9 @@ export class Impala_All_Data {
     let theads = this.createThead();
     let tbody = this.createTbody();
     let description = this.descriptionsBox();
-    let table = document.createElement('table');
-    table.appendChild(theads);
-    table.appendChild(tbody);
-    this.tableBox.appendChild(table);
+    this.table.appendChild(theads);
+    this.table.appendChild(tbody);
+    this.tableBox.appendChild(this.table);
     this.tableBox.appendChild(description);
   }
 
@@ -71,7 +70,7 @@ export class Impala_All_Data {
     return descBox;
   }
 
-  getTable() {
+  getTables() {
     return this.tableBox;
   }
 }
@@ -243,7 +242,7 @@ export class createTableReplacementsImpala {
     return descBox;
   }
 
-  getTable() {
+  getTables() {
     return this.tableBox;
   }
 }

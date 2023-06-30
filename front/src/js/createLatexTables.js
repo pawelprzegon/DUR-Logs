@@ -1,4 +1,5 @@
 import { generateNewChart } from './common.js';
+import { createThead } from './common_components.js';
 
 export class Latex_All_Data {
   constructor(data, chart) {
@@ -7,10 +8,11 @@ export class Latex_All_Data {
     this.tableBox = document.createElement('div');
     this.tableBox.classList.add('tableBox');
     this.table = document.createElement('table');
+    this.thead_elements = ['Unit', 'Printed\n[m2]', 'Ink\n[ml]', 'Date'];
   }
 
   createAll() {
-    let theads = this.createThead();
+    let theads = createThead(this.thead_elements);
     let tbody = this.createTbody();
     let description = this.descriptionsBox();
     let table = document.createElement('table');
@@ -18,21 +20,6 @@ export class Latex_All_Data {
     table.appendChild(tbody);
     this.tableBox.appendChild(table);
     this.tableBox.appendChild(description);
-  }
-
-  createThead() {
-    const heads = ['Unit', 'Printed\n[m2]', 'Ink\n[ml]', 'Date'];
-    let thead = document.createElement('thead');
-    let tr = document.createElement('tr');
-    heads.forEach((head) => {
-      let each = document.createElement('th');
-      each.classList.add('table-th');
-      each.innerText = head;
-      tr.appendChild(each);
-      thead.appendChild(tr);
-    });
-
-    return thead;
   }
 
   createTbody() {
