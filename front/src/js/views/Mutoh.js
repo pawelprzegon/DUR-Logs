@@ -1,6 +1,6 @@
 import AbstractView from './AbstractView.js';
-import { callApiGet } from '../endpoints.js';
-import { createTablesMutoh } from '../createMutohTables.js';
+import { callApiGet } from '../common_functions/endpoints.js';
+import { createTablesMutoh } from '../tables_creations/createMutohTables.js';
 import { createChart } from '../chart/createChart.js';
 import { Alerts } from '../alerts/alerts.js';
 import {
@@ -10,7 +10,7 @@ import {
   showloader,
   NoDataFound,
   hideOverlayForSn,
-} from '../common.js';
+} from '../common_functions/common.js';
 
 export default class extends AbstractView {
   constructor() {

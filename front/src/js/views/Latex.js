@@ -1,6 +1,6 @@
 import AbstractView from './AbstractView.js';
-import { callApiGet } from '../endpoints.js';
-import { Latex_All_Data } from '../createLatexTables.js';
+import { callApiGet } from '../common_functions/endpoints.js';
+import { createTablesLatex } from '../tables_creations/createLatexTables.js';
 import { createChart } from '../chart/createChart.js';
 import { Alerts } from '../alerts/alerts.js';
 import {
@@ -8,7 +8,7 @@ import {
   removeDbSettings,
   showloader,
   NoDataFound,
-} from '../common.js';
+} from '../common_functions/common.js';
 
 export default class extends AbstractView {
   constructor() {
@@ -30,7 +30,7 @@ export default class extends AbstractView {
       if (status == 200) {
         hideloader();
 
-        let allTables = new Latex_All_Data(dataAll, newChart);
+        let allTables = new createTablesLatex(dataAll, newChart);
         allTables.createAll();
         let tableAllReady = allTables.getTable();
         let dataBox = document.createElement('div');

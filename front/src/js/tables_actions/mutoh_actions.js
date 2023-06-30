@@ -1,6 +1,10 @@
-import { generateNewChart, hideAllSnInputs } from '../common.js';
+import {
+  generateNewChart,
+  hideAllSnInputs,
+  setSessionStorageItems,
+} from '../common_functions/common.js';
 import { Alerts } from '../alerts/alerts.js';
-import { callApiPut } from '../endpoints.js';
+import { callApiPut } from '../common_functions/endpoints.js';
 import { navigateTo } from '../index.js';
 
 export function mutoh_actions(key, value, tr, each, unit, actions_data) {
@@ -8,8 +12,7 @@ export function mutoh_actions(key, value, tr, each, unit, actions_data) {
     each.classList.add('unit');
     each.onclick = () => {
       let path = `mutoh/chart/${value}`;
-      sessionStorage.setItem('activeChartData', path);
-      sessionStorage.setItem('activeUnit', value);
+      setSessionStorageItems(path, value);
       generateNewChart(actions_data.chart);
     };
   } else if (key == 'date') {

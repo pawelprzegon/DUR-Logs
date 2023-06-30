@@ -1,9 +1,8 @@
-import { generateNewChart } from './common.js';
 import {
   createThead,
   createTbody,
   descriptionsBox,
-} from './common_components.js';
+} from './common_tables_components.js';
 
 export class Impala_All_Data {
   constructor(data, chart) {

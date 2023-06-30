@@ -4,7 +4,7 @@ import {
   uniqueSortedList,
   generateNewChart,
   onlyUnique,
-} from '../common.js';
+} from '../common_functions/common.js';
 
 export class createChart {
   constructor() {

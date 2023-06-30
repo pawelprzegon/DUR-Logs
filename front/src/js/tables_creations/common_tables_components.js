@@ -2,8 +2,14 @@ import {
   impala_actions,
   impala_filters_actions,
   impala_bearings_actions,
-} from './actions/impala_actions.js';
-import { mutoh_actions } from './actions/mutoh_actions.js';
+} from '../tables_actions/impala_actions.js';
+import { mutoh_actions } from '../tables_actions/mutoh_actions.js';
+import { latex_actions } from '../tables_actions/latex_actions.js';
+import {
+  xeikon_actions,
+  xeikon_action_single_data,
+  xeikon_action_double_data,
+} from '../tables_actions/xeikon_actions.js';
 
 export function createThead(list_of_elements) {
   let thead = document.createElement('thead');
@@ -12,7 +18,7 @@ export function createThead(list_of_elements) {
   list_of_elements.forEach((head) => {
     let each = document.createElement('th');
     each.classList.add('table-th');
-    each.innerText = head;
+    each.innerText = head.capitalize();
     tr.appendChild(each);
     thead.appendChild(tr);
   });
@@ -58,8 +64,15 @@ export function createTbody(data, printer_type, actions_data) {
         } else if (key === 'last_replacement') {
           break;
         }
+      } else if (printer_type === 'latex') {
+        latex_actions(key, value, each, actions_data);
+      } else if (printer_type === 'xeikon') {
+        xeikon_actions(key, value, each, actions_data);
+      } else if (printer_type == 'single_data') {
+        xeikon_action_single_data(key, value, each, actions_data);
+      } else if (printer_type == 'double_data' && key !== 'unit') {
+        xeikon_action_double_data(value, each, tr);
       }
-
       tr.appendChild(each);
     }
     tbody.appendChild(tr);

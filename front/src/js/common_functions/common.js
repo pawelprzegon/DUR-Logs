@@ -1,6 +1,11 @@
-import { Alerts } from './alerts/alerts.js';
+import { Alerts } from '../alerts/alerts.js';
 import { callApiPut, callApiGet } from './endpoints.js';
-import { navigateTo } from './index.js';
+import { navigateTo } from '../index.js';
+
+export function setSessionStorageItems(path, value) {
+  sessionStorage.setItem('activeChartData', path);
+  sessionStorage.setItem('activeUnit', value);
+}
 
 export function onlyUnique(value, index, array) {
   return array.indexOf(value) === index;

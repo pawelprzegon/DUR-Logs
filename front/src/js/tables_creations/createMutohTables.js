@@ -1,13 +1,13 @@
-import { navigateTo } from './index.js';
-import { callApiPut } from './endpoints.js';
-import { Alerts } from './alerts/alerts.js';
+import { navigateTo } from '../index.js';
+import { callApiPut } from '../common_functions/endpoints.js';
+import { Alerts } from '../alerts/alerts.js';
 import {
   createThead,
   pack_to_table,
   pack_to_scroll_table,
   createTbody,
   descriptionsBox,
-} from './common_components.js';
+} from './common_tables_components.js';
 
 export class createTablesMutoh {
   constructor(data, target, chart) {

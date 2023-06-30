@@ -1,10 +1,10 @@
 import AbstractView from './AbstractView.js';
-import { callApiGet } from '../endpoints.js';
+import { callApiGet } from '../common_functions/endpoints.js';
 import {
   Impala_All_Data,
   createFiltersReplacements,
   createBearingsReplacements,
-} from '../createImpalaTables.js';
+} from '../tables_creations/createImpalaTables.js';
 import { createChart } from '../chart/createChart.js';
 import { Alerts } from '../alerts/alerts.js';
 import {
@@ -13,7 +13,7 @@ import {
   removeDbSettings,
   showloader,
   NoDataFound,
-} from '../common.js';
+} from '../common_functions/common.js';
 
 export default class extends AbstractView {
   constructor() {

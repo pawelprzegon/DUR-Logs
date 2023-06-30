@@ -23,7 +23,7 @@ body {
   padding: 15px;
   color: white;
   text-decoration: none;
-  margin-left: 20px;
+  margin-left: 10%;
 }
 
 .nav a:first-child {
@@ -58,7 +58,11 @@ body {
 }
 .opcje p {
   margin-top: 5px;
-  margin-left: 35px;
+  margin-left: 10%;
+}
+
+.options-label {
+  padding-left: 5px;
 }
 
 .opcje hr {
@@ -86,7 +90,7 @@ body {
   width: fit-content;
   border-radius: 5px;
   border: solid 1px rgb(119, 119, 119);
-  /* width: 75%; */
+  width: 75%;
 }
 
 .settingsBtn:hover {

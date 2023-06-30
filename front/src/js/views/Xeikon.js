@@ -1,6 +1,9 @@
 import AbstractView from './AbstractView.js';
-import { callApiGet } from '../endpoints.js';
-import { Xeikon_All_Data, Xeikon_Data } from '../createXeikonTables.js';
+import { callApiGet } from '../common_functions/endpoints.js';
+import {
+  Xeikon_All_Data,
+  Xeikon_Data,
+} from '../tables_creations/createXeikonTables.js';
 import { createChart } from '../chart/createChart.js';
 import { Alerts } from '../alerts/alerts.js';
 import {
@@ -8,7 +11,7 @@ import {
   showloader,
   removeDbSettings,
   NoDataFound,
-} from '../common.js';
+} from '../common_functions/common.js';
 
 export default class extends AbstractView {
   constructor() {
@@ -29,8 +32,7 @@ export default class extends AbstractView {
       let [status, dataAll] = await callApiGet('xeikon');
       if (status == 200) {
         hideloader();
-        let description = '*całkowity przebieg urządzeń';
-        let allTables = new Xeikon_All_Data(dataAll, description, newChart);
+        let allTables = new Xeikon_All_Data(dataAll, newChart);
         allTables.createAll();
         let tableAllReady = allTables.getTable();
 
@@ -48,6 +50,7 @@ export default class extends AbstractView {
         let alert = new Alerts(status, dataAll.detail, 'alert-orange');
         alert.createNew();
       }
+
       let tonerPath = 'xeikon/toner/';
       let dvlPath = 'xeikon/dvl/';
       let [statusToner, dataToner] = await callApiGet(tonerPath);
@@ -62,12 +65,12 @@ export default class extends AbstractView {
           newChart,
           tonerPath
         );
-        tonerTable.createAll(1);
+        tonerTable.createAll('single_data');
         let tonerTableReady = tonerTable.getTable();
 
         let description = '*licznik DVL [A3] oraz ilość wymian [szt]';
         let dvlTable = new Xeikon_Data(dataDVL, description, newChart);
-        dvlTable.createAll(2);
+        dvlTable.createAll('double_data');
         let dvlTableReady = dvlTable.getTable();
 
         let DataBox = document.createElement('div');
@@ -95,7 +98,7 @@ export default class extends AbstractView {
         let descriptionFuser =
           '*aktualne zużycie fusera [A3] oraz ilość wymian [szt]';
         let fuserTable = new Xeikon_Data(dataFuser, descriptionFuser, newChart);
-        fuserTable.createAll(1);
+        fuserTable.createAll('single_data');
         let fuserTableReady = fuserTable.getTable();
 
         let descriptionClicks = '*aktualna ilość druku w kolorze oraz b&w [A3]';
@@ -105,7 +108,7 @@ export default class extends AbstractView {
           newChart,
           clicksPath
         );
-        clicksTable.createAll(1);
+        clicksTable.createAll('single_data');
         let clicksTableReady = clicksTable.getTable();
 
         let dataBox = document.createElement('div');
