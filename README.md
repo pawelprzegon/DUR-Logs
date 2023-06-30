@@ -32,7 +32,7 @@ Project based on docker containers.
   For each of them we can see raport how many square meters and ml each unit used under production.
   Using options inside menubar we can change some target which changes time when specify unit will inform us about delays with maintenance\
   or get us information that it reached her live end time.
-  Working DEMO [Raport-app](https://dur-logs-front.onrender.com/) - patience is required to enter (free server)
+  Working DEMO [Printers-statistics-app](https://dur-logs-front.onrender.com/) - patience is required to enter (free server)
 
 ## How to use
 
