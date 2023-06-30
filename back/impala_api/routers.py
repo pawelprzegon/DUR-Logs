@@ -94,12 +94,12 @@ async def impala_Replacements_Update(what, date, unit, color):
     return impala_update_replacements([what, date, unit, color], tags=["Impala"])
 
 
-@impala_api.get("/impala/replacements/", tags=["Impala"])
-async def impala_Replacements():
+@impala_api.get("/impala/replacements/{replacement_type}", tags=["Impala"])
+async def impala_Replacements(replacement_type):
     """
      endpoint: gets all replacements datas for filters and bearings(if any)
     """
-    return impala_replacements()
+    return impala_replacements(replacement_type)
 
 
 @impala_api.put('/impala/settings/{what}&{target}', tags=["Impala"])

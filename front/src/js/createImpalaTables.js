@@ -1,4 +1,9 @@
 import { generateNewChart } from './common.js';
+import {
+  createThead,
+  createTbody,
+  descriptionsBox,
+} from './common_components.js';
 
 export class Impala_All_Data {
   constructor(data, chart) {
@@ -7,67 +12,21 @@ export class Impala_All_Data {
     this.tableBox = document.createElement('div');
     this.tableBox.classList.add('tableBox');
     this.table = document.createElement('table');
+    this.thead_elements = ['Unit', 'Printed\n[m2]', 'Ink\n[ml]', 'Date'];
   }
 
   createAll() {
-    let theads = this.createThead();
-    let tbody = this.createTbody();
-    let description = this.descriptionsBox();
+    let theads = createThead(this.thead_elements);
+    let actions_data = { chart: this.chart };
+    let tbody = createTbody(this.data, 'impala', actions_data);
+    let descriptions = {
+      first: '*całkowity przebieg urządzeń',
+    };
+    let description = descriptionsBox(descriptions);
     this.table.appendChild(theads);
     this.table.appendChild(tbody);
     this.tableBox.appendChild(this.table);
     this.tableBox.appendChild(description);
-  }
-
-  createThead() {
-    const heads = ['Unit', 'Printed\n[m2]', 'Ink\n[ml]', 'Date'];
-    let thead = document.createElement('thead');
-    let tr = document.createElement('tr');
-    heads.forEach((head) => {
-      let each = document.createElement('th');
-      each.classList.add('table-th');
-      each.innerText = head;
-      tr.appendChild(each);
-      thead.appendChild(tr);
-    });
-
-    return thead;
-  }
-
-  createTbody() {
-    let tbody = document.createElement('tbody');
-    this.data.forEach((unit) => {
-      let tr = document.createElement('tr');
-      for (const [key, value] of Object.entries(unit)) {
-        if (key != 'filters' && key != 'bearings') {
-          let each = document.createElement('td');
-          each.classList.add('table-td');
-          each.innerText = value;
-          if (key == 'unit') {
-            each.classList.add('unit');
-            each.onclick = () => {
-              let path = `impala/chart/${value}`;
-              sessionStorage.setItem('activeChartData', path);
-              sessionStorage.setItem('activeUnit', value);
-              generateNewChart(this.chart);
-            };
-          }
-          tr.appendChild(each);
-        }
-      }
-      tbody.appendChild(tr);
-    });
-    return tbody;
-  }
-
-  descriptionsBox() {
-    let descBox = document.createElement('div');
-    descBox.classList.add('descBox');
-    let descLabel = document.createElement('small');
-    descLabel.innerText = '*całkowity przebieg urządzeń';
-    descBox.appendChild(descLabel);
-
-    return descBox;
   }
 
   getTables() {
@@ -75,171 +34,65 @@ export class Impala_All_Data {
   }
 }
 
-export class createTableReplacementsImpala {
+export class createFiltersReplacements {
   constructor(data) {
     this.data = data;
     this.tableBox = document.createElement('div');
     this.tableBox.classList.add('tableBox');
     this.table = document.createElement('table');
-    this.units = [];
-    this.colors = [];
+    this.filters_thead_elements = [
+      'Unit',
+      'Black',
+      'Cyan',
+      'Magenta',
+      'Yellow',
+      'White',
+    ];
   }
 
-  createTableAll(changeType) {
-    let table = document.createElement('table');
-    let thead = this.createTheadReplacement(changeType);
-    let tbody;
-    if (changeType == 'filters') {
-      tbody = this.createTbodyFilters();
-    } else {
-      tbody = this.createTbodyBearings();
-    }
+  createAll() {
+    let thead = createThead(this.filters_thead_elements);
+    let actions_data = {
+      filters_threshold: this.data.filters_threshold,
+    };
+    let tbody = createTbody(this.data.units, 'impala_filters', actions_data);
+    let descriptions = {
+      first: '*ostatnia data wymiany oraz aktualny przebieg filtrów',
+    };
+    let description = descriptionsBox(descriptions);
+    this.table.appendChild(thead);
+    this.table.appendChild(tbody);
+    this.tableBox.appendChild(this.table);
+    this.tableBox.appendChild(description);
+  }
+  getTables() {
+    return this.tableBox;
+  }
+}
 
-    table.appendChild(thead);
-    table.appendChild(tbody);
-    this.tableBox.appendChild(table);
-    this.tableBox.appendChild(this.descriptionsBox(changeType));
+export class createBearingsReplacements {
+  constructor(data) {
+    this.data = data;
+    this.tableBox = document.createElement('div');
+    this.tableBox.classList.add('tableBox');
+    this.table = document.createElement('table');
+    this.bearings_thead_elements = ['Unit', 'Łożyska/Paski'];
   }
 
-  createTheadReplacement(replace) {
-    let thead = document.createElement('thead');
-    let tr = document.createElement('tr');
-    let name = document.createElement('th');
-    name.innerText = 'Nazwa';
-    name.classList.add('table-th');
-    tr.appendChild(name);
-    thead.appendChild(tr);
-    if (replace == 'filters') {
-      this.data.units[0].filters.forEach((color) => {
-        for (const key of Object.keys(color)) {
-          let each = document.createElement('th');
-          each.classList.add('table-th');
-          each.innerText = key.capitalize();
-          this.colors.push(key.capitalize());
-          tr.appendChild(each);
-          thead.appendChild(tr);
-        }
-      });
-    } else if (replace == 'bearings') {
-      let each = document.createElement('th');
-      each.classList.add('table-th');
-      each.innerText = 'Łożyska/paski';
-      tr.appendChild(each);
-      thead.appendChild(tr);
-    }
-    return thead;
-  }
-
-  createTbodyFilters() {
-    let tbody = document.createElement('tbody');
-    this.data.units.forEach((unit) => {
-      if (
-        !unit.hasOwnProperty('filters_threshold') &&
-        !unit.hasOwnProperty('bearings_threshold')
-      ) {
-        let tr = document.createElement('tr');
-        let name = document.createElement('td');
-        name.innerText = unit.unit;
-        name.classList.add('table-th');
-        this.units.push(unit.unit);
-        tr.append(name);
-        for (const value of Object.values(unit.filters)) {
-          for (const [key, val] of Object.entries(value)) {
-            let each = document.createElement('td');
-            each.classList.add('table-td', 'clickable');
-            let date = document.createElement('p');
-            date.classList.add('replacement-date');
-            let quantity = document.createElement('p');
-            if (val['last_replacement'] != 'NaT') {
-              each.id = `filters-${unit.unit.split(' ')[1]}-${key}`;
-              each.onclick = () => {
-                if (each.classList.contains('activ')) {
-                  let selected = document.querySelector('.selected-to-replace');
-                  if (selected) {
-                    selected.classList.remove('selected-to-replace');
-                  }
-                  each.classList.add('selected-to-replace');
-                }
-              };
-              if (val['liter'] * 1000 >= this.data.filters_threshold) {
-                each.classList.add('warning');
-              }
-              date.innerText = val['last_replacement'];
-              quantity.innerText = val['liter'];
-            } else {
-              date.innerText = 0;
-              quantity.innerText = 0;
-            }
-            each.appendChild(date);
-            each.appendChild(quantity);
-            tr.appendChild(each);
-          }
-        }
-        tbody.appendChild(tr);
-      }
-    });
-    return tbody;
-  }
-
-  createTbodyBearings() {
-    let tbody = document.createElement('tbody');
-    this.data.units.forEach((unit) => {
-      if (
-        !unit.hasOwnProperty('filters_threshold') &&
-        !unit.hasOwnProperty('bearings_threshold')
-      ) {
-        let tr = document.createElement('tr');
-        let name = document.createElement('td');
-        name.innerText = unit.unit;
-        name.classList.add('table-th');
-        tr.append(name);
-
-        let each = document.createElement('td');
-        each.classList.add('table-td', 'clickable');
-        each.id = `bearings-${unit.unit}`;
-        each.onclick = () => {
-          if (each.classList.contains('activ')) {
-            let selected = document.querySelector('.selected-to-replace');
-            if (selected) {
-              selected.classList.remove('selected-to-replace');
-            }
-            each.classList.add('selected-to-replace');
-          }
-        };
-        if (unit.bearings.tys_m2 * 1000 >= this.data.bearings_threshold) {
-          each.classList.add('warning');
-        }
-        let date = document.createElement('p');
-        date.classList.add('replacement-date');
-        date.innerText = unit.bearings.last_replacement;
-        let quantity = document.createElement('p');
-        quantity.innerText = unit.bearings.tys_m2;
-        each.appendChild(date);
-        each.appendChild(quantity);
-        tr.appendChild(each);
-        tbody.appendChild(tr);
-      }
-    });
-    return tbody;
-  }
-
-  descriptionsBox(changeType) {
-    let changeType_;
-    switch (changeType) {
-      case 'filters':
-        changeType_ = 'filtrów';
-        break;
-      case 'bearings':
-        changeType_ = 'łożysk i pasków';
-        break;
-    }
-    let descBox = document.createElement('div');
-    descBox.classList.add('descBox');
-    let descLabel = document.createElement('small');
-    descLabel.innerText = `*ostatnia data wymiany oraz aktualny przebieg ${changeType_}`;
-    descBox.appendChild(descLabel);
-
-    return descBox;
+  createAll() {
+    let thead = createThead(this.bearings_thead_elements);
+    let actions_data = {
+      bearings_threshold: this.data.bearings_threshold,
+    };
+    let tbody = createTbody(this.data.units, 'impala_bearings', actions_data);
+    let descriptions = {
+      first: '*ostatnia data wymiany oraz aktualny przebieg filtrów',
+    };
+    let description = descriptionsBox(descriptions);
+    this.table.appendChild(thead);
+    this.table.appendChild(tbody);
+    this.tableBox.appendChild(this.table);
+    this.tableBox.appendChild(description);
   }
 
   getTables() {

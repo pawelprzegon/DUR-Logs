@@ -2,7 +2,8 @@ import AbstractView from './AbstractView.js';
 import { callApiGet } from '../endpoints.js';
 import {
   Impala_All_Data,
-  createTableReplacementsImpala,
+  createFiltersReplacements,
+  createBearingsReplacements,
 } from '../createImpalaTables.js';
 import { createChart } from '../chart/createChart.js';
 import { Alerts } from '../alerts/alerts.js';
@@ -30,10 +31,17 @@ export default class extends AbstractView {
       let chart = newChart.getChart();
 
       let [status, dataAll] = await callApiGet('impala');
-      let [statusRepl, dataReplacements] = await callApiGet(
-        'impala/replacements/'
+      let [statusReplFilters, dataReplFilters] = await callApiGet(
+        'impala/replacements/filters'
       );
-      if (status == 200 && statusRepl == 200) {
+      let [statusReplBearings, dataReplBearings] = await callApiGet(
+        'impala/replacements/bearings'
+      );
+      if (
+        status == 200 &&
+        statusReplFilters == 200 &&
+        statusReplBearings == 200
+      ) {
         hideloader();
 
         let tables = new Impala_All_Data(dataAll, newChart);
@@ -45,22 +53,24 @@ export default class extends AbstractView {
         dataBox.appendChild(tableAllReady);
         app.appendChild(dataBox);
 
-        let tableFiltersReplacements = new createTableReplacementsImpala(
-          dataReplacements
+        let tableFiltersReplacements = new createFiltersReplacements(
+          dataReplFilters
         );
-        tableFiltersReplacements.createTableAll('filters');
-        let tableFiltersReplacementsReady = tableFiltersReplacements.getTable();
+        tableFiltersReplacements.createAll();
+        let tableFiltersReplacementsReady =
+          tableFiltersReplacements.getTables();
 
-        let tableBearingsReplacements = new createTableReplacementsImpala(
-          dataReplacements
+        let tableBearingsReplacements = new createBearingsReplacements(
+          dataReplBearings
         );
-        tableBearingsReplacements.createTableAll('bearings');
-        let tableReplacementsReady = tableBearingsReplacements.getTables();
+        tableBearingsReplacements.createAll();
+        let tableBearingsReplacementsReady =
+          tableBearingsReplacements.getTables();
 
         let dataBox_Repl = document.createElement('div');
         dataBox_Repl.classList.add('dataBox');
         dataBox_Repl.appendChild(tableFiltersReplacementsReady);
-        dataBox_Repl.appendChild(tableReplacementsReady);
+        dataBox_Repl.appendChild(tableBearingsReplacementsReady);
         app.appendChild(dataBox_Repl);
 
         // NavOptions
@@ -119,10 +129,17 @@ export default class extends AbstractView {
       } else if (status == 403) {
         let alert = new Alerts(status, dataAll.detail, 'alert-orange');
         alert.createNew();
-      } else if (statusRepl != 200) {
+      } else if (statusReplFilters != 200) {
         let alert = new Alerts(
-          statusRepl,
-          dataReplacements.detail,
+          statusReplFilters,
+          dataReplFilters.detail,
+          'alert-red'
+        );
+        alert.createNew();
+      } else if (statusReplBearings != 200) {
+        let alert = new Alerts(
+          statusReplBearings,
+          dataReplBearings.detail,
           'alert-red'
         );
         alert.createNew();

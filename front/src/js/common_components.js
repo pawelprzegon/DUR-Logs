@@ -1,4 +1,9 @@
-import { mutoh_actions } from './mutoh_actions.js';
+import {
+  impala_actions,
+  impala_filters_actions,
+  impala_bearings_actions,
+} from './actions/impala_actions.js';
+import { mutoh_actions } from './actions/mutoh_actions.js';
 
 export function createThead(list_of_elements) {
   let thead = document.createElement('thead');
@@ -40,7 +45,20 @@ export function createTbody(data, printer_type, actions_data) {
       each.innerText = value;
       if (printer_type === 'mutoh') {
         mutoh_actions(key, value, tr, each, unit, actions_data);
+      } else if (printer_type === 'impala') {
+        impala_actions(key, value, each, actions_data);
+      } else if (printer_type === 'impala_filters' && key !== 'unit') {
+        each.innerText = '';
+        impala_filters_actions(key, value, each, unit.unit, actions_data);
+      } else if (printer_type === 'impala_bearings') {
+        if (key !== 'unit' && key !== 'last_replacement') {
+          each.innerText = '';
+          impala_bearings_actions(each, unit, actions_data);
+        } else if (key === 'last_replacement') {
+          break;
+        }
       }
+
       tr.appendChild(each);
     }
     tbody.appendChild(tr);

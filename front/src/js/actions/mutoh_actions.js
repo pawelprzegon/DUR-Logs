@@ -1,4 +1,7 @@
-import { generateNewChart } from './common.js';
+import { generateNewChart, hideAllSnInputs } from '../common.js';
+import { Alerts } from '../alerts/alerts.js';
+import { callApiPut } from '../endpoints.js';
+import { navigateTo } from '../index.js';
 
 export function mutoh_actions(key, value, tr, each, unit, actions_data) {
   if (key == 'unit') {
@@ -60,7 +63,7 @@ function showSnInputText(each, unit_number) {
     event.preventDefault();
     let newSN = document.querySelector(`#sn_${unit_number}`);
     let data = newSN.value;
-    let validate = this.serialValidation(data);
+    let validate = serialValidation(data);
     if (validate == true) {
       let [response, status] = await callApiPut(
         `mutoh/sn/Mutoh ${unit_number}/${data}`
@@ -76,6 +79,11 @@ function showSnInputText(each, unit_number) {
       }
     }
   };
+}
+
+function serialValidation(sn) {
+  //TODO tutaj musi być RegExp
+  return true;
 }
 
 function createProgressBar(value) {
