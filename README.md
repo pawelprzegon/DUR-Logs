@@ -1,9 +1,9 @@
-# Raports app
+# Printers statistics app
 
 ## Description
 
-Report management project.\
-Created to create new reports, save them in the [database](https://github.com/pawelprzegon/DUR-DB.git) and create statistics for generated reports.\
+Printers statistics app project for printing house.\
+Created to collect data from printing units, save them in the [database](https://github.com/pawelprzegon/DUR-DB.git) and create statistics and get prompts about maintenance.\
 Database is a separated repository to build it independent
 
 ## Technologies
