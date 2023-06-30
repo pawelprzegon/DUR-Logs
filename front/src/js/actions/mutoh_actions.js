@@ -13,7 +13,7 @@ export function mutoh_actions(key, value, tr, each, unit, actions_data) {
       generateNewChart(actions_data.chart);
     };
   } else if (key == 'date') {
-    each.innerText = value.replace('T', ' ');
+    each.innerText = value.replace('T', ' ').split(' ')[0];
     let date = new Date();
     if (Date.parse(value) < date.setDate(date.getDate() - 7)) {
       tr.classList.add('unused');

@@ -91,7 +91,7 @@ async def impala_Replacements_Update(what, date, unit, color):
      color: Black (if needed)
     """
 
-    return impala_update_replacements([what, date, unit, color], tags=["Impala"])
+    return impala_update_replacements([what, date, unit, color])
 
 
 @impala_api.get("/impala/replacements/{replacement_type}", tags=["Impala"])

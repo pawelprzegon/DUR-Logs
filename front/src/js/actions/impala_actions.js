@@ -13,6 +13,8 @@ export function impala_actions(key, value, each, actions_data) {
 }
 
 export function impala_filters_actions(key, val, each, unit, actions_data) {
+  each.innerText = '';
+  each.classList.add('clickable');
   let date = document.createElement('p');
   date.classList.add('replacement-date');
   let quantity = document.createElement('p');
@@ -41,6 +43,8 @@ export function impala_filters_actions(key, val, each, unit, actions_data) {
 }
 
 export function impala_bearings_actions(each, unit, actions_data) {
+  each.classList.add('clickable');
+  each.innerText = '';
   each.id = `bearings-${unit.unit.split(' ')[1]}`;
   each.onclick = () => {
     if (each.classList.contains('activ')) {

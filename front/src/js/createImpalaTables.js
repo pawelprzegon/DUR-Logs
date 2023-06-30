@@ -58,6 +58,7 @@ export class createFiltersReplacements {
     let tbody = createTbody(this.data.units, 'impala_filters', actions_data);
     let descriptions = {
       first: '*ostatnia data wymiany oraz aktualny przebieg filtrów',
+      second: `aktualny target [ml]: ${this.data.filters_threshold} ml`,
     };
     let description = descriptionsBox(descriptions);
     this.table.appendChild(thead);
@@ -86,7 +87,8 @@ export class createBearingsReplacements {
     };
     let tbody = createTbody(this.data.units, 'impala_bearings', actions_data);
     let descriptions = {
-      first: '*ostatnia data wymiany oraz aktualny przebieg filtrów',
+      first: '*ostatnia data wymiany oraz aktualny przebieg łożysk i pasków',
+      second: `aktualny target [m2]: ${this.data.bearings_threshold} m2`,
     };
     let description = descriptionsBox(descriptions);
     this.table.appendChild(thead);

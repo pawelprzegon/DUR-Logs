@@ -119,7 +119,7 @@ export default class extends AbstractView {
           bTargetPath
         );
         bTarget.createBox();
-        bTarget.inputValue('impala/setting/bearings&');
+        bTarget.inputValue('impala/settings/bearings&');
         navOptions.appendChild(bTarget.getReplaceBox());
       } else if (status != 200 && status != 403) {
         let alert = new Alerts(status, dataAll.detail, 'alert-red');

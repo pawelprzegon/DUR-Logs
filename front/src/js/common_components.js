@@ -46,13 +46,14 @@ export function createTbody(data, printer_type, actions_data) {
       if (printer_type === 'mutoh') {
         mutoh_actions(key, value, tr, each, unit, actions_data);
       } else if (printer_type === 'impala') {
+        if (key == 'filters' || key == 'bearings') {
+          break;
+        }
         impala_actions(key, value, each, actions_data);
       } else if (printer_type === 'impala_filters' && key !== 'unit') {
-        each.innerText = '';
         impala_filters_actions(key, value, each, unit.unit, actions_data);
       } else if (printer_type === 'impala_bearings') {
         if (key !== 'unit' && key !== 'last_replacement') {
-          each.innerText = '';
           impala_bearings_actions(each, unit, actions_data);
         } else if (key === 'last_replacement') {
           break;

@@ -153,7 +153,7 @@ def max_date_for_color(ff, each, color):
 def get_filters_last_date(df, ff, each, color):
     maxDate = (
         datetime.strptime('1990-01-01', '%Y-%m-%d')
-        if ff.empty
+        if str(max_date_for_color(ff, each, color)) == 'NaT'
         else max_date_for_color(ff, each, color)
     )
     return {
@@ -191,7 +191,7 @@ def all_dates_for_bearings(bf, each):
 def get_bearings_data(df, bf, each):
     maxDate = (
         datetime.strptime('1990-01-01', '%Y-%m-%d')
-        if bf.empty
+        if str(max_date_for_bearings(bf, each)) == 'NaT'
         else max_date_for_bearings(bf, each)
     )
     return {
