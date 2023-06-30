@@ -106,19 +106,20 @@ def get_new_date_job(df) -> dict:
 
 def update_Latex_data():
     new_df = get_XLC_data()
-    old_date_job = get_old_date_job()
-    new_loc_df = get_new_loc_df(new_df, old_date_job)
-    new_date_job = get_new_date_job(new_df)
+    if new_df is not None:
+        old_date_job = get_old_date_job()
+        new_loc_df = get_new_loc_df(new_df, old_date_job)
+        new_date_job = get_new_date_job(new_df)
 
-    if new_loc_df is not None:
-        print(
-            f"old_date_job: {old_date_job['old_date']}--->new date:{new_date_job['new_date']}")
+        if new_loc_df is not None:
+            print(
+                f"old_date_job: {old_date_job['old_date']}--->new date:{new_date_job['new_date']}")
 
-        update_db = Database(new_loc_df, new_date_job)
-        update_db.add_to_latex_details()
-        update_db.add_to_latex()
+            update_db = Database(new_loc_df, new_date_job)
+            update_db.add_to_latex_details()
+            update_db.add_to_latex()
 
-        csv_backup = CsvBackup(
-            'Latex 3100', get_log_files(), new_loc_df, ARCHIVES_FILES_PATH)
-        csv_backup.save_csv_backup()
-        csv_backup.moveFiles()
+            csv_backup = CsvBackup(
+                'Latex 3100', get_log_files(), new_loc_df, ARCHIVES_FILES_PATH)
+            csv_backup.save_csv_backup()
+            csv_backup.moveFiles()

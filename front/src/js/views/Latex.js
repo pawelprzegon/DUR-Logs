@@ -42,15 +42,12 @@ export default class extends AbstractView {
         // NavOptions
         removeDbSettings();
       } else if (status != 200 && status != 403) {
-        let alert = new Alerts(status, 'alert-red');
+        let alert = new Alerts(status, dataAll.detail, 'alert-red');
         alert.createNew();
         hideloader();
         app.appendChild(NoDataFound('Latex'));
       } else if (status == 403) {
         let alert = new Alerts(status, dataAll.detail, 'alert-orange');
-        alert.createNew();
-      } else if (statusRepl != 200) {
-        let alert = new Alerts(statusRepl, 'alert-red');
         alert.createNew();
       }
     } catch (error) {

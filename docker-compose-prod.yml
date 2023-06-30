@@ -1,8 +1,8 @@
-version: "3.8"
+version: '3.8'
 
 services:
   db:
-    container_name: UNITS_db
+    container_name: LOGS_db
     image: postgres:15.1-alpine
     environment:
       POSTGRES_PASSWORD: docker # environment variable that sets the superuser password for PostgreSQL
@@ -12,16 +12,15 @@ services:
       - backend
 
   adminer:
-    container_name: UNITS_adminer
+    container_name: LOGS_adminer
     image: adminer
     ports:
       - 8080:8080
     networks:
       - backend
 
-
   app:
-    container_name: UNITS_app
+    container_name: LOGS_app
     build: .
     command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload --workers 4"
     volumes:
@@ -30,24 +29,22 @@ services:
       - logs2:/app/impala_api/volumes
     ports:
       - 8000:8000
-    
+
     networks:
       - backend
 
-      
 networks:
   backend:
-     driver: bridge
-
+    driver: bridge
 
 volumes:
   logs:
     driver_opts:
       type: cifs
-      o: "username=docker,password=docker4545docker"
-      device: "//192.168.5.80/production_files/logs/mutoh"
+      o: 'username=docker,password=docker4545docker'
+      device: '//192.168.5.80/production_files/logs/mutoh'
   logs2:
     driver_opts:
       type: cifs
-      o: "username=docker,password=docker4545docker"
-      device: "//192.168.5.80/production_files/logs/impala"
+      o: 'username=docker,password=docker4545docker'
+      device: '//192.168.5.80/production_files/logs/impala'

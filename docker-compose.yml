@@ -1,8 +1,8 @@
-version: "3.8"
+version: '3.8'
 
 services:
   front:
-    container_name: units_FRONT
+    container_name: logs_FRONT
     build: ./front
     ports:
       - 3001:3000
@@ -12,7 +12,7 @@ services:
       - ./front:/front/
 
   back:
-    container_name: units_BACK
+    container_name: logs_BACK
     build: ./back
     restart: on-failure:10
     environment:
