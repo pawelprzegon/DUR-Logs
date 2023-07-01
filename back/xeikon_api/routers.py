@@ -3,9 +3,9 @@ from fastapi_sqlalchemy import db
 import xeikon_api.schema as schema
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from xeikon_api.update import update_xeikon_data
-from xeikon_api.reorganizeData import reorganize_toner_data, \
+from xeikon_api.reorganizeData import get_summed_toner_data, \
     reorganize_dvl_data, reorganize_fuser_data, \
-    reorganize_clicks_data
+    get_summed_clicks_data
 from xeikon_api.models_Xeikon import Xeikon, DVL, Fuser, Toner, \
     XeikonDetails, Clicks
 from typing import Optional
@@ -19,6 +19,8 @@ xeikon_api = APIRouter()
 
 
 def update():
+    '''function where status of update become true before update is done.
+    Runs update and changing status of update to false when it is done'''
     global status
     status = True
     update_xeikon_data()
@@ -28,11 +30,16 @@ def update():
 
 @xeikon_api.get('/xeikon/status', include_in_schema=False)
 def status():
+    '''route for checking current update status true/false 
+    (true when it's in progress and false if no updating data)'''
     return status
 
 
 @xeikon_api.get('/xeikon/update', include_in_schema=False)
 async def xeikon_Update(background_tasks: BackgroundTasks):
+    '''route to run update process if there is no current update in progress.
+    Update is running as a separated task in backgroud to give user
+    intermidiate answer that update is in progress'''
     global status
     if status != True:
         background_tasks.add_task(update)
@@ -102,7 +109,7 @@ def xeikon_Toner_data():
     """
     with get_session() as session:
         if data := session.query(Toner):
-            return reorganize_toner_data(data)
+            return get_summed_toner_data(data)
         else:
             raise HTTPException(
                 status_code=404,
@@ -170,7 +177,7 @@ async def xeikon_Clicks_data():
     """
     with get_session() as session:
         if result := session.query(Clicks):
-            return reorganize_clicks_data(result)
+            return get_summed_clicks_data(result)
         else:
             raise HTTPException(
                 status_code=404,

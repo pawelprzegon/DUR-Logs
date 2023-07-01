@@ -9,7 +9,6 @@ import numpy as np
 from impala_api.models_Impala import ImpalaDetails as Impd
 from fastapi_sqlalchemy import db
 from sqlalchemy import func
-from datetime import date
 from impala_api.insert_into_db import Database
 from common.csv_backup import CsvBackup
 
@@ -20,13 +19,13 @@ DATA_FOLDER: str = f"{basedir}/volumes/impala/**/*.mdb"
 
 
 def create_new_df(database_path):
+    '''read mdb file into csv using subprocess, StringIO and mdb-tables and then from csv puts data ingo dataframe'''
     subprocess.call(["mdb-schema", database_path, "mysql"])
     # Get the list of table names with "mdb-tables"
     table_names = subprocess.Popen(["mdb-tables", "-1", database_path],
                                    stdout=subprocess.PIPE).communicate()[0]
     tables = table_names.splitlines()
     sys.stdout.flush()
-    # Dump each table as a stringio using "mdb-export",
     for rtable in tables:
         table = rtable.decode('ISO-8859-1')
         if table == 'Jobs':
@@ -53,6 +52,7 @@ def create_new_df(database_path):
 
 
 def loc_new_df(df, unit_number, last_db_insert):
+    '''locking dataframe with credentials(data oldest than last_db_insert)'''
     cols = ['Black', 'Cyan', 'Magenta', 'Yellow', 'White']
     df[cols] = df[cols] / 70000000
     df.insert(0, 'unit', f'Impala {unit_number}')
@@ -74,11 +74,13 @@ def loc_new_df(df, unit_number, last_db_insert):
 
 
 def get_unit_number(file):
+    '''getting unit numbers from file name'''
     file = file.split('/')[-1]
     return re.findall(r'\d+', file)
 
 
 def get_last_insert(unit):
+    '''getting last date from db query'''
     last_db_insert = db.session.query(func.max(Impd.date)).filter(
         Impd.unit == f'Impala {str(unit)}').first()
     print(last_db_insert)
@@ -91,6 +93,7 @@ def get_last_insert(unit):
 
 
 def update_Impala_data():
+    '''steps for updating with collecting data, commit into db and creating csv backup with moving files'''
     files = glob.glob(DATA_FOLDER, recursive=True)
 
     for file in files:
@@ -102,8 +105,8 @@ def update_Impala_data():
         if not new_df.empty:
             update_db = Database(new_df,
                                  f'Impala {str(*unit_number)}')
-            update_db.add_all_to_db_by_month()
-            update_db.new_summ_all()
+            update_db.impala_details()
+            update_db.impala()
 
             csv_backup = CsvBackup(
                 f'Impala_{str(*unit_number)}', [file], new_df, ARCHIVES_FILES_PATH)

@@ -11,6 +11,7 @@ class Database:
         self.new_last_db_insert = new_last_db_insert
 
     def add_to_mutoh_details(self):
+        '''commit data into mutoh details table in db'''
         for index, row in self.df.iterrows():
             if (
                 exists := db.session.query(MutDet)
@@ -31,6 +32,7 @@ class Database:
             db.session.commit()
 
     def add_to_mutoh(self) -> dict:
+        '''commit data into mutoh table in db'''
         unit_summed_df = self.prepare_data()
         mutoh_data = {}
         for index, row in unit_summed_df.iterrows():
@@ -55,6 +57,7 @@ class Database:
             db.session.commit()
 
     def prepare_data(self) -> DataFrame:
+        '''grouping dataframe by unit and suming ink and printed columns'''
         unit_summed_df = self.df.groupby([
             'unit']).sum(["Ink", "Printed"]).reset_index()
 
@@ -67,6 +70,7 @@ class Database:
         return unit_summed_df
 
     def calculate_target_reached(self, suma_m2):
+        '''for each row in db calculating new target reached'''
         target = target.target if (
             target := db.session.query(MutSet).first()) else 1
         return round(suma_m2/target, 2)*100

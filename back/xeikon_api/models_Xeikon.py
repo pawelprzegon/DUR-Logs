@@ -4,6 +4,8 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+'''Models for each Xeikon unit table'''
+
 
 class Xeikon(Base):
     __tablename__ = "xeikon"

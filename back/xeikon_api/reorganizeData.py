@@ -3,7 +3,8 @@ import pandas as pd
 from db import get_session
 
 
-def reorganize_toner_data(response):
+def get_summed_toner_data(response):
+    '''sum data for each toner'''
     with get_session() as session:
         result = []
         df = pd.read_sql(response.statement, session.bind)
@@ -26,7 +27,8 @@ def reorganize_toner_data(response):
         return result
 
 
-def reorganize_clicks_data(response):
+def get_summed_clicks_data(response):
+    '''sum data for each clicks data'''
     with get_session() as session:
         result = []
         df = pd.read_sql(response.statement, session.bind)
@@ -43,16 +45,17 @@ def reorganize_clicks_data(response):
         return result
 
 
-def reorganize_dvl_data(response):
-    tst = defaultdict(list)
+def reorganize_dvl_data(response) -> list:
+    '''filtering data and pack as list of dict(dict created as ziped 2 lists)'''
+    sorted_data_per_unit = defaultdict(list)
     result = []
     for each in response:
         data = {
             'current': each.current,
             'replaced': each.replaced_total
         }
-        tst[each.unit].append([each.color, data])
-    for k, v in tst.items():
+        sorted_data_per_unit[each.unit].append([each.color, data])
+    for k, v in sorted_data_per_unit.items():
         col = ['unit']
         data = [k]
         for each in v:
@@ -63,6 +66,7 @@ def reorganize_dvl_data(response):
 
 
 def reorganize_fuser_data(response):
+    '''filtering data and pack as list of dicts'''
     result = []
     for each in response:
         data = {

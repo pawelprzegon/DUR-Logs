@@ -5,6 +5,9 @@ from sqlalchemy.orm import relationship
 Base = declarative_base()
 
 
+'''Models for each Impala unit table'''
+
+
 class Impala(Base):
     __tablename__ = "impala"
     id = Column(Integer, primary_key=True)

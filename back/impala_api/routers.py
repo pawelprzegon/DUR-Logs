@@ -16,6 +16,8 @@ status = None
 
 
 def update_data():
+    '''function where status of update become true before update is done.
+    Runs update and changing status of update to false when it is done'''
     global status
     status = True
     update_Impala_data()
@@ -25,11 +27,16 @@ def update_data():
 
 @impala_api.get('/impala/status', include_in_schema=False)
 async def status():
+    '''route for checking current update status true/false 
+    (true when it's in progress and false if no updating data)'''
     return status
 
 
 @impala_api.get("/impala/update", include_in_schema=False)
 async def impalaDataUpdate(background_tasks: BackgroundTasks):
+    '''route to run update process if there is no current update in progress.
+    Update is running as a separated task in backgroud to give user
+    intermidiate answer that update is in progress'''
     global status
     if status != True:
         background_tasks.add_task(update_data)

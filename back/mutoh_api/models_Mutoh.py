@@ -3,6 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+'''Models for each Mutoh unit table'''
+
 
 class Mutoh(Base):
     __tablename__ = "mutoh"

@@ -9,6 +9,7 @@ class Database:
         self.new_date_job = new_date_job
 
     def add_to_latex_details(self):
+        '''commit data into latex details table in db'''
         with get_session() as session:
             for index, row in self.df.iterrows():
                 if (
@@ -27,6 +28,7 @@ class Database:
                 session.commit()
 
     def add_to_latex(self):
+        '''commit data into latex table in db'''
         summed_df = self.sum_df()
         with get_session() as session:
             if (exists := session.query(Latex).first()):
@@ -46,5 +48,6 @@ class Database:
             session.commit()
 
     def sum_df(self):
+        '''grouo dataframe by unit and sum columns ink and printed'''
         return self.df.groupby([
             'Unit']).sum(["Ink", "Printed"]).reset_index()

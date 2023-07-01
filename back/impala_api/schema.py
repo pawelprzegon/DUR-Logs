@@ -3,7 +3,8 @@ from datetime import datetime, date
 from typing import List, Optional
 
 
-# Impala
+'''Schemas for responses'''
+
 
 class ImpalaDetails(BaseModel):
     unit: str

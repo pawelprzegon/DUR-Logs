@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 
+'''Creating sqlalchemy engine and sessionmaker'''
+
 load_dotenv(".env")
 SQLALCHEMY_DATABASE_URL = os.environ["DATABASE_URL"]
 DB_TIMEOUT = os.environ["DB_TIMEOUT"]

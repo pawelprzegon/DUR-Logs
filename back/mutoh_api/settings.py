@@ -6,6 +6,7 @@ from mutoh_api.models_Mutoh import MutohSettings as MutSet
 
 
 def mutoh_update_settings(target):
+    '''updating Mutoh Settings table with new target'''
     try:
         settings = MutSet(
             target=int(target),
@@ -33,13 +34,15 @@ def mutoh_update_settings(target):
 
 
 def update_targets(target):
+    '''function to recalculate for each row in db new target'''
     data = db.session.query(Mh).all()
     for each in data:
         each.target_reached = round(each.suma_m2/int(target), 2)*100
         db.session.commit()
 
 
-def add_default_darget_to_db():
+def add_default_target_to_db():
+    '''created default target if there is no entry in target table'''
     default_target = MutSet(
         target=19000
     )
@@ -49,6 +52,7 @@ def add_default_darget_to_db():
 
 
 def update_SN(unit, sn):
+    '''function to update serial number'''
     try:
         if exists := db.session.query(Mh).filter(Mh.unit == unit).first():
             exists.sn = sn

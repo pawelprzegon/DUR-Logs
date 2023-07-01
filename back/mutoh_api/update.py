@@ -15,6 +15,7 @@ DATA_FOLDER: str = f"{basedir}/volumes/mutoh/**/*.log"
 
 
 def get_mutoh_numbers() -> list:
+    '''getting numbers from files names'''
     mutohNumbers = []
     files = glob.glob(DATA_FOLDER, recursive=True)
     for file in files:
@@ -29,10 +30,12 @@ def get_mutoh_numbers() -> list:
 
 
 def get_log_files() -> list:
+    '''getting list of files in directory'''
     return glob.glob(DATA_FOLDER, recursive=True)
 
 
 def unit_log_files_to_dict(mutohNumbers: list, log_files: list) -> dict:
+    '''creating dict with unit name as key and list of files as value'''
     unit_logFiles_dict = {f"Mutoh {i}": [] for i in mutohNumbers}
     for log_file in log_files:
         y = log_file
@@ -48,6 +51,7 @@ def unit_log_files_to_dict(mutohNumbers: list, log_files: list) -> dict:
 
 
 def create_new_df(logs):
+    '''creating dataframe with data from list of files'''
     lines = []
     lines = list(fileinput.FileInput(
         logs, encoding="ISO-8859-1"))  # read file
@@ -81,6 +85,9 @@ def create_new_df(logs):
 
 
 def loc_new_df(df, last_db_insert: str, unit):
+    '''locking dataframe with credentials (Data older than last_db_insert)
+    and if not empty group by Data and sum columns Ink and Printed. 
+    If dataframe empty returnd double None'''
     df = df.loc[df['Data'] > last_db_insert]
     if not df.empty:
         new_last_db_insert = df['Data'].max()
@@ -112,6 +119,8 @@ def loc_new_df(df, last_db_insert: str, unit):
 
 
 def get_last_insert(unit) -> str:
+    '''getting last date from column date in Mutoh table.
+    If query is empty returns default date'''
     last_db_insert = db.session.query(Mh.date).filter(
         Mh.unit == unit).first()
 
@@ -123,12 +132,14 @@ def get_last_insert(unit) -> str:
 
 
 def prepare_unit_logFiles_dict():
+    '''function to creates mutoh numbers getting log files and returns all log files for each unit'''
     mutoh_numbers = get_mutoh_numbers()
     log_files = get_log_files()
     return unit_log_files_to_dict(mutoh_numbers, log_files)
 
 
 def update_Mutoh_data():
+    '''steps for updating with collecting data, commit into db and creating csv backup with moving files'''
     all_data = pd.DataFrame()
     last_inserts = {}
     unit_logFiles_dict = prepare_unit_logFiles_dict()

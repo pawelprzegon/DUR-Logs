@@ -12,6 +12,7 @@ class Database:
         self.unit = unit
 
     def assign_data(self, row, exists):
+        '''assigning data into query from dataframe row'''
         exists.unit = row["unit"]
         exists.Black = row["Black"]
         exists.Cyan = row["Cyan"]
@@ -22,7 +23,8 @@ class Database:
         exists.Total_Ink = row["Total_Ink"]
         exists.date = row["date"]
 
-    def add_all_to_db_by_month(self):
+    def impala_details(self):
+        '''commit data into impala details table in db'''
         for index, row in self.df.iterrows():
             if (
                 exists := db.session.query(Impd)
@@ -45,7 +47,8 @@ class Database:
                 db.session.add(impala_data)
             db.session.commit()
 
-    def new_summ_all(self):
+    def impala(self):
+        '''commit data into impala table in db'''
         summed_data = db.session.query(func.sum(Impd.printed).label('sum_printed'), func.sum(
             Impd.ink).label('sum_ink')).filter(Impd.unit == self.unit).first()
         if (

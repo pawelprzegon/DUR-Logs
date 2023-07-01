@@ -13,12 +13,14 @@ DIRECTORY = ['Xeikon 1', 'Xeikon 2', 'Xeikon 3']
 
 
 def get_last_log_file(unit):
+    '''getting oldest file from directory'''
     data_folder = f"{DATA_FOLDER}/{unit}/**/*.zip"
     all_zip_files = glob.glob(data_folder, recursive=True)
     return max(all_zip_files)
 
 
 def unzip(last_file):
+    '''unziping file and execute get_data function'''
     last_file_datetime = time.ctime(os.path.getmtime(last_file))
     with zipfile.ZipFile(last_file, 'r') as archive:
         with archive.open('Application/Reports/Statistics.csv') as csv_file:
@@ -27,6 +29,7 @@ def unzip(last_file):
 
 
 def get_data(csv_file, last_file_datetime):
+    '''filtering credential data form last file into dict'''
     data = {'last_file_datetime': last_file_datetime}
     toner_CMYK = {}
     dvl_CMYK = {}
@@ -78,6 +81,7 @@ def get_data(csv_file, last_file_datetime):
 
 
 def create_df(data):
+    '''creating pandas dataframe form dict'''
     df = pd.DataFrame.from_dict(
         data, orient='index', columns=['value'])
     first_column = df.index
@@ -86,6 +90,7 @@ def create_df(data):
 
 
 def update_xeikon_data():
+    '''steps for updating with collecting data, commit into db and creating csv backup with moving files'''
     for unit in DIRECTORY:
         print(unit)
         last_file = get_last_log_file(unit)

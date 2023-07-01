@@ -12,14 +12,17 @@ class Database:
         self.data = data
 
     def change_Dt(self, dt):
+        '''changing datetime into date format: yyyy-mm-01'''
         dt = datetime.strptime(dt, "%a %b %d %H:%M:%S %Y")
         return dt.strftime("%Y-%m-01")
 
     def change_Dt_to_date(self, dt):
+        '''changing datetime into date format: yyyy-mm-dd'''
         dt = datetime.strptime(dt, "%a %b %d %H:%M:%S %Y")
         return dt.strftime("%Y-%m-%d")
 
     def xeikon(self):
+        '''commit data into xeikon table in db'''
         if (exists := db.session.query(Xeikon).filter(Xeikon.unit == self.unit
                                                       ).first()):
             exists.date = self.data['last_file_datetime']
@@ -38,6 +41,7 @@ class Database:
         db.session.commit()
 
     def xeikon_details(self):
+        '''commit data into xeikon_details table in db'''
         mY = datetime.strptime(self.change_Dt(
             self.data['last_file_datetime']), "%Y-%m-%d")
         prev_data_printed = db.session.query(func.sum(XeikonDetails.printed)).filter(XeikonDetails.unit == self.unit,
@@ -63,6 +67,7 @@ class Database:
         db.session.commit()
 
     def toner(self):
+        '''commit data into toner table in db'''
         mY = self.change_Dt(self.data['last_file_datetime'])
         prev_toner = {
             'cyan':
@@ -121,6 +126,7 @@ class Database:
         db.session.commit()
 
     def dvl_repl(self):
+        '''commit data into dvl_repl table in db'''
         for key, value in self.data['dvl_CMYK'].items():
             if (
                 exists := db.session.query(DVL.replaced_total)
@@ -138,6 +144,7 @@ class Database:
                     db.session.commit()
 
     def dvl(self):
+        '''commit data into dvl table in db'''
         for key, value in self.data['dvl_CMYK'].items():
             if (
                 exists := db.session.query(DVL).filter(DVL.unit == self.unit,
@@ -156,6 +163,7 @@ class Database:
             db.session.commit()
 
     def fuser(self):
+        '''commit data into fuser table in db'''
         for value in self.data['fuser'].values():
             if (
                 exists := db.session.query(Fuser).filter(Fuser.unit == self.unit).first()
@@ -172,6 +180,7 @@ class Database:
             db.session.commit()
 
     def clicks(self):
+        '''commit data into clicks table in db'''
         mY = self.change_Dt(self.data['last_file_datetime'])
 
         prev_color = db.session.query(func.sum(Clicks.color)).filter(Clicks.unit == self.unit,

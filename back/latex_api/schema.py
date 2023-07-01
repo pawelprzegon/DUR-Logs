@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from datetime import date
 
+'''Schemas for responses'''
+
 
 class Latex(BaseModel):
     unit: str

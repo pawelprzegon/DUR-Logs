@@ -2,7 +2,7 @@ from typing import List
 from fastapi_sqlalchemy import db
 import mutoh_api.schema as schema
 from mutoh_api.update import update_Mutoh_data
-from mutoh_api.settings import mutoh_update_settings, add_default_darget_to_db, update_SN
+from mutoh_api.settings import mutoh_update_settings, add_default_target_to_db, update_SN
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from mutoh_api.models_Mutoh import Mutoh, MutohDetails, MutohSettings
 from datetime import datetime
@@ -15,6 +15,8 @@ status: bool = False
 
 
 def update():
+    '''function where status of update become true before update is done.
+    Runs update and changing status of update to false when it is done'''
     global status
     status = True
     update_Mutoh_data()
@@ -24,20 +26,16 @@ def update():
 
 @mutoh_api.get('/mutoh/status', include_in_schema=False)
 def status():
-    if isinstance(status, bool):
-        raise HTTPException(
-            status_code=200,
-            detail=status,
-        )
-    else:
-        raise HTTPException(
-            status_code=500,
-            detail='status type error',
-        )
+    '''route for checking current update status true/false 
+    (true when it's in progress and false if no updating data)'''
+    return status
 
 
 @mutoh_api.get("/mutoh/update", include_in_schema=False)
 async def mutohDataUpdate(background_tasks: BackgroundTasks):
+    '''route to run update process if there is no current update in progress.
+    Update is running as a separated task in backgroud to give user
+    intermidiate answer that update is in progress'''
     global status
     if status != True:
         background_tasks.add_task(update)
@@ -119,7 +117,7 @@ async def mutoh_target():
     if target := db.session.query(MutohSettings).first():
         return {'target': target.target}
     else:
-        return add_default_darget_to_db()
+        return add_default_target_to_db()
 
 
 @mutoh_api.put("/mutoh/sn/{unit}/{sn}", tags=["Mutoh"])

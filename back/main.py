@@ -19,6 +19,7 @@ from descriptions import description, tags_metadata
 # TODO  add API key - https://joshdimella.com/blog/adding-api-key-auth-to-fast-api
 
 def include_routers(app):
+    '''Including routes form different modules into app'''
     app.include_router(mutoh_api)
     app.include_router(impala_api)
     app.include_router(xeikon_api)
@@ -26,7 +27,7 @@ def include_routers(app):
 
 
 def include_middlewares(app):
-
+    '''Include middlewares Session and CORS'''
     app.add_middleware(DBSessionMiddleware, db_url=os.environ["DATABASE_URL"])
     CORS_URL = os.environ["CORS_URL"]
     origins = [CORS_URL]
@@ -41,6 +42,7 @@ def include_middlewares(app):
 
 
 def check_tables_exist():
+    '''Checking if db have any tables'''
     inspector = inspect(engine)
     tables = inspector.get_table_names()
 
@@ -49,11 +51,13 @@ def check_tables_exist():
 
 
 def create_tables_if_not_exists():
+    '''Creates tables if there is no tables in db'''
     if not check_tables_exist():
         create_tables()
 
 
 def create_tables():
+    '''Creating tables in db'''
     BaseMutoh.metadata.create_all(bind=engine)
     BaseImpala.metadata.create_all(bind=engine)
     BaseXeikon.metadata.create_all(bind=engine)
@@ -61,6 +65,7 @@ def create_tables():
 
 
 def start_application():
+    '''Creating Fastapi app with configuration'''
     app = FastAPI(
         openapi_tags=tags_metadata,
         title="Artgeist USAGE",
