@@ -1,6 +1,7 @@
 import os
 import uvicorn
 from fastapi_sqlalchemy import DBSessionMiddleware
+from sqlalchemy import inspect
 from mutoh_api.routers import mutoh_api
 from impala_api.routers import impala_api
 from xeikon_api.routers import xeikon_api
@@ -39,8 +40,20 @@ def include_middlewares(app):
     )
 
 
+def check_tables_exist():
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+
+    # Check if tables exist
+    return len(tables) > 0
+
+
+def create_tables_if_not_exists():
+    if not check_tables_exist():
+        create_tables()
+
+
 def create_tables():
-    
     BaseMutoh.metadata.create_all(bind=engine)
     BaseImpala.metadata.create_all(bind=engine)
     BaseXeikon.metadata.create_all(bind=engine)
@@ -54,7 +67,7 @@ def start_application():
         description=description,)
     include_routers(app)
     include_middlewares(app)
-    create_tables()
+    create_tables_if_not_exists()
     return app
 
 
