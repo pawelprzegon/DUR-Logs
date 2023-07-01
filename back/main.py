@@ -40,6 +40,7 @@ def include_middlewares(app):
 
 
 def create_tables():
+    
     BaseMutoh.metadata.create_all(bind=engine)
     BaseImpala.metadata.create_all(bind=engine)
     BaseXeikon.metadata.create_all(bind=engine)
