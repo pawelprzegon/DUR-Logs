@@ -20242,3 +20242,8 @@ back/.venv/Scripts/__pycache__/pywin32_testall.cpython-311.pyc
 back/.venv/Scripts/__pycache__/wsdump.cpython-311.pyc
 back/.env
 back/__pycache__
+back/common/__pycache__/
+back/impala_api/__pycache__/
+back/mutoh_api/__pycache__/
+back/latex_api/__pycache__/
+back/xeikon_api/__pycache__/
